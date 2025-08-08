@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<nav>
+  <div class="nav-center">
+    <div class="nav-item">
+      <a href="#banking" class="nav-link">뱅킹서비스</a>
+      <div class="dropdown">
+        <a href="#">계좌생성</a>
+        <a href="#">이체</a>
+        <a href="#">세이프박스</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#wedding" class="nav-link">웨딩플래너</a>
+      <div class="dropdown">
+        <a href="#">추천테마</a>
+        <a href="#">DIY</a>
+      </div>
+      
+    </div>
+    <div class="nav-item">
+      <a href="#loan" class="nav-link">대출</a>
+      <div class="dropdown">
+        <a href="#">대출상품</a>
+        <a href="#">대출상환</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="#mypage" class="nav-link">마이페이지</a>
+    </div>
+  </div>
+
+  <div class="user-profile">
+  <!-- 1. 체크박스 -->
+  <input type="checkbox" id="profileToggle" class="menu-toggle" />
+
+  <!-- 2. label: 클릭하면 체크박스 토글 -->
+  <label for="profileToggle" class="profile-label">
+  <img src="/img/profile.png" class="profile-img" />
+  <span class="username">로그인</span>
+  <span class="arrow">▼</span>
+</label>
+
+
+  <!-- 3. 드롭다운: 토글되면 보이게 -->
+  <div class="dropdown2">
+    <a href="/budget" class="dropdown-item">내 보유예산</a>
+    <a href="/mypage" class="dropdown-item">프로필 수정</a>
+    <a href="/logout" class="dropdown-item">로그아웃</a>
+  </div>
+</div>
+
+</nav>
+</html>
+
+  
