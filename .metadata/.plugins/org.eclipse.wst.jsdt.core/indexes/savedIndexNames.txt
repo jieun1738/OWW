@@ -1,4 +1,0 @@
-INDEX VERSION 1.4+D:\PJsbworkspace\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-2685302233.index
-1546589211.index
-2842900167.index
