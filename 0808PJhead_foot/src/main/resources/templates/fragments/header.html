@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<header>
+	<!-- tsparticles container -->
+	<div id="tsparticles"></div>
+	<h1 class="logo">
+		<a href="#">
+			<img src="/img/demo.png" alt="프로필" class="logo">
+		</a>
+	</h1>
+
+	<!-- 우측 사용자 아이콘 -->
+
+</header>
+
+<script>
+tsParticles.load("tsparticles", {
+  particles: {
+    number: {
+      value: 50,
+      density: {
+        enable: true,
+        value_area: 800
+      }
+    },
+    color: {
+      value: ["#FADADD", "#E6CCFF", "#FFFFFF"] // 연핑크, 라일락, 진주색
+    },
+    shape: {
+    	  type: "image",
+    	  image: [
+    	    { src: "/img/particles/diamond1(1).png", width: 64, height: 56 },
+    	    { src: "/img/particles/diamond2(1).png", width: 64, height: 66 },
+    	  ]
+    	},
+
+    opacity: {
+      value: 0.9,
+      random: true
+    },
+    size: {
+      value: 32,
+      random: { enable: true, minimumValue: 16 }
+    },
+    move: {
+      direction: "random",
+      enable: true,
+      speed: 2.7,
+      outModes: {
+        default: "out"
+      },
+      straight: false
+    }
+  },
+  detectRetina: true,
+  fullScreen: {
+    enable: false // ❗ header 영역 안에서만 동작하도록 설정
+  }
+});
+</script>
+
+</html>
