@@ -39,3 +39,55 @@
 2025-08-08 13:13:00,828 [Worker-8: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
 2025-08-08 13:13:00,831 [Worker-8: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\test\resources
 2025-08-08 13:15:31,641 [Worker-1: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2025-08-08 16:21:38,047 [Worker-1: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2025-08-08 16:22:05,616 [Worker-2: Building] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.sboot:0807PJjava:0.0.1-SNAPSHOT @ D:\PJsbworkspace\0808PJhead_foot\pom.xml.
+2025-08-08 16:22:07,166 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-08-08 16:22:07,189 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 22 resources from src\main\resources to target\classes
+2025-08-08 16:22:07,222 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\0808PJhead_foot\src\test\resources
+2025-08-08 16:22:07,679 [Worker-5: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-08-08 16:22:07,682 [Worker-5: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 22 resources from src\main\resources to target\classes
+2025-08-08 16:22:07,709 [Worker-5: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\0808PJhead_foot\src\test\resources
+2025-08-08 16:47:17,910 [Worker-13: Building] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.example:OWW:0.0.1-SNAPSHOT @ D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\pom.xml.
+2025-08-08 16:47:18,968 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
+2025-08-08 16:47:18,968 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
+2025-08-08 16:47:18,974 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\test\resources
+2025-08-08 16:47:18,976 [Worker-13: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of com.example_OWW
+2025-08-08 16:47:18,977 [Worker-13: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for com.example_OWW
+2025-08-08 16:47:20,232 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
+2025-08-08 16:47:20,232 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
+2025-08-08 16:47:20,235 [Worker-11: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\test\resources
+2025-08-08 16:47:20,236 [Worker-11: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of com.example_OWW
+2025-08-08 16:47:20,236 [Worker-11: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for com.example_OWW
+2025-08-08 16:53:45,752 [Worker-13: Building] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.sboot:0807PJjava:0.0.1-SNAPSHOT @ D:\PJsbworkspace\0808PJhead_foot\pom.xml.
+2025-08-08 16:53:46,334 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-08-08 16:53:46,367 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 22 resources from src\main\resources to target\classes
+2025-08-08 16:53:46,389 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\0808PJhead_foot\src\test\resources
+2025-08-08 16:53:46,390 [Worker-13: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of 0808PJhead_foot
+2025-08-08 16:53:46,390 [Worker-13: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for 0808PJhead_foot
+2025-08-08 16:53:46,650 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-08-08 16:53:46,653 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 22 resources from src\main\resources to target\classes
+2025-08-08 16:53:46,685 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\0808PJhead_foot\src\test\resources
+2025-08-08 16:53:46,809 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
+2025-08-08 16:53:46,809 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\main\resources
+2025-08-08 16:53:46,812 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\OWW\target\m2e-wtp\web-resources\META-INF\maven\com.example\OWW\src\test\resources
+2025-08-08 16:54:16,876 [Worker-21: Import Getting Started Content] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.example:demotest:0.0.1-SNAPSHOT @ D:\PJsbworkspace\demotest\pom.xml.
+2025-08-08 16:54:17,599 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /demotest/src/main/java
+2025-08-08 16:54:17,601 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /demotest/src/main/resources
+2025-08-08 16:54:17,604 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /demotest/src/main/resources
+2025-08-08 16:54:17,606 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /demotest/src/test/java
+2025-08-08 16:54:17,607 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /demotest/src/test/resources
+2025-08-08 16:54:18,606 [Worker-21: Import Getting Started Content] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 1 project(s) in 2 sec
+2025-08-08 16:54:18,608 [Worker-21: Import Getting Started Content] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update started
+2025-08-08 16:54:18,922 [Worker-21: Import Getting Started Content] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.example:demotest:0.0.1-SNAPSHOT @ D:\PJsbworkspace\demotest\pom.xml.
+2025-08-08 16:54:19,383 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /demotest/src/main/java
+2025-08-08 16:54:19,384 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /demotest/src/main/resources
+2025-08-08 16:54:19,385 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /demotest/src/main/resources
+2025-08-08 16:54:19,385 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /demotest/src/test/java
+2025-08-08 16:54:19,385 [Worker-21: Import Getting Started Content] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /demotest/src/test/resources
+2025-08-08 16:54:19,857 [Worker-21: Import Getting Started Content] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Cleaning filtered folder for demotest
+2025-08-08 16:54:19,870 [Worker-21: Import Getting Started Content] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update completed for 1 poms: local refresh takes 0.00 sec, refresh facades takes 0.00 sec, update config takes 0.00 sec 
+2025-08-08 16:54:20,270 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-08-08 16:54:20,288 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-08-08 16:54:20,291 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory D:\PJsbworkspace\demotest\src\test\resources
+2025-08-08 16:54:20,292 [Worker-19: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of demotest
+2025-08-08 16:54:20,292 [Worker-19: Building] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for demotest
