@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Own Wedding Wallet</title>
+<link rel="stylesheet" href="/css/page.css" />
+</head>
+<body>
+	<div class="container">
+
+		<header>
+			<h1 class="logo">Own Wedding Wallet</h1>
+		</header>
+
+		<nav>
+			<div class="nav-item">
+				<a href="/banking_main" class="nav-link">뱅킹서비스</a>
+				<div class="dropdown">
+					<a href="/createAccount">계좌생성</a> <a href="banking_transfer_1">이체</a> <a href="banking_safebox">세이프박스</a>
+				</div>
+			</div>
+			<div class="nav-item">
+				<a href="#wedding" class="nav-link">웨딩플래너</a>
+				<div class="dropdown">
+					<a href="#">추천테마</a> <a href="#">DIY</a>
+				</div>
+			</div>
+			<div class="nav-item">
+				<a href="#loan" class="nav-link">대출</a>
+				<div class="dropdown">
+					<a href="#">대출상품</a> <a href="#">대출상환</a>
+				</div>
+			</div>
+			<div class="nav-item">
+				<a href="#mypage" class="nav-link">마이페이지</a>
+			</div>
+		</nav>
+
+		<section class="service-cards">
+			<article class="service-card" tabindex="0"
+				aria-labelledby="card1-title" aria-describedby="card1-desc">
+				<div class="service-card-left">
+					<h1 id="name">XXX님의 통장</h1>
+					<br />
+					<h2 id="card1-title">000-0000-00000</h2>
+					<br />
+					<h1 id="amount">잔액 확인하기</h1>
+				</div>
+
+				<div class="service-card-right">
+					<form action="/banking_transfer_1" method="get">
+						<button class="history-btn" type="submit">이체하기</button>
+					</form>
+					<form action="/history.do" method="get">
+						<button class="history-btn" type="submit">내역조회</button>
+					</form>
+				</div>
+			</article>
+
+			<article class="service-card" tabindex="0"
+				aria-labelledby="card2-title" aria-describedby="card2-desc">
+				<div class="service-card-left">
+					<h2 id="card2-title">XXX님의 세이프박스</h2>
+					<br />
+					<br />
+					<h1>잔액 확인하기</h1>
+				</div>
+			</article>
+		</section>
+
+		<footer> &copy; 2025 Wedding Planner Co. All rights reserved.
+		</footer>
+	</div>
+</body>
+</html>
