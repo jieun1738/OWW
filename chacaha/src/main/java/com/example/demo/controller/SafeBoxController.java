@@ -15,10 +15,11 @@ public class SafeBoxController {
 
     // 금고 화면
     @GetMapping("/mypage/safe_box")
-    public String safeBox(Model model) {
+    public String safeBox(Model model){
         model.addAttribute("goal", new GoalView(10_000_000L, 7_000_000L, true));
         return "safe/safe_box";
     }
+
 
     
     @GetMapping("/hello")
