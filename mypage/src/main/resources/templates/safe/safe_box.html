@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>차곡차곡 금고</title>
+
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/safe_box.css">
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- 상단바: 로고/로그아웃 버튼 -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="btn-ghost" th:href="@{/}">로고</a>
+      <a class="btn-primary" th:href="@{/logout}">로그아웃</a>
+    </div>
+  </header>
+
+  <div class="page">
+    <!-- 사이드바 (신규 문법 + 3개 파라미터) -->
+    <div th:replace="~{fragments/sidebar :: sidebar(user=${user}, active='piggy', progress=${progressPercent})}"></div>
+
+    <!-- 본문 그대로 -->
+    <main class="content">
+      <h1 class="page-title">차곡차곡 금고</h1>
+
+      <section class="card">
+        <div class="card-title">목표 달성율</div>
+        <div class="progress">
+          <span th:style="|width:${(goal != null and goal.targetAmount != 0) ? ((goal.savedAmount * 100) / goal.targetAmount) : 0}%|">70%</span>
+        </div>
+
+        <div class="goal-info">
+          <div class="row"><span class="label">목표금액:</span>
+            <span class="value" th:text="|${goal != null ? #numbers.formatInteger(goal.targetAmount,3,'COMMA') : 0}원|">10,000,000원</span>
+          </div>
+          <div class="row"><span class="label">저축액:</span>
+            <span class="value violet" th:text="|${goal != null ? #numbers.formatInteger(goal.savedAmount,3,'COMMA') : 0}원|">7,000,000원</span>
+          </div>
+          <div class="row"><span class="label">잔여금액:</span>
+            <span class="value" th:text="|${goal != null ? #numbers.formatInteger(goal.targetAmount - goal.savedAmount,3,'COMMA') : 0}원|">3,000,000원</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="tabs">
+          <button id="tab-daily" class="tab active">일별 저금율</button>
+          <button id="tab-monthly" class="tab">월별 저금율</button>
+        </div>
+
+        <div class="chart-block">
+          <div class="chart-caption">0 원 ▽</div>
+          <div class="chart-wrap"><canvas id="savingChart"></canvas></div>
+          <div class="baseline"></div>
+        </div>
+
+        <div class="progress titled">
+          <div class="title">저금 성공률</div>
+          <span id="successBar" style="width:67%">67%</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 서버 값 주입 -->
+  <script th:inline="javascript">
+    const targetAmount = /*[[${goal != null ? goal.targetAmount : 0}]]*/ 0;
+    const savedAmount  = /*[[${goal != null ? goal.savedAmount  : 0}]]*/ 0;
+  </script>
+
+  <!-- 차트 스크립트(기존 그대로) -->
+  <script>
+    let savingChart;
+    function renderChart(labels, data){
+      const ctx=document.getElementById('savingChart').getContext('2d');
+      if(savingChart) savingChart.destroy();
+      savingChart=new Chart(ctx,{type:'line',data:{labels,
+        datasets:[{label:'저축금액',data,pointRadius:3,tension:.35}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true}}}});
+    }
+    const sampleDaily=[15,12,14,18,25,22,27,26,24,28,32,31,30,29,30,33,31,35,36,34,32,33,36,35,34,37,39,38,36,37,40].map(v=>v*10000);
+    const sampleMonthly=[120,130,110,150,160,170,180,190,175,185,195,210].map(v=>v*10000);
+
+    function updateSuccessBar(arr){
+      const unit=Math.max(1,Math.round(targetAmount/(arr.length||1)));
+      const exceed=arr.filter(v=>v>=unit).length;
+      const ratio=Math.min(100,Math.round(exceed/arr.length*100));
+      const bar=document.getElementById('successBar');
+      bar.style.width=ratio+'%'; bar.textContent=ratio+'%';
+    }
+    function toDaily(){document.getElementById('tab-daily').classList.add('active');
+      document.getElementById('tab-monthly').classList.remove('active');
+      const days=new Date().getMonth()===1?28:31;
+      renderChart(Array.from({length:days},(_,i)=>`${i+1}일`),sampleDaily.slice(0,days));
+      updateSuccessBar(sampleDaily.slice(0,days));
+    }
+    function toMonthly(){document.getElementById('tab-monthly').classList.add('active');
+      document.getElementById('tab-daily').classList.remove('active');
+      renderChart(Array.from({length:12},(_,i)=>`${i+1}월`),sampleMonthly);
+      updateSuccessBar(sampleMonthly);
+    }
+    document.getElementById('tab-daily').addEventListener('click',toDaily);
+    document.getElementById('tab-monthly').addEventListener('click',toMonthly);
+    toDaily();
+  </script>
+</body>
+</html>

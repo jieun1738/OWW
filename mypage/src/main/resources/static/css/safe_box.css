@@ -1,0 +1,41 @@
+@charset "UTF-8";
+:root{--violet:#8a5dd8; --violet-ink:#6f3fd2}
+
+.topbar{background:#f0f0f3;border-bottom:1px solid #e6e6ea}
+.topbar-inner{max-width:1200px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.btn-ghost{border:1px solid #bdbdc7;background:#e8e8ee;height:30px;padding:0 12px;border-radius:6px;text-decoration:none;color:#333;display:inline-flex;align-items:center}
+.btn-primary{border:1px solid var(--violet-ink);background:var(--violet);color:#fff;height:32px;padding:0 14px;border-radius:8px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center}
+.btn-primary:hover{filter:brightness(.95)}
+
+.page{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:32px;padding:18px}
+.content{padding-left:8px}
+.page-title{margin:6px 0 18px;font-size:20px;font-weight:800;color:#242424}
+
+.card{border:1px solid #e6e6ea;border-radius:12px;background:#fff;padding:18px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.card-title{font-weight:800;margin-bottom:12px}
+
+.progress{position:relative;background:#e9e7f1;border-radius:999px;height:14px;overflow:hidden;margin:12px 0 14px}
+.progress>span{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--violet) 0%,var(--violet-ink) 100%);color:#fff;font-size:11px;line-height:14px;text-align:right;padding-right:8px;min-width:36px}
+.progress.titled{margin-top:18px}
+.progress.titled .title{position:absolute;left:0;top:-22px;font-size:12px;color:#6b7280}
+
+.goal-info{font-size:13px;line-height:1.8}
+.goal-info .row{display:flex;gap:10px}
+.goal-info .label{color:#6b7280;min-width:72px}
+.goal-info .value{font-weight:700}
+.goal-info .value.violet{color:var(--violet-ink)}
+
+.tabs{display:flex;gap:8px;margin:4px 0 12px}
+.tab{border:1px solid #dddfe6;background:#fafafb;height:30px;padding:0 12px;border-radius:8px;cursor:pointer;font-size:12px}
+.tab.active{background:rgba(138,93,216,.12);border-color:var(--violet);color:var(--violet)}
+
+.chart-block{border:1px solid #e6e6ea;padding:16px;border-radius:12px;position:relative;background:#fff}
+.chart-caption{font-size:12px;color:#6b7280;margin-bottom:8px}
+.chart-wrap{position:relative;height:360px;width:100%}
+#savingChart{width:100%!important;height:100%!important;display:block}
+.baseline{height:2px;background:#b396f0;position:absolute;left:16px;right:16px;bottom:72px;opacity:.85}
+
+@media (max-width:1024px){
+  .page{grid-template-columns:1fr}
+  .content{padding-left:0}
+}
