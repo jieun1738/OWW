@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title layout:fragment="title">테마별 패키지 | OWW</title>
+  <link rel="stylesheet" th:href="@{/css/weddingplanner-packages.css}">
+</head>
+<body>
+<section layout:fragment="content">
+  <div class="page" id="wppkg">
+    <!-- ✅ 기존 사이드바 프래그먼트 유지 -->
+    <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingThemePackages', progress=${progressPercent})}"></div>
+
+    <!-- ===== 메인 컨텐츠 ===== -->
+    <main class="content">
+      <!-- 상단 헤더 -->
+      <header class="page-header">
+        <div>
+          <h1 class="title">테마별 패키지</h1>
+          <p class="desc">무드 · 예산 · 지역 · 일정 조건으로 맞춤 패키지를 빠르게 찾습니다.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">대시보드</a>
+          <a class="btn" th:href="@{/api/plan}">플랜 보관함</a>
+          <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">DIY 시작</a>
+        </div>
+      </header>
+
+      <!-- 필터 바 -->
+      <section class="filters">
+        <div class="field-group">
+          <label class="label">무드</label>
+          <div class="chip-row">
+            <button type="button" class="chip" data-value="classic">클래식</button>
+            <button type="button" class="chip" data-value="modern">모던</button>
+            <button type="button" class="chip" data-value="natural">내추럴</button>
+            <button type="button" class="chip" data-value="luxury">럭셔리</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="label">예산(만원)</label>
+          <div class="budget">
+            <input type="number" class="input" placeholder="최소" min="0" step="50">
+            <span class="dash">~</span>
+            <input type="number" class="input" placeholder="최대" min="0" step="50">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="label">지역</label>
+          <select class="select">
+            <option value="">전체</option>
+            <option>서울</option>
+            <option>경기</option>
+            <option>인천</option>
+            <option>부산</option>
+            <option>대구</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="label">예식일</label>
+          <input type="date" class="input">
+        </div>
+
+        <div class="field-actions">
+          <button type="button" class="btn ghost" id="btnReset">초기화</button>
+          <button type="button" class="btn brand" id="btnApply">적용</button>
+        </div>
+      </section>
+
+      <!-- 결과 요약 -->
+      <section class="result-meta">
+        <span class="count"><strong th:text="${packageCount}">0</strong>개 결과</span>
+        <div class="sort">
+          <label for="sortSel">정렬</label>
+          <select id="sortSel" class="select small">
+            <option value="pop">인기순</option>
+            <option value="priceAsc">가격↑</option>
+            <option value="priceDesc">가격↓</option>
+            <option value="rating">평점순</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- 카드 그리드(샘플 더미 6개 / 추후 MyBatis 연동 시 서버 데이터로 치환) -->
+      <section class="grid">
+        <article class="card">
+          <div class="thumb"><img th:src="@{/img/sample/pkg_classic.jpg}" alt="클래식 예시"></div>
+          <div class="body">
+            <h3 class="name">클래식 패키지 A</h3>
+            <p class="desc">격식 있는 예식장 · 웅장한 홀 세팅 · 전통 포토 무드</p>
+            <div class="meta">
+              <span class="pill">서울</span><span class="pill">평점 4.7</span><span class="pill">예산 950~1,200</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">이 구성으로 DIY</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">자세히</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><img th:src="@{/img/sample/pkg_modern.jpg}" alt="모던 예시"></div>
+          <div class="body">
+            <h3 class="name">모던 패키지 M</h3>
+            <p class="desc">심플 & 미니멀 · 최신식 조명 · 세련된 동선</p>
+            <div class="meta">
+              <span class="pill">서울</span><span class="pill">평점 4.6</span><span class="pill">예산 800~1,050</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">이 구성으로 DIY</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">자세히</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><img th:src="@{/img/sample/pkg_natural.jpg}" alt="내추럴 예시"></div>
+          <div class="body">
+            <h3 class="name">내추럴 패키지 N</h3>
+            <p class="desc">가든 컨셉 · 생화 장식 · 따뜻한 컬러 팔레트</p>
+            <div class="meta">
+              <span class="pill">경기</span><span class="pill">평점 4.8</span><span class="pill">예산 700~950</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">이 구성으로 DIY</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">자세히</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><img th:src="@{/img/sample/pkg_luxury.jpg}" alt="럭셔리 예시"></div>
+          <div class="body">
+            <h3 class="name">럭셔리 패키지 L</h3>
+            <p class="desc">하이엔드 플로럴 · 샹들리에 · 풀패키지 서비스</p>
+            <div class="meta">
+              <span class="pill">서울</span><span class="pill">평점 4.9</span><span class="pill">예산 1,300~1,800</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">이 구성으로 DIY</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">자세히</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><img th:src="@{/img/sample/pkg_city.jpg}" alt="시티 예시"></div>
+          <div class="body">
+            <h3 class="name">시티 뷰 패키지 C</h3>
+            <p class="desc">스카이라인 전망 · 루프탑 세리머니</p>
+            <div class="meta">
+              <span class="pill">부산</span><span class="pill">평점 4.5</span><span class="pill">예산 900~1,200</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">이 구성으로 DIY</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">자세히</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb"><img th:src="@{/img/sample/pkg_small.jpg}" alt="스몰웨딩 예시"></div>
+          <div class="body">
+            <h3 class="name">스몰웨딩 패키지 S</h3>
+            <p class="desc">가까운 가족·지인 중심의 아늑한 세팅</p>
+            <div class="meta">
+              <span class="pill">인천</span><span class="pill">평점 4.4</span><span class="pill">예산 500~750</span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">이 구성으로 DIY</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">자세히</a>
+          </div>
+        </article>
+      </section>
+
+      <!-- 페이지네이션(자리만 구성) -->
+      <nav class="pager" aria-label="페이지 이동">
+        <button class="btn ghost" disabled>«</button>
+        <button class="btn brand">1</button>
+        <button class="btn">2</button>
+        <button class="btn">3</button>
+        <button class="btn ghost">»</button>
+      </nav>
+    </main>
+  </div>
+</section>
+
+<!-- 간단 동작(선택): 필터 chip 토글만, 다른 페이지 영향 없도록 최소 스크립트 -->
+<script>
+  (function(){
+    const root = document.getElementById('wppkg');
+    if(!root) return;
+    root.querySelectorAll('.chip').forEach(chip=>{
+      chip.addEventListener('click',()=> chip.classList.toggle('on'));
+    });
+    const reset = root.querySelector('#btnReset');
+    if(reset){
+      reset.addEventListener('click', ()=>{
+        root.querySelectorAll('.chip.on').forEach(el=>el.classList.remove('on'));
+        root.querySelectorAll('.filters .input').forEach(i=>i.value='');
+        const sel = root.querySelector('.filters .select'); if(sel) sel.value='';
+      });
+    }
+  })();
+</script>
+</body>
+</html>

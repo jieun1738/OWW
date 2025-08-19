@@ -1,0 +1,38 @@
+<!-- fragments/planner-sidebar.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <!-- activeMenu 파라미터 동일 -->
+  <aside class="sidebar" th:fragment="sidebar(user, active, progress)">
+
+    <!-- 기존 내용은 sb-inner로 감싸기 -->
+    <div class="sb-inner">
+      <div class="profile">
+        <div class="avatar">👤</div>
+        <div class="grade">ID / <span>이수연</span></div>
+      </div>
+
+      <a class="mini-card-link" th:href="@{/mypage/budget}">
+        <div class="mini-card">
+          <div class="mini-title">예산 설정 정보</div>
+          <ul class="mini-list">
+            <li>웨딩홀 0000원</li>
+            <li>스튜디오 0000원</li>
+            <li>드레스 0000원</li>
+            <li>메이크업 0000원</li>
+            <li>총 예산 00000원</li>
+          </ul>
+        </div>
+      </a>
+
+      <nav class="mymenu">
+        <a class="item" th:classappend="${active}=='WeddingPlanner/WeddingPlannerInfo' ? ' active' : ''" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">웨딩플래너</a>
+        <a class="item" th:classappend="${active}=='WeddingPlanner/WeddingPlannerInfo' ? ' active' : ''" th:href="@{/WeddingPlanner/WeddingPlannerIntro}">웨딩플래너 소개</a>
+        <a class="item" th:classappend="${active}=='budget' ? ' active' : ''" th:href="@{/WeddingPlanner/WeddingThemePackages}">테마별 패키지</a>
+        <a class="item" th:classappend="${active}=='/wedding/diy.do' ? ' active' : ''" th:href="@{/wedding/diy.do}">사용자 DIY</a>
+        <a class="item" th:classappend="${active}=='/api/plan' ? ' active' : ''" th:href="@{/api/plan}">플랜 보관함</a>
+      </nav>
+    </div>
+  </aside>
+</body>
+</html>
