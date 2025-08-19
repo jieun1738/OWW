@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oww.oww1.mapper.MypageMapper">
+
+    <select id="getBudget" resultType="BudgetVO">
+        SELECT * FROM budget WHERE USER_EMAIL = #{user_email} 
+    </select>
+    
+     <select id="getPlanProgress" resultType="PlanProgressVO">
+        SELECT * FROM plan_progress WHERE PLAN_NO = #{plan_no} 
+    </select>
+    
+      <select id="sumBudget" resultType="int">
+        SELECT hall + studio + dress + makeup + dvd + makeup_parents + ring + hair + skincare + hanbok + honeymoon + invitation FROM budget WHERE USER_EMAIL = #{user_email} 
+    </select>
+    
+    <select id="getProduct" resultType="ProductVO">
+        SELECT * FROM product WHERE PRODUCT_NO = #{product_no} 
+    </select>
+    
+    <select id="getPlanNO" resultType="PlanVO">
+        SELECT * FROM plan WHERE USER_EMAIL = #{user_email} 
+    </select>
+
+	<select id="getProductInfo" resultType="ProductVO">
+		select
+		pl.plan_no,
+		pl.user_email,
+		hall.product_name,
+		hall.category,
+		hall.cost,
+		hall.address,
+		hall.description,
+		hall.img
+		from plan pl
+		inner join product hall on pl.hall = hall.product_no
+		where pl.user_email = #{user_email} and hall.category = 0
+
+		union all
+
+		select
+		pl.plan_no,
+		pl.user_email,
+		studio.product_name,
+		studio.category,
+		studio.cost,
+		studio.address,
+		studio.description,
+		studio.img
+		from plan pl
+		inner join product studio on pl.studio = studio.product_no
+		where pl.user_email =#{user_email} and studio.category = 1
+
+		union all
+
+		select
+		pl.plan_no,
+		pl.user_email,
+		dress.product_name,
+		dress.category,
+		dress.cost,
+		dress.address,
+		dress.description,
+		dress.img
+		from plan pl
+		inner join product dress on pl.dress = dress.product_no
+		where pl.user_email = #{user_email}and dress.category = 2
+
+		union all
+
+		select
+		pl.plan_no,
+		pl.user_email,
+		makeup.product_name,
+		makeup.category,
+		makeup.cost,
+		makeup.address,
+		makeup.description,
+		makeup.img
+		from plan pl
+		inner join product makeup on pl.makeup = makeup.product_no
+		where pl.user_email = #{user_email} and makeup.category = 3
+	</select>
+
+	<select id="getContractProgress" resultType="Integer">
+		SELECT
+		( COUNT(CASE WHEN CONTRACT_HALL = 'Y' THEN 1 END)
+		+ COUNT(CASE WHEN CONTRACT_STUD = 'Y' THEN 1 END)
+		+ COUNT(CASE WHEN CONTRACT_DRES = 'Y' THEN 1 END)
+		+ COUNT(CASE WHEN CONTRACT_MAKE = 'Y' THEN 1 END) )
+		FROM PLAN_PROGRESS
+		WHERE PLAN_NO=#{plan_no}
+	</select>
+
+	<select id="getPaidProgress" resultType="Integer">
+		SELECT
+		NVL(pay_hall, 0) + NVL(pay_stud, 0) + NVL(pay_dres, 0) + NVL(pay_make, 0) 
+		FROM PLAN_PROGRESS
+		WHERE PLAN_NO = #{plan_no}
+	</select>
+
+	<update id="setProgress" parameterType="com.oww.oww1.VO.PlanProgressVO">
+		UPDATE plan_progress
+		SET
+		contract_hall = #{contract_hall},
+		pay_hall = #{pay_hall},
+		contract_stud = #{contract_stud},
+		pay_stud = #{pay_stud},
+		contract_dres = #{contract_dres},
+		pay_dres = #{pay_dres},
+		contract_make = #{contract_make},
+		pay_make = #{pay_make}
+		WHERE plan_no = #{plan_no}
+	</update>
+	
+</mapper>
