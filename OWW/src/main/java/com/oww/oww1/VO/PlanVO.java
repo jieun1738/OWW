@@ -1,9 +1,17 @@
 package com.oww.oww1.VO;
 
 public class PlanVO {
-	int plan_no, hall, studio, dress, makeup;
+	int plan_no, package_no, hall, studio, dress, makeup;
+	
 	String user_email;
 	
+	
+	public int getPackage_no() {
+		return package_no;
+	}
+	public void setPackage_no(int package_no) {
+		this.package_no = package_no;
+	}
 
 	public int getPlan_no() {
 		return plan_no;

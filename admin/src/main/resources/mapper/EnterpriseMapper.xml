@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.EnterpriseMapper">
+
+    <!-- resultMap -->
+    <resultMap id="EnterpriseMap" type="com.example.demo.vo.EnterpriseVO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="region" column="region"/>
+    </resultMap>
+
+    <!-- 전체 조회 -->
+    <select id="findAll" resultMap="EnterpriseMap">
+        SELECT id, name, image_url, region
+        FROM enterprises
+        ORDER BY id DESC
+    </select>
+
+    <!-- 단일 조회 -->
+    <select id="findById" parameterType="java.lang.Long" resultMap="EnterpriseMap">
+        SELECT id, name, image_url, region
+        FROM enterprises
+        WHERE id = #{id,jdbcType=NUMERIC}
+    </select>
+
+    <!-- 등록 (트리거로 ID 자동 생성) -->
+    <insert id="insert" parameterType="com.example.demo.vo.EnterpriseVO">
+        INSERT INTO ENTERPRISES (NAME, IMAGE_URL, REGION)
+        VALUES (#{name,jdbcType=VARCHAR},
+                #{imageUrl,jdbcType=VARCHAR},
+                #{region,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 방금 생성된 ID 조회 -->
+    <select id="selectLastId" resultType="long">
+        SELECT SEQ_ENTERPRISES.CURRVAL FROM dual
+    </select>
+
+    <!-- 수정 -->
+    <update id="update" parameterType="com.example.demo.vo.EnterpriseVO">
+        UPDATE ENTERPRISES
+        SET NAME = #{name,jdbcType=VARCHAR},
+            IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+            REGION = #{region,jdbcType=VARCHAR}
+        WHERE ID = #{id,jdbcType=NUMERIC}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM enterprises
+        WHERE id = #{id,jdbcType=NUMERIC}
+    </delete>
+
+</mapper>

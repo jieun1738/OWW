@@ -32,8 +32,8 @@ public class BudgetService {
 	        return mypageMapper.getProductInfo(email);
 	       
 	   }
-	   public PlanVO getPlanNO(String email) {
-		   return mypageMapper.getPlanNO(email);
+	   public PlanVO getPlan(String email) {
+		   return mypageMapper.getPlan(email);
 	   }
 	   
 	   public int getContractProgess(int plan_no) {
@@ -50,5 +50,9 @@ public class BudgetService {
 	   
 	   public PlanProgressVO getPlanProgress(int plan_no){
 		   return mypageMapper.getPlanProgress(plan_no);
+	   }
+
+	   public int getDiscount(int package_no) {
+		return mypageMapper.getDiscount(package_no);
 	   }
 }

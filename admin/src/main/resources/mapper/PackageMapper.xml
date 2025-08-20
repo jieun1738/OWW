@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.PackageMapper">
+
+  <!-- VO 매핑 -->
+  <resultMap id="PackageResult" type="com.example.demo.vo.PackageVO">
+    <id property="id" column="package_no"/>
+    <result property="name" column="name"/>
+    <result property="hallId" column="hall"/>
+    <result property="studioId" column="studio"/>
+    <result property="dressId" column="dress"/>
+    <result property="makeupId" column="makeup"/>
+  </resultMap>
+
+  <!-- 전체 조회 -->
+  <select id="findAll" resultMap="PackageResult">
+    SELECT package_no, name, hall, studio, dress, makeup
+    FROM package
+    ORDER BY package_no DESC
+  </select>
+
+  <!-- 단건 조회 -->
+  <select id="findById" parameterType="long" resultMap="PackageResult">
+    SELECT package_no, name, hall, studio, dress, makeup
+    FROM package
+    WHERE package_no = #{id}
+  </select>
+
+  <!-- 등록 (시퀀스 사용 → useGeneratedKeys 제거) -->
+  <insert id="insert" parameterType="com.example.demo.vo.PackageVO">
+    INSERT INTO package (package_no, name, hall, studio, dress, makeup)
+    VALUES (seq_package_no.NEXTVAL, #{name}, #{hallId}, #{studioId}, #{dressId}, #{makeupId})
+  </insert>
+
+  <!-- 수정 -->
+  <update id="update" parameterType="com.example.demo.vo.PackageVO">
+    UPDATE package
+    SET name   = #{name},
+        hall   = #{hallId},
+        studio = #{studioId},
+        dress  = #{dressId},
+        makeup = #{makeupId}
+    WHERE package_no = #{id}
+  </update>
+
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="long">
+    DELETE FROM package WHERE package_no = #{id}
+  </delete>
+
+</mapper>
