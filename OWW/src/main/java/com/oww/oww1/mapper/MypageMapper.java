@@ -18,7 +18,7 @@ public interface MypageMapper {
 
 	public List<ProductVO> getProductInfo(String email);
 	
-	public PlanVO getPlanNO(String email);
+	public PlanVO getPlan(String email);
 	
 	public int getContractProgress(int plan_no);
 	
@@ -27,5 +27,8 @@ public interface MypageMapper {
 	public Boolean setProgress(PlanProgressVO planprogvo);
 	
 	public PlanProgressVO getPlanProgress(int plan_no);
+	
+	public int getDiscount(int package_no);
+	
 	
 }

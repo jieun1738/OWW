@@ -2,14 +2,20 @@ package com.oww.oww1.controller;
 
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.oww.oww1.OwwApplication;
+import com.oww.oww1.VO.PaymentDTO;
 import com.oww.oww1.VO.PlanProgressVO;
 import com.oww.oww1.VO.ProductVO;
 import com.oww.oww1.service.BudgetService;
@@ -34,7 +40,10 @@ public class MypageController {
 		int sumBudget=budservice.sumBudget(user_email);
 		model.addAttribute("sumBudget", sumBudget);	
 		List<ProductVO> user_product = budservice.getProductInfo(user_email);
+		int total_cost =0;
 		for (ProductVO imsi :user_product) {
+			
+			total_cost += imsi.getCost();
 			switch (imsi.getCategory()) {
 			case 0:
 				model.addAttribute("hallInfo", imsi);
@@ -50,8 +59,18 @@ public class MypageController {
 				break;
 			}
 		}
-		int plan_no=budservice.getPlanNO(user_email).getPlan_no();
 		
+		int plan_no=budservice.getPlan(user_email).getPlan_no();
+		int package_no = budservice.getPlan(user_email).getPackage_no();
+		int discount =0;
+		if(package_no==9999) {
+			model.addAttribute("discount", discount);
+			System.out.println("할인율: "+discount);
+		}else {
+			discount=budservice.getDiscount(package_no);
+		model.addAttribute("discount", discount);
+		}
+		model.addAttribute("total_cost", total_cost*(100-discount)/100);
 		PlanProgressVO planprogvo1 = budservice.getPlanProgress(plan_no);
 		System.out.println("홀결제:"+planprogvo1.getPay_hall());
 		planprogvo1.setPay_hall_ch(planprogvo1.getPay_hall() != 0);
@@ -85,7 +104,7 @@ public class MypageController {
 		ppgvo.setContract_stud(ppgvo.getContract_stud_ch() ? "Y" : "N");
 		ppgvo.setContract_dres(ppgvo.getContract_dres_ch() ? "Y" : "N");
 		ppgvo.setContract_make(ppgvo.getContract_make_ch() ? "Y" : "N");	
-		ppgvo.setPlan_no(budservice.getPlanNO(user_email).getPlan_no());
+		ppgvo.setPlan_no(budservice.getPlan(user_email).getPlan_no());
 		budservice.setProgress(ppgvo);
 		
 		System.out.println(ppgvo.getContract_hall());
@@ -94,6 +113,20 @@ public class MypageController {
 		System.out.println("저장중");
 		System.out.println(ppgvo.getPay_hall());
 		return "redirect:/mypage";
+	}
+	
+	@PostMapping("/payment/success")
+	public Map<String, Object> paymentSuccess(@RequestBody PaymentDTO payment) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        // DB에 저장
+	        paymentService.savePayment(payment); 
+	        result.put("success", true);
+	    } catch (Exception e) {
+	        result.put("success", false);
+	        result.put("error", e.getMessage());
+	    }
+	    return result;
 	}
 	
 }
