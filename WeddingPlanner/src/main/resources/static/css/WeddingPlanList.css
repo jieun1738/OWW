@@ -1,0 +1,133 @@
+:root {
+	--line: #e5e7eb;
+	--ink: #111827;
+	--sub: #6b7280;
+	--brand: #7c3aed;
+	--card: #fff;
+	--muted: #f9fafb;
+	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
+	--r: 16px;
+}
+
+#wpplanlist.page {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+
+#wpplanlist .content {
+	padding: 8px 16px 32px;
+	min-width: 0;
+}
+
+#wpplanlist .title {
+	margin: 0 0 6px;
+	font-size: 28px;
+	font-weight: 800;
+	letter-spacing: -.3px;
+}
+
+#wpplanlist .desc {
+	margin: 0 0 14px;
+	color: var(--sub);
+}
+
+#wpplanlist .grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(220px, 1fr));
+	gap: 16px;
+}
+
+#wpplanlist .card {
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+#wpplanlist .thumb {
+	width: 100%;
+	height: 140px;
+	background: #e5e7eb;
+	background-size: cover;
+	background-position: center;
+}
+
+#wpplanlist .content {
+	padding: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+#wpplanlist .meta-row {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	color: var(--sub);
+	font-size: 13px;
+}
+
+#wpplanlist .price-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 0;
+	border-top: 1px dashed var(--line);
+}
+
+#wpplanlist .price-row .label {
+	color: var(--sub);
+}
+
+#wpplanlist .price-row .value {
+	font-weight: 800;
+	font-size: 16px;
+}
+
+#wpplanlist .actions {
+	margin-top: auto;
+	display: flex;
+	gap: 8px;
+}
+
+#wpplanlist .btn {
+	appearance: none;
+	border: 1px solid var(--line);
+	background: var(--card);
+	color: var(--ink);
+	border-radius: 12px;
+	padding: 10px 14px;
+	font-weight: 700;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+#wpplanlist .empty {
+	padding: 28px;
+	border: 1px dashed var(--line);
+	border-radius: 12px;
+	color: var(--sub);
+	background: #fff;
+}
+
+@media ( max-width : 980px) {
+	#wpplanlist .grid {
+		grid-template-columns: repeat(2, minmax(220px, 1fr));
+	}
+}
+
+@media ( max-width : 640px) {
+	#wpplanlist.page {
+		grid-template-columns: 1fr;
+	}
+	#wpplanlist .grid {
+		grid-template-columns: 1fr;
+	}
+}
