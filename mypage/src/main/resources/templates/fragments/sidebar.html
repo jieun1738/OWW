@@ -1,46 +1,65 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
-
 <body>
-<!-- 사이드바 프래그먼트: active에는 'safe', 'budget', ... 등 섹션 키워드 전달 -->
-<div th:fragment="sidebar(user, active, progress)">
-  <aside class="sidebar">
-    <!-- 프로필 -->
-    <div class="profile">
-      <div class="avatar">👤</div>
-      <div class="grade">ID / <span th:text="${user != null ? user.name : '이수연'}">이수연</span></div>
+<aside class="sidebar" th:fragment="sidebar(user, active, progress)">
+
+  <!-- 프로필 -->
+  <div class="profile">
+    <div class="avatar">🙂</div>
+    <div class="name" th:text="${user != null ? user.name : '사용자'}">사용자</div>
+    <div class="grade">일반회원</div>
+  </div>
+
+  <!-- 진행바 -->
+  <div class="progress-line">
+    <div class="progress-fill" th:style="|width:${progress != null ? progress : 0}%|"></div>
+  </div>
+
+  <!-- 예산 카드 (제목은 링크) -->
+  <div class="mini-card">
+    <div class="mini-title">
+      <a class="link-underline"
+         th:href="@{/mypage/budget}"
+         th:text="${budgetTitle != null ? budgetTitle : '예산 설정 정보'}">예산 설정 정보</a>
     </div>
+    <ul class="mini-list">
+      <li>
+        다음 이체일 :
+        <span th:text="${nextTransferDate != null ? nextTransferDate : '-'}">-</span>
+      </li>
+      <li>
+        월 예산 :
+        <span th:text="${monthlyBudget != null ? #numbers.formatInteger(monthlyBudget,3,'COMMA') + '원' : '-'}">-</span>
+      </li>
+      <li>
+        이번달 사용 :
+        <span th:text="${monthlySpent != null ? #numbers.formatInteger(monthlySpent,3,'COMMA') + '원' : '-'}">-</span>
+      </li>
+    </ul>
+  </div>
 
-    <!-- 결혼준비 진행률 -->
-    <div class="progress-slim">
-      <div class="label">결혼준비 진행률</div>
-      <div class="track"><div class="bar" th:style="|width:${progress != null ? progress : 70}%|"></div></div>
-    </div>
+  <!-- 메뉴 -->
+  <nav class="mymenu">
+    <!-- 세이프 박스 -->
+    <a class="item"
+       th:classappend="${active}=='safe' ? ' active' : ''"
+       th:href="@{/mypage/safe}">세이프 박스</a>
 
-    <!-- 예산 설정 정보 (카드 전체 클릭 가능) -->
-    <a class="mini-card-link" th:href="@{/mypage/budget}">
-      <div class="mini-card">
-        <div class="mini-title">예산 설정 정보</div>
-        <ul class="mini-list">
-          <li>웨딩홀 0000원</li>
-          <li>스튜디오 0000원</li>
-          <li>드레스 0000원</li>
-          <li>메이크업 0000원</li>
-          <li>총 예산 00000원</li>
-        </ul>
-      </div>
-    </a>
+    <!-- 미니스토어 결제내역 -->
+    <a class="item"
+       th:classappend="${active}=='ministore' ? ' active' : ''"
+       th:href="@{/mypage/ministore/payments}">미니스토어 결제내역</a>
 
-    <!-- 메뉴 -->
-    <nav class="mymenu">
-      <a th:classappend="${active} == 'plan' ? ' active'" class="item" th:href="@{/mypage/plan}">웨딩플랜 조회</a>
-      <a th:classappend="${active} == 'budget' ? ' active'" class="item" th:href="@{/mypage/budget}">예산설정</a>
-      <a th:classappend="${active} == 'spend' ? ' active'" class="item" th:href="@{/mypage/spend}">소비정보 조회</a>
-      <a th:classappend="${active} == 'safe' ? ' active'" class="item" th:href="@{/mypage/safe}">세이프 박스</a>
-      <a th:classappend="${active} == 'mini' ? ' active'" class="item" th:href="@{/mypage/mini}">미니스토어 결제내역</a>
-    </nav>
-  </aside>
-</div>
+    <!-- (선택) 추가 메뉴들 — 필요 없으면 지워도 됨 -->
+    <a class="item"
+       th:classappend="${active}=='orders' ? ' active' : ''"
+       th:href="@{/mypage/ministore/orders}">주문내역</a>
+
+    <a class="item"
+       th:classappend="${active}=='settings' ? ' active' : ''"
+       th:href="@{/mypage/settings}">설정</a>
+  </nav>
+
+</aside>
 </body>
 </html>

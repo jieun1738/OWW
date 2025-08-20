@@ -1,33 +1,38 @@
-<!-- templates/layout/layout.html -->
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title th:replace="${title} ?: ~{}">차차하</title>
-  <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-  <link rel="stylesheet" th:href="@{/css/base.css}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title th:text="${title} ?: '마이페이지'">마이페이지</title>
+
+  <!-- 공통 CSS: 이 순서 그대로 -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/safe_box.css"><!-- 그래프/카드 등 공통 요소 포함 -->
 </head>
 <body>
-<div class="page">
-  <!-- 왼쪽: 사이드바 -->
-  <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
-
-  <!-- 오른쪽: 본문 -->
-  <main class="content">
-    <div th:fragment="content">
-      <!-- 각 페이지에서 이 fragment를 덮어씀 -->
+  <!-- 공통 상단바 -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="btn-ghost" th:href="@{/}">로고</a>
+      <a class="btn-primary" th:href="@{/logout}">로그아웃</a>
     </div>
-  </main>
-</div>
+  </header>
 
-<!-- 모바일에서 사이드바 토글용(선택) -->
-<script>
-  document.addEventListener('click', e=>{
-    const btn = e.target.closest('[data-toggle-sidebar]');
-    if(!btn) return;
-    document.body.classList.toggle('sidebar-open');
-  });
-</script>
+  <!-- 공통 2열 그리드 -->
+  <div class="page">
+    <!-- 공통 사이드바 -->
+    <div th:replace="~{fragments/sidebar :: sidebar(user=${user}, active=${active}, progress=${progress})}"></div>
+
+    <!-- 개별 페이지 본문 -->
+    <main class="content" th:fragment="content">
+      <!-- 개별 페이지에서 이 자리에 자신의 본문을 렌더 -->
+      <div th:insert="${content}"></div>
+    </main>
+  </div>
+
+  <!-- 공통 자바스크립트가 있으면 여기 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <div th:insert="${scripts}"></div>
 </body>
 </html>

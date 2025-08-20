@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title th:text="${title} ?: '마이페이지'">마이페이지</title>
+
+  <!-- 공통 CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+
+<body th:fragment="layout(user, active, progress)">
+  <div class="page">
+    <!-- 사이드바(공통) -->
+    <aside th:replace="~{fragments/sidebar :: sidebar(user=${user}, active=${active}, progress=${progress})}"></aside>
+
+    <!-- 본문: 자식 페이지의 ::content 프래그먼트가 들어감 -->
+    <main class="content" th:insert="~{::content}"></main>
+  </div>
+</body>
+</html>

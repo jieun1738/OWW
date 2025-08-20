@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>마이페이지 - 미니스토어 결제내역</title>
+
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/ministore_payments.css">
+</head>
+<body>
+  <!-- 상단바: 로고/로그아웃 버튼 -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="btn-ghost" th:href="@{/}">로고</a>
+      <a class="btn-primary" th:href="@{/logout}">로그아웃</a>
+    </div>
+  </header>
+
+<div class="page">
+  <!-- 사이드바 -->
+  <div th:replace="~{fragments/sidebar :: sidebar(user=${user}, active='ministore', progress=${progressPercent})}"></div>
+
+  <!-- 본문 -->
+  <main class="content">
+    <h1 class="page-title">미니스토어 결제내역</h1>
+
+    <section class="card">
+      <div class="list">
+        <!-- 항목 -->
+        <article class="item" th:each="p : ${payments}">
+          <div class="thumb">
+            <img th:src="${p.imageUrl}" alt="상품 이미지">
+          </div>
+          <div class="meta">
+            <div class="row">
+              <span class="status" th:text="${p.status}">결제완료</span>
+              <span class="code" th:text="${p.id}">O-20240801-00001</span>
+            </div>
+            <div class="name" th:text="${p.itemName}">상품명</div>
+            <div class="sub">
+              <span>구매일시: </span>
+              <span th:text="${#temporals.format(p.paidAt,'yyyy.MM.dd HH:mm')}">2025.08.01 10:00</span>
+              <span class="dot">·</span>
+              <span>결제금액: </span>
+              <b th:text="|${#numbers.formatInteger(p.price,3,'COMMA')}원|">25,000원</b>
+            </div>
+          </div>
+        </article>
+        <!-- /항목 -->
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

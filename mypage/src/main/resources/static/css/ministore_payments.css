@@ -1,0 +1,28 @@
+/* 레이아웃 여백 재사용 */
+.content { padding-left: 8px; }
+
+.page-title { margin: 8px 0 16px; font-size: 18px; font-weight: 700; }
+
+.card{ border:1px solid var(--gray-300); background:#fff; border-radius:6px; padding:16px; }
+
+.list{ display:flex; flex-direction:column; gap:12px; }
+
+/* 리스트 아이템 */
+.item{
+  display:flex; gap:14px; align-items:flex-start;
+  border:1px solid var(--gray-200);
+  border-radius:8px; padding:12px 12px; background:#fafafb;
+}
+.item .thumb{ width:72px; height:72px; border-radius:8px; overflow:hidden; flex:0 0 auto; background:#eee; }
+.item .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.item .meta{ flex:1; min-width:0; }
+.item .row{ display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.item .status{
+  font-size:12px; color:#5b3fd2; background:rgba(138,93,216,.12);
+  border:1px solid var(--violet); padding:2px 6px; border-radius:999px;
+}
+.item .code{ font-size:12px; color:#777; }
+.item .name{ font-weight:700; margin-bottom:4px; }
+.item .sub{ font-size:13px; color:#555; }
+.item .sub .dot{ margin:0 6px; color:#bbb; }

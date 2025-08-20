@@ -5,21 +5,33 @@
 }
 
 /* 레이아웃 */
+/* 좁은 화면에서도 2열 유지 강제 */
 .page{
   max-width:1100px;
+  min-width:900px;     
   margin:0 auto;
   display:grid;
-  grid-template-columns:260px 1fr;
+  grid-template-columns:260px minmax(0,1fr);
   gap:24px;
   padding:18px;
 }
-.content{ padding-left:8px }
+html, body{
+  overflow-x: auto;    /* 화면이 더 좁으면 가로 스크롤 */
+}
+
 
 /* 사이드바 박스 */
+/* 헤더 높이가 56px 가정 */
 .sidebar{
   border-right:1px solid var(--gray-200);
   padding-right:24px;
+  position: sticky;
+  top: 56px;          /* 헤더 바로 아래 고정 */
+  align-self: start;  /* 그리드 안에서 sticky가 먹도록 */
+  max-height: calc(100vh - 56px);
+  overflow:auto;      /* 사이드바 내용 길어지면 자체 스크롤 */
 }
+
 .profile{ display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:14px }
 .avatar{ width:120px; height:120px; border-radius:50%; border:2px solid var(--gray-300);
   display:flex; align-items:center; justify-content:center; font-size:46px; color:#444 }
@@ -51,9 +63,4 @@
   display:inline-block; padding:10px 6px; color:#5a40b8; text-decoration:underline;
 }
 
-/* 반응형 */
-@media (max-width: 920px){
-  .page{ grid-template-columns:1fr }
-  .sidebar{ border-right:none; padding-right:0; border-bottom:1px solid var(--gray-200);
-    padding-bottom:16px; margin-bottom:12px }
-}
+
