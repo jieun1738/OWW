@@ -1,0 +1,253 @@
+ 	/* ============ 플랜 보관함 전용: #planList 스코프 ============ */
+:root {
+	--line: #e5e7eb;
+	--ink: #111827;
+	--sub: #6b7280;
+	--brand: #7c3aed; /* 사이트 보라 톤 */
+	--danger: #ef4444;
+	--card: #ffffff;
+	--muted: #f9fafb;
+	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
+	--r: 14px;
+}
+
+/* 레이아웃 */
+#planList .page {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+	padding: 0 !important;
+}
+
+#planList .content {
+	padding: 8px 16px 32px;
+	min-width: 0;
+}
+
+/* 헤더 */
+#planList .pv-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 12px;
+}
+
+#planList .page-title {
+	margin: 0 0 6px;
+	font-size: 28px;
+	font-weight: 800;
+	letter-spacing: -.3px;
+	color: #5a3a36;
+}
+
+#planList .count {
+	margin: 0;
+	color: var(--sub);
+	font-size: 14px;
+}
+
+#planList .pv-actions {
+	display: flex;
+	gap: 8px;
+}
+
+/* 카드 */
+#planList .plan-card {
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	padding: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	margin-bottom: 16px;
+}
+
+#planList .plan-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+#planList .pill {
+	font-size: 12px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	border: 1px solid var(--line);
+}
+
+/* 버튼 공통(이 페이지 스코프 내부에서만 적용) */
+#planList .btn {
+	appearance: none;
+	border: 1px solid var(--line);
+	background: #fff;
+	color: var(--ink);
+	padding: 10px 14px;
+	border-radius: 12px;
+	font-weight: 700;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .04);
+}
+
+#planList .btn-sm {
+	padding: 8px 12px;
+	border-radius: 10px;
+	font-size: 13px;
+}
+
+#planList .btn-weak {
+	background: #fff;
+}
+
+#planList .btn-primary {
+	background: var(--brand);
+	color: #fff;
+	border-color: transparent;
+}
+
+#planList .btn-danger {
+	background: var(--danger);
+	color: #fff;
+	border-color: transparent;
+}
+
+#planList .btn:hover {
+	filter: brightness(.98);
+}
+
+/* 버튼 행 */
+#planList .btn-row {
+	display: flex;
+	gap: 8px;
+}
+
+/* 요약 */
+#planList .pv-summary {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 4px 4px;
+}
+
+#planList .pv-cover {
+	width: 72px;
+	height: 72px;
+	object-fit: cover;
+	border-radius: 10px;
+	background: #f8f9fa;
+	flex: 0 0 auto;
+}
+
+#planList .pv-summary-body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+#planList .pv-summary-title {
+	font-weight: 800;
+}
+
+#planList .pv-summary-sub {
+	color: var(--sub);
+	font-size: 13px;
+}
+
+/* 상세(가로 그리드) */
+#planList .pv-detail {
+	margin-top: 10px;
+}
+
+#planList .pv-grid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(4, minmax(180px, 1fr));
+}
+
+@media ( max-width :1080px) {
+	#planList .pv-grid {
+		grid-template-columns: repeat(2, minmax(180px, 1fr));
+	}
+}
+
+@media ( max-width :640px) {
+	#planList .pv-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+#planList .pv-item {
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	background: #fff;
+	box-shadow: var(--shadow);
+	overflow: hidden;
+}
+
+#planList .pv-thumb {
+	display: block;
+	width: 100%;
+	height: 140px;
+	object-fit: cover;
+	background: #f8f9fa;
+}
+
+#planList .pv-body {
+	padding: 12px;
+}
+
+#planList .pv-title {
+	font-weight: 700;
+}
+
+#planList .pv-sub {
+	font-size: 13px;
+	color: var(--sub);
+}
+
+/* 스피너/알럿 */
+#planList .spinner {
+	display: none;
+	align-items: center;
+	gap: 8px;
+}
+
+#planList .spinner.show {
+	display: inline-flex;
+}
+
+#planList .spinner-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--brand);
+	animation: pulse .9s infinite;
+}
+
+@keyframes pulse { 
+	50%{
+	transform: scale(1.4);
+	opacity: .6
+}
+
+}
+#planList .alert-weak {
+	padding: 12px;
+	border: 1px dashed var(--line);
+	color: var(--sub);
+	border-radius: 12px;
+	background: #fff;
+}
+
+#planList .alert-err {
+	padding: 12px;
+	border: 1px solid #fecaca;
+	color: #991b1b;
+	border-radius: 12px;
+	background: #fff;
+}

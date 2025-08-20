@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title layout:fragment="title">WeddingDIY</title>
+  <!-- 실제 프로젝트의 CSS 파일명에 맞춰 주세요 -->
+  <link rel="stylesheet" th:href="@{/css/WeddingDIY.css}">
+</head>
+<body>
+<section layout:fragment="content">
+  <div class="page" id="wpdiy">
+    <!-- 좌측 사이드바(기존 프래그먼트) -->
+    <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingDIY', progress=${progressPercent})}"></div>
+
+    <!-- ========== 본문 ========== -->
+    <main class="main">
+      <h1 class="brown-title">Wedding DIY</h1>
+      <p class="brown-desc">스튜디오 · 드레스 · 메이크업 · 웨딩홀을 한 곳에서 비교·선택하세요. 예산과 선호도에 맞춰 나만의 플랜을 손쉽게 구성할 수 있습니다.</p>
+
+      <div class="folder">
+        <!-- 탭: 카테고리 / 전체보기 (동시 활성화 방지) -->
+        <div class="folder-tabs" role="tablist" aria-label="카테고리">
+          <!-- 카테고리 탭: all=false일 때만 활성 조건 고려 -->
+          <a class="tab" th:classappend="${cat == 1 and !all} ? ' active' : ''"
+             th:href="@{/wedding/diy.do(cat=1, q=${q}, sort=${sort})}">스튜디오</a>
+          <a class="tab" th:classappend="${cat == 2 and !all} ? ' active' : ''"
+             th:href="@{/wedding/diy.do(cat=2, q=${q}, sort=${sort})}">드레스</a>
+          <a class="tab" th:classappend="${cat == 3 and !all} ? ' active' : ''"
+             th:href="@{/wedding/diy.do(cat=3, q=${q}, sort=${sort})}">메이크업</a>
+          <a class="tab" th:classappend="${cat == 0 and !all} ? ' active' : ''"
+             th:href="@{/wedding/diy.do(cat=0, q=${q}, sort=${sort})}">웨딩홀</a>
+
+          <!-- 전체보기: 클릭 시 all=true만 전달( cat 파라미터 미포함 ) -->
+          <a class="tab" th:classappend="${all} ? ' active' : ''"
+             th:href="@{/wedding/diy.do(all=true, q=${q}, sort=${sort})}">전체보기</a>
+        </div>
+
+        <div class="folder-body">
+          <!-- 검색/정렬: all/카테고리에 따라 히든 필드 분기 -->
+          <section class="toolbar" role="search">
+            <form class="searchbar" method="get" th:action="@{/wedding/diy.do}">
+              <span class="search-ico" aria-hidden="true">🔍</span>
+
+              <!-- all=true면 all만 전달 -->
+              <input type="hidden" name="all" th:value="${all}" th:if="${all}">
+              <!-- all=false면 cat만 전달 -->
+              <input type="hidden" name="cat" th:value="${cat}" th:if="${!all}">
+              <input type="search" name="q" th:value="${q}" placeholder="검색어를 입력하세요"/>
+              <button class="btn-s" type="button"
+                      onclick="this.form.q.value=''; this.form.submit()">지우기</button>
+            </form>
+
+            <div class="chipbox" aria-label="빠른 필터">
+              <!-- 정렬 링크도 all 여부에 맞춰 분기 -->
+              <a class="chip" th:classappend="${sort == 'cost_asc'} ? ' active' : ''"
+                 th:if="${!all}"
+                 th:href="@{/wedding/diy.do(cat=${cat}, q=${q}, sort='cost_asc')}">가격순 ▲</a>
+              <a class="chip" th:classappend="${sort == 'cost_desc'} ? ' active' : ''"
+                 th:if="${!all}"
+                 th:href="@{/wedding/diy.do(cat=${cat}, q=${q}, sort='cost_desc')}">가격순 ▼</a>
+
+              <a class="chip" th:classappend="${sort == 'cost_asc'} ? ' active' : ''"
+                 th:if="${all}"
+                 th:href="@{/wedding/diy.do(all=true, q=${q}, sort='cost_asc')}">가격순 ▲</a>
+              <a class="chip" th:classappend="${sort == 'cost_desc'} ? ' active' : ''"
+                 th:if="${all}"
+                 th:href="@{/wedding/diy.do(all=true, q=${q}, sort='cost_desc')}">가격순 ▼</a>
+            </div>
+          </section>
+
+          <!-- 고급 필터: 현재 선택 표시(전체/카테고리) -->
+          <section class="filter-advanced">
+            <details open>
+              <summary>카테고리 선택</summary>
+              <div class="fa-inner">
+                <div class="fa-row">
+                  <div class="fa-label">카테고리</div>
+                  <div class="fa-fields">
+                    <label class="chk" th:if="${all}">
+                      <input type="checkbox" checked disabled> 현재 선택: 전체
+                    </label>
+                    <label class="chk" th:if="${!all}">
+                      <input type="checkbox" checked disabled>
+                      현재 선택:
+                      <span th:text="${cat == 0 ? '웨딩홀' : (cat==1 ? '스튜디오' : (cat==2 ? '드레스' : '메이크업'))}">스튜디오</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="fa-row">
+                  <div class="fa-label">제외할 단어</div>
+                  <div class="fa-fields">
+                    <input type="text" class="input fa-exclude" placeholder="예: 야외, 스냅 불가, 주차 협소" disabled>
+                    <button class="btn-s" type="button" disabled>적용</button>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </section>
+
+          <!-- 결과 카드 -->
+          <section class="grid" aria-live="polite">
+            <article class="card" th:each="p : ${products}">
+              <div class="thumb"
+                   th:style="|background-image:url(@{/resources/img/{img}(img=${p.img})}); background-size:cover; background-position:center;|"></div>
+              <div class="content">
+                <h3 class="title" th:text="${p.productName}">로맨틱 스튜디오</h3>
+                <div class="meta-row">
+                  <span th:text="${'가격 ' + #numbers.formatInteger(p.cost, 3, 'COMMA') + '원'}">가격 1,200,000원</span><span>•</span>
+                  <span th:text="${p.address}">강남구</span>
+                </div>
+              </div>
+              <div class="row-actions">
+                <a class="btn-m"
+                   th:href="@{/wedding/compare/add.do(userEmail=${userEmail}, productNo=${p.productNo})}">비교</a>
+                <a class="btn-m contained"
+                   th:href="@{/wedding/plan/select.do(userEmail=${userEmail}, productNo=${p.productNo})}">선택</a>
+              </div>
+            </article>
+
+            <div class="empty" th:if="${#lists.isEmpty(products)}">검색 결과가 없습니다.</div>
+          </section>
+        </div>
+      </div>
+    </main>
+    
+    <!-- ========== 선택 현황(사이드바) ========== -->
+    <aside class="selectbar" aria-label="선택 현황 패널">
+      <div class="row" style="padding-top:2px; gap:12px">
+        <div class="sb-title">
+          선택 현황
+          <span class="pill" style="margin-left:8px"
+                th:text="${#lists.isEmpty(selectedItems) ? '선택 없음' : '선택 ' + selectedItems.size() + '건'}">선택 없음</span>
+        </div>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:8px">
+          <a class="btn-s"
+             th:href="@{/wedding/plan/reset.do(userEmail=${userEmail},cat=${cat})}">모두 초기화</a>
+        </div>
+      </div>
+
+      <!-- 선택된 플랜 있을 때 -->
+      <section class="sb-block" th:if="${selectedPlan != null}">
+        <div class="row">
+          <strong th:text="${selectedPlan.planNo + '번 플랜'}">1번 플랜</strong>
+        </div>
+
+        <!-- 각 선택 항목(카테고리별 1개) -->
+        <div class="mini" th:each="it : ${selectedItems}" style="position:relative">
+          <div class="thumb-s"
+               th:style="|background-image:url(@{/resources/img/{img}(img=${it.img})}); background-size:cover; background-position:center;|">
+          </div>
+          <div class="meta">
+            <div th:text="${it.productName}">로맨틱 드레스 B</div>
+            <div class="tag" th:text="${it.categoryName}">드레스</div>
+          </div>
+          <div class="price" th:text="${#numbers.formatInteger(it.cost, 3, 'COMMA') + '원'}">800,000원</div>
+
+          <!-- X 삭제: 정확히 이 항목의 카테고리만 NULL 처리 -->
+          <a title="항목 삭제"
+             th:href="@{/wedding/plan/item/delete.do(
+                       userEmail=${userEmail},
+                       planNo=${it.planNo},
+                       category=${it.category},
+                       cat=${cat},
+                       q=${q},
+                       sort=${sort}
+                     )}"
+             style="position:absolute; top:6px; right:6px; font-weight:700; text-decoration:none; line-height:1;">×</a>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div class="legend">
+            <span class="dot ok"></span> 예산 이내
+            <span class="dot ng" style="margin-left:10px"></span> 예산 초과
+          </div>
+          <div class="budget"
+               th:classappend="${isBudgetOk} ? ' ok' : ' ng'"
+               th:text="${isBudgetOk ? '예산 이내' : '예산 초과'}">예산 이내</div>
+        </div>
+        <div class="row" style="padding-top:0">
+          <div class="tag">합계</div>
+          <div class="price"
+               th:text="${#numbers.formatInteger(selectedTotal, 3, 'COMMA') + '원'}">2,000,000원</div>
+        </div>
+      </section>
+
+      <!-- 선택된 플랜이 없을 때 -->
+      <section class="sb-block" th:if="${selectedPlan == null}">
+        <div class="row"><strong>플랜 없음</strong></div>
+        <div class="empty">선택한 상품이 없습니다.</div>
+        <div class="row" style="padding-top:0">
+          <div class="tag">합계</div>
+          <div class="price">0원</div>
+        </div>
+      </section>
+
+      <!-- 동작 버튼: 저장/불러오기/플랜추가(위치 이동) -->
+      <section class="sb-block">
+        <div class="row" style="justify-content:flex-start; gap:8px">
+          <a class="btn" th:href="@{/wedding/plan/save.do(userEmail=${userEmail},cat=${cat})}">플랜 저장</a>
+          <a class="btn" th:href="@{/wedding/plan/load.do(userEmail=${userEmail},cat=${cat})}">플랜 불러오기</a>
+          <!-- 플랜추가 버튼을 여기(저장/불러오기 옆)로 이동 -->
+          <a class="btn" th:href="@{/wedding/plan/add.do(userEmail=${userEmail},cat=${cat})}">플랜 추가</a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</section>
+</body>
+</html>

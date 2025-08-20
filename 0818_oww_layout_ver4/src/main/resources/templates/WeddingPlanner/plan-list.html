@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title layout:fragment="title">플랜 보관함</title>
+</head>
+
+<body>
+<section id="planList" layout:fragment="content">
+  <div class="page">
+    <!-- 좌측 사이드바 -->
+    <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='/api/plan', progress=${progressPercent})}"></div>
+
+    <!-- 우측 본문 -->
+    <div class="content">
+      <header id="planTop" class="pv-header">
+        <div>
+          <h2 class="page-title">플랜 보관함</h2>
+          <p class="count">내가 저장한 플랜 목록</p>
+        </div>
+        <div class="pv-actions">
+          <a class="btn btn-weak" th:href="@{/}">홈으로</a>
+        </div>
+      </header>
+
+      <!-- 로딩 -->
+      <section class="mb-3">
+        <div id="loading" class="spinner" role="status" aria-live="polite">
+          <span class="spinner-dot"></span>
+          <span class="spinner-text">로딩 중…</span>
+        </div>
+      </section>
+
+      <!-- 목록 -->
+      <main id="listWrap" aria-live="polite"></main>
+    </div><!-- /content -->
+  </div><!-- /.page -->
+
+  <!-- 모달/‘플랜 상세’ 섹션은 사용하지 않으므로 완전히 제거했습니다. -->
+
+  <script th:inline="javascript">
+    /* ===== API / 정적 경로 ===== */
+    const API_LIST   = /*[[@{/api/plan/list.do}]]*/ '/api/plan/list.do';
+    const API_DETAIL = /*[[@{/api/plan/detail.do}]]*/ '/api/plan/detail.do';
+    const API_DELETE = /*[[@{/api/plan/delete.do}]]*/ '/api/plan/delete.do';
+    const IMG_BASE   = /*[[@{/img/plan}]]*/ '/img/plan';
+
+    /* ===== 엘리먼트 ===== */
+    const $ = (s)=>document.querySelector(s);
+    const listWrap = $('#listWrap');
+    const loading  = $('#loading');
+
+    /* ===== 유틸 ===== */
+    function showSpinner(on){ loading.classList.toggle('show', !!on); }
+    function numberFormat(n){ return (n ?? '-').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+    function imgSrc(p){ return `${IMG_BASE}/${p ? p : 'default.jpg'}`; }
+    function coverImg(p){
+      return p.hall_img || p.studio_img || p.dress_img || p.makeup_img || null;
+    }
+
+    /* 상세 카드 */
+    function itemCard(title, cost, address, img){
+      return `
+        <div class="pv-item">
+          <img class="pv-thumb" loading="lazy" src="${imgSrc(img)}"
+               alt="${title ? title : '이미지'}"
+               onerror="this.onerror=null;this.src='${imgSrc()}';">
+          <div class="pv-body">
+            <div class="pv-title">${title ?? '-'}</div>
+            <div class="pv-sub">비용: ${numberFormat(cost)}원</div>
+            <div class="pv-sub">${address ?? ''}</div>
+          </div>
+        </div>`;
+    }
+
+    /* 목록 행(요약 + 숨겨진 상세) */
+    function planRow(p){
+      const cover = coverImg(p);
+      return `
+        <section class="plan-card" data-plan="${p.plan_no}">
+          <div class="plan-header">
+            <span class="pill">Plan #${p.plan_no}</span>
+            <div class="btn-row">
+              <button class="btn btn-primary btn-sm btn-toggle"
+                      data-plan="${p.plan_no}" data-role="toggle" aria-expanded="false">
+                상세보기
+              </button>
+              <button class="btn btn-danger btn-sm"
+                      data-plan="${p.plan_no}" data-role="delete">
+                삭제
+              </button>
+            </div>
+          </div>
+
+          <!-- 요약(썸네일 1장) -->
+          <div class="pv-summary">
+            <img class="pv-cover" loading="lazy" src="${imgSrc(cover)}"
+                 alt="대표 이미지"
+                 onerror="this.onerror=null;this.src='${imgSrc()}';">
+            <div class="pv-summary-body">
+              <div class="pv-summary-title">Plan #${p.plan_no}</div>
+              <div class="pv-summary-sub">홀 · 스튜디오 · 드레스 · 메이크업 요약</div>
+            </div>
+          </div>
+
+          <!-- 상세(처음엔 숨김, 최초 오픈 시 1회 로드) -->
+          <div class="pv-detail" hidden>
+            <div class="pv-grid pv-detail-grid"></div>
+          </div>
+        </section>`;
+    }
+
+    function renderList(data){
+      if(!Array.isArray(data) || data.length === 0){
+        listWrap.innerHTML = `<div class="alert-weak">저장된 플랜이 없습니다.</div>`;
+        return;
+      }
+      listWrap.innerHTML = data.map(planRow).join('');
+    }
+
+    function renderDetailInline(container, p){
+      const grid = container.querySelector('.pv-detail-grid');
+      grid.innerHTML = `
+        ${itemCard(p.hall_name,   p.hall_cost,   p.hall_address,   p.hall_img)}
+        ${itemCard(p.studio_name, p.studio_cost, p.studio_address, p.studio_img)}
+        ${itemCard(p.dress_name,  p.dress_cost,  p.dress_address,  p.dress_img)}
+        ${itemCard(p.makeup_name, p.makeup_cost, p.makeup_address, p.makeup_img)}
+      `;
+      container.dataset.loaded = '1';
+    }
+
+    async function fetchJson(url, opt){
+      const res = await fetch(url, opt || { headers:{ 'Accept':'application/json' }});
+      if(!res.ok){ const err = new Error('HTTP ' + res.status); err.status = res.status; throw err; }
+      return res.json();
+    }
+
+    async function loadList(){
+      try{
+        showSpinner(true);
+        const data = await fetchJson(API_LIST);
+        renderList(data);
+      }catch(e){
+        console.error(e);
+        listWrap.innerHTML = `<div class="alert-err">목록을 불러오지 못했습니다.</div>`;
+      }finally{
+        showSpinner(false);
+      }
+    }
+
+    async function handleAction(e){
+      const btn = e.target.closest('button[data-role]');
+      if(!btn) return;
+
+      const role = btn.getAttribute('data-role');
+      const planNo = btn.getAttribute('data-plan');
+      const card   = btn.closest('.plan-card');
+
+      if(role === 'toggle'){
+        const detailBox = card.querySelector('.pv-detail');
+        const expanded  = btn.getAttribute('aria-expanded') === 'true';
+
+        if(expanded){
+          detailBox.hidden = true;
+          btn.setAttribute('aria-expanded','false');
+          btn.textContent = '상세보기';
+          return;
+        }
+
+        try{
+          showSpinner(true);
+          if(detailBox.dataset.loaded !== '1'){
+            const p = await fetchJson(`${API_DETAIL}?plan_no=${encodeURIComponent(planNo)}`);
+            renderDetailInline(detailBox, p);
+          }
+          detailBox.hidden = false;
+          btn.setAttribute('aria-expanded','true');
+          btn.textContent = '접기';
+        }catch(err){
+          console.error(err);
+          alert('상세 조회 실패');
+        }finally{
+          showSpinner(false);
+        }
+        return;
+      }
+
+      if(role === 'delete'){
+        if(!confirm(`플랜 #${planNo} 을(를) 삭제하시겠습니까?`)) return;
+        try{
+          showSpinner(true);
+          await fetch(`${API_DELETE}?plan_no=${encodeURIComponent(planNo)}`, {
+            method:'POST', headers:{ 'Accept':'application/json' }
+          });
+          await loadList();
+        }catch(err){
+          console.error(err);
+          alert('삭제 실패');
+        }finally{
+          showSpinner(false);
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      listWrap.addEventListener('click', handleAction);
+      loadList();
+    });
+  </script>
+</section>
+</body>
+</html>
