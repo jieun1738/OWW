@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>대출</title>
+</head>
+<body>
+<form action="http://payment-service.com/main"><!-- 완성된게 아니라 예시임 -->
+<button type="submit">메인 화면으로</button>
+</form>
+<form action="/searchloan">
+<input type="text" name="search" placeholder="대출 상품명 검색" />
+<input type="hidden" name="lastUrl" value="LoanMain">
+<button type="submit">검색</button>
+</form>
+<form action="/loancomparison" method="get">
+    <button type="submit">상품 비교</button>
+</form>
+
+<ul>
+<div>
+  <form th:each="product : ${products}" th:action="@{/loandetail}" method="get">
+    <input type="hidden" name="loanName" th:value="${product}" />
+    <button type="submit" th:text="${product}"></button>
+  </form>
+</div>
+</ul>
+
+</body>
+</html>

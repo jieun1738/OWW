@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>대출 성공</title>
+</head>
+<body>
+<h1>대출이 성공적으로 완료되었습니다!</h1>
+<div style="border:1px solid #333; padding:10px; margin-bottom:10px; text-align: center; display: flex; gap: 100px;">
+	
+	<form th:action="@{/loanmain}">
+	<button type="submit">메인으로</button>
+	</form>
+	<form th:action="@{/repayment}">
+	<button type="submit">대출 상환 페이지로</button>
+	</form>
+	
+</div>
+</body>
+</html>

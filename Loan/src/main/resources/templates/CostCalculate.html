@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>생활비 계산기</title>
+</head>
+<body>
+<form action="/costcalculateresult">
+	<div style="border:1px solid #333; padding:10px; margin-bottom:10px; text-align: center;">
+	월 소득 :<input type="text" name="earnings">
+	월 납입금: <input type="text" name="monthlyinstallment" id="monthlyinstallment" value="${monthlyinstallment}" disabled>
+	<input type="checkbox" id="editInstallment"> 수정
+	생활비: <input type="text" name="cost">
+	<button type="submit">계산</button>
+	</div>
+	</form>
+<h4>여유 자금: <span th:text="${restcost != null} ? ${restcost} : ' '"> </span></h4>
+
+<form action="/safebox">
+	<button type="submit">저금하러 가기</button>
+</form>
+
+<script>
+    const checkbox = document.getElementById('editInstallment');
+    const input = document.getElementById('monthlyinstallment');
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            input.removeAttribute('disabled');
+            input.focus();
+        }else{
+        	input.setAttribute('disabled', true);
+        }
+    });
+</script>
+</body>
+</html>
