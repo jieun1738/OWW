@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -15,6 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+//✅ 이 한 줄 추가
+@ConditionalOnProperty(name = "app.auth.bypass", havingValue = "false", matchIfMissing = true)
 @Component
 @RequiredArgsConstructor
 public class PlannerAuthInterceptor implements HandlerInterceptor {

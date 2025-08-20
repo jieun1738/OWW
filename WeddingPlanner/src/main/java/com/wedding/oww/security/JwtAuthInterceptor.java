@@ -1,5 +1,6 @@
 package com.wedding.oww.security;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -9,6 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+
+//✅ 이 한 줄로 단독 실행 시(=bypass=true) 빈 생성 자체를 막습니다.
+@ConditionalOnProperty(name = "app.auth.bypass", havingValue = "false", matchIfMissing = true)
 @Component
 @RequiredArgsConstructor
 public class JwtAuthInterceptor implements HandlerInterceptor {
