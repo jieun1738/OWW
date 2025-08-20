@@ -119,9 +119,20 @@ public class MypageController {
 	public Map<String, Object> paymentSuccess(@RequestBody PaymentDTO payment) {
 	    Map<String, Object> result = new HashMap<>();
 	    try {
+	    	System.out.println("결제 정보 받음: " + payment);
 	        // DB에 저장
-	        paymentService.savePayment(payment); 
+	    	int plan_no=budservice.getPlan(payment.getUser_email()).getPlan_no();
+	    	payment.setPlan_no(plan_no);
+	    	payment.getCategorytoString();
+	    	int aa =budservice.savePayment(payment); 
+	    	
+	    	if(aa>0) {
 	        result.put("success", true);
+	        System.out.println("결제 정보 저장완료: " + payment);
+	    	}
+	    	else 
+	    		result.put("success", false);
+	 	   
 	    } catch (Exception e) {
 	        result.put("success", false);
 	        result.put("error", e.getMessage());

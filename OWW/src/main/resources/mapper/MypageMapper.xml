@@ -120,5 +120,13 @@
 		pay_make = #{pay_make}
 		WHERE plan_no = #{plan_no}
 	</update>
+	<update id="savePayment" parameterType="com.oww.oww1.VO.PaymentDTO">
+		UPDATE plan_progress
+		SET
+		#{category_str} = #{amount}
+		WHERE plan_no = #{plan_no}
+	</update>
+	
+	
 	
 </mapper>

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.oww.oww1.VO.BudgetVO;
+import com.oww.oww1.VO.PaymentDTO;
 import com.oww.oww1.VO.PlanProgressVO;
 import com.oww.oww1.VO.PlanVO;
 import com.oww.oww1.VO.ProductVO;
@@ -30,5 +31,6 @@ public interface MypageMapper {
 	
 	public int getDiscount(int package_no);
 	
+	public int savePayment(PaymentDTO payment);
 	
 }
