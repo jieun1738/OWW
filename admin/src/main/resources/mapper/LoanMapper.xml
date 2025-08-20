@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.LoanMapper">
+
+  <resultMap id="LoanResult" type="com.example.demo.vo.LoanVO">
+    <id property="id" column="loan_id"/>
+    <result property="userEmail" column="user_email"/>
+    <result property="amount" column="amount"/>
+    <result property="status" column="status"/>
+  </resultMap>
+
+  <select id="findAll" resultMap="LoanResult">
+    SELECT loan_id, user_email, amount, status
+    FROM loan
+    ORDER BY loan_id DESC
+  </select>
+
+  <select id="findById" parameterType="long" resultMap="LoanResult">
+    SELECT loan_id, user_email, amount, status
+    FROM loan
+    WHERE loan_id = #{id}
+  </select>
+
+  <update id="approve" parameterType="long">
+    UPDATE loan SET status = 'APPROVED' WHERE loan_id = #{id}
+  </update>
+
+  <update id="reject" parameterType="long">
+    UPDATE loan SET status = 'REJECTED' WHERE loan_id = #{id}
+  </update>
+
+</mapper>

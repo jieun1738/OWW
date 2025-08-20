@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.ProductMapper">
+
+  <!-- 결과 매핑 -->
+  <resultMap id="ProductResultMap" type="com.example.demo.vo.ProductVO">
+    <id property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="price" column="price"/>
+    <result property="imageUrl" column="image_url"/>
+    <result property="enterpriseId" column="enterprise_id"/>
+  </resultMap>
+
+  <!-- 전체 조회 -->
+  <select id="findAll" resultMap="ProductResultMap">
+    SELECT id, name, price, image_url, enterprise_id
+    FROM products
+    ORDER BY id DESC
+  </select>
+
+  <!-- 단건 조회 -->
+  <select id="findById" parameterType="java.lang.Long" resultMap="ProductResultMap">
+    SELECT id, name, price, image_url, enterprise_id
+    FROM products
+    WHERE id = #{id}
+  </select>
+
+  <!-- 등록 -->
+  <insert id="insert" parameterType="com.example.demo.vo.ProductVO"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO products (name, price, image_url, enterprise_id)
+    VALUES (#{name}, #{price}, #{imageUrl}, #{enterpriseId})
+  </insert>
+
+  <!-- 수정 -->
+  <update id="update" parameterType="com.example.demo.vo.ProductVO">
+    UPDATE products
+    SET name = #{name},
+        price = #{price},
+        image_url = #{imageUrl},
+        enterprise_id = #{enterpriseId}
+    WHERE id = #{id}
+  </update>
+
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="java.lang.Long">
+    DELETE FROM products
+    WHERE id = #{id}
+  </delete>
+
+</mapper>

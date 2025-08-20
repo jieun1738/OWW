@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <title>관리자 - 상품목록</title>
+  <link th:href="@{/css/base.css}" rel="stylesheet">
+  <link th:href="@{/css/sidebar.css}" rel="stylesheet">
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <div th:replace="sidebar :: sidebar('product')"></div>
+  </aside>
+
+  <main>
+    <h2>상품 관리</h2>
+
+    <!-- 검색 / 등록 버튼 -->
+    <form th:action="@{/admin/products}" method="get" style="margin-bottom:1rem;">
+      <input type="text" name="q" th:value="${q}" placeholder="상품명/업체명 검색"/>
+      <button type="submit">검색</button>
+      <a th:href="@{/admin/products/new}">상품 등록</a>
+    </form>
+
+    <!-- 상품 목록 -->
+    <div th:if="${#lists.isEmpty(products)}">상품이 없습니다.</div>
+    <div th:each="p : ${products}"
+         th:replace="products/fragments/product-card :: card(${p})">
+    </div>
+  </main>
+</div>
+</body>
+</html>

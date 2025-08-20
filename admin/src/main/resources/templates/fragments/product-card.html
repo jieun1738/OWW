@@ -1,0 +1,23 @@
+<!-- templates/products/fragments/product-card.html -->
+<div th:fragment="card(product)">
+  <div class="product-card">
+    <img th:src="${product.thumbUrl != null ? product.thumbUrl : '/images/placeholder.png'}"
+         alt="상품 이미지"
+         class="product-thumb"/>
+
+    <div class="product-info">
+      <h3 th:text="${product.name}">상품명</h3>
+      <p th:text="${product.category}">카테고리</p>
+      <p th:text="${product.enterpriseName}">업체명</p>
+      <p class="price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + ' 원'">0 원</p>
+    </div>
+
+    <div class="product-actions">
+      <a th:href="@{'/admin/products/' + ${product.id} + '/edit'}">수정</a>
+      <form th:action="@{'/admin/products/' + ${product.id} + '/delete'}"
+            method="post" style="display:inline;">
+        <button type="submit" onclick="return confirm('삭제하시겠습니까?');">삭제</button>
+      </form>
+    </div>
+  </div>
+</div>

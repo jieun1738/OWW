@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" th:href="@{/css/admin-sidebar.css}">
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+</head>
+<body>
+<div class="page">
+  <!-- 사이드바 -->
+  <div th:replace="~{fragments/admin-sidebar :: sidebar(active='product')}"></div>
+
+  <!-- 본문 -->
+  <main class="content dashboard">
+    <!-- KPI 카드 -->
+    <section class="kpi-cards">
+      <div class="card">
+        <span class="label">이번달 매출</span>
+        <span class="value">₩ 12,500,000</span>
+        <span class="delta up">+12%</span>
+      </div>
+      <div class="card">
+        <span class="label">신규 가입 업체</span>
+        <span class="value">25곳</span>
+        <span class="delta">이달</span>
+      </div>
+      <div class="card">
+        <span class="label">활성 상품</span>
+        <span class="value">120개</span>
+        <span class="delta">전체</span>
+      </div>
+      <div class="card">
+        <span class="label">대출 심사 대기</span>
+        <span class="value">38건</span>
+        <span class="delta down">-3%</span>
+      </div>
+    </section>
+
+    <!-- 그래프 -->
+    <section class="charts">
+      <!-- 좌: 매출 & 예약 추이 -->
+      <div class="chart-box">
+        <h3>매출·예약 추이 (월별)</h3>
+        <canvas id="opsTrendChart"></canvas>
+      </div>
+
+      <!-- 우: 심사/승인 현황 -->
+      <div class="chart-box">
+        <h3>업체·대출 심사 현황</h3>
+        <canvas id="reviewStatusChart"></canvas>
+        <ul class="budget-list">
+          <li class="ok">승인: 142건 (지난달 대비 +8%)</li>
+          <li class="warn">대기: 38건 (SLA 24h 초과 5건)</li>
+          <li class="over">반려: 12건 (사유: 서류 미비 8, 신용도 4)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 하단 섹션: 최근 데이터 -->
+    <section class="extra-widgets">
+      <div class="widget-box">
+        <h3>최근 가입 업체</h3>
+        <table class="simple-table">
+          <thead>
+            <tr><th>업체명</th><th>가입일</th><th>상태</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ABC Corp</td><td>2025-08-12</td><td>승인완료</td></tr>
+            <tr><td>XYZ Ltd</td><td>2025-08-14</td><td>대기</td></tr>
+            <tr><td>QWE Traders</td><td>2025-08-15</td><td>반려</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="widget-box">
+        <h3>인기 상품</h3>
+        <ul class="rank-list">
+          <li>상품 A — 120건 판매</li>
+          <li>상품 B — 98건 판매</li>
+          <li>상품 C — 77건 판매</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 차트.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const opsCtx = document.getElementById('opsTrendChart').getContext('2d');
+    const reviewCtx = document.getElementById('reviewStatusChart').getContext('2d');
+
+    // 숫자 포맷
+    const fmtKRW = (v) => new Intl.NumberFormat('ko-KR', { style:'currency', currency:'KRW', maximumFractionDigits:0 }).format(v);
+    const fmtNum = (v) => new Intl.NumberFormat('ko-KR').format(v);
+
+    // ===== 선그래프 (매출 + 승인건수) =====
+    new Chart(opsCtx, {
+      type: 'line',
+      data: {
+        labels: ['1월','2월','3월','4월','5월','6월'],
+        datasets: [
+          {
+            label: '매출',
+            data: [12500000, 13800000, 15500000, 14900000, 17100000, 18900000],
+            borderColor: '#6366F1',
+            backgroundColor: 'rgba(99,102,241,.15)',
+            fill: true,
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#6366F1',
+            yAxisID: 'y'
+          },
+          {
+            label: '대출 승인건수',
+            data: [120, 132, 140, 128, 156, 171],
+            borderColor: '#06B6D4',
+            backgroundColor: 'rgba(6,182,212,.15)',
+            fill: true,
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#06B6D4',
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'top', labels: { usePointStyle: true } },
+          tooltip: {
+            callbacks: {
+              label(ctx) {
+                return ctx.dataset.label === '매출'
+                  ? `${ctx.dataset.label}: ${fmtKRW(ctx.parsed.y)}`
+                  : `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)}건`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display:false } },
+          y: {
+            title: { display:true, text:'매출(KRW)' },
+            ticks: { callback: (v) => fmtKRW(v) },
+            grid: { color:'rgba(0,0,0,.05)' }
+          },
+          y1: {
+            position:'right',
+            title: { display:true, text:'승인건수' },
+            ticks: { callback: (v)=> `${fmtNum(v)}건` },
+            grid: { drawOnChartArea:false }
+          }
+        }
+      }
+    });
+
+    // ===== 도넛형 원형 그래프 (심사 현황) =====
+    new Chart(reviewCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['승인', '대기', '반려'],
+        datasets: [{
+          data: [320, 70, 30],
+          backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%', // 도넛 두께 조정
+        plugins: {
+          legend: { position:'bottom', labels:{ usePointStyle:true } },
+          tooltip: {
+            callbacks: {
+              label(ctx) {
+                const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+                const v = ctx.parsed;
+                const rate = total ? Math.round((v/total)*100) : 0;
+                return `${ctx.label}: ${fmtNum(v)}건 (${rate}%)`;
+              }
+            }
+          }
+        }
+      },
+      plugins: [{
+        id: 'centerText',
+        afterDraw(chart) {
+          const {ctx, width, height} = chart;
+          ctx.save();
+          ctx.font = 'bold 16px sans-serif';
+          ctx.fillStyle = '#333';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('심사 현황', width/2, height/2);
+        }
+      }]
+    });
+  });
+</script>
+</body>
+</html>
