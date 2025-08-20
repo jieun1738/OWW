@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.mapper.PackageMapper;
 import com.example.demo.mapper.ProductMapper;
-import com.example.demo.vo.PackageVO;
+import com.example.demo.vo.PackageAdminVO;
 import com.example.demo.vo.ProductVO;
 
 @Controller
@@ -37,12 +37,12 @@ public class PackageController {
     public String newForm(Model model) {
         List<ProductVO> products = productMapper.findAll();
         model.addAttribute("products", products);
-        model.addAttribute("form", new PackageVO());
+        model.addAttribute("form", new PackageAdminVO());
         return "fragments/package-form";
     }
 
     @PostMapping
-    public String save(@ModelAttribute PackageVO form) {
+    public String save(@ModelAttribute PackageAdminVO form) {
         if (form.getId() == null) {
             packageMapper.insert(form);
         } else {

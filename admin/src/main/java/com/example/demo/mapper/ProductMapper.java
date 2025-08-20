@@ -1,26 +1,21 @@
 package com.example.demo.mapper;
 
-import java.util.List;
-
+import com.example.demo.vo.ProductDto;
 import org.apache.ibatis.annotations.Mapper;
-
-import com.example.demo.vo.ProductVO;
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
 
 @Mapper
 public interface ProductMapper {
+    List<ProductDto> findAll(@Param("q") String q,
+                             @Param("category") Integer category,
+                             @Param("offset") int offset,
+                             @Param("limit") int limit);
+    int count(@Param("q") String q, @Param("category") Integer category);
 
-    // 상품 전체 조회
-    List<ProductVO> findAll();
+    ProductDto findById(@Param("id") int id);
 
-    // 상품 단건 조회
-    ProductVO findById(Long id);
-
-    // 상품 등록
-    int insert(ProductVO product);
-
-    // 상품 수정
-    int update(ProductVO product);
-
-    // 상품 삭제
-    int delete(Long id);
+    int insert(ProductDto dto);
+    int update(ProductDto dto);
+    int delete(@Param("id") int id);
 }

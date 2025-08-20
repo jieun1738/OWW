@@ -14,13 +14,6 @@ public class AdminHomeController {
         return "admin-dashboard";
     }
 
-    // 업체관리
-    @GetMapping("/admin/company")
-    public String company(Model model) {
-        model.addAttribute("active", "company");
-        return "admin-company";  // templates/admin-company.html 
-    }
-
     // 상품관리
     @GetMapping("/admin/product")
     public String product(Model model) {
