@@ -21,9 +21,14 @@
         SELECT * FROM product WHERE PRODUCT_NO = #{product_no} 
     </select>
     
-    <select id="getPlanNO" resultType="PlanVO">
+    <select id="getPlan" resultType="PlanVO">
         SELECT * FROM plan WHERE USER_EMAIL = #{user_email} 
     </select>
+    
+     <select id="getDiscount" resultType="int">
+        SELECT discount FROM package WHERE package_no = #{package_no} 
+    </select>
+    
 
 	<select id="getProductInfo" resultType="ProductVO">
 		select

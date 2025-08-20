@@ -10,6 +10,52 @@
 	<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 	<link th:href="@{/css/design.css}" rel="stylesheet" />
 	<link th:href="@{/css/WeddingDIY.css}" rel="stylesheet" />
+	<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+	<script src="/js/payment.js" defer></script>
+	<script>
+		
+		const urlParams = new URLSearchParams(window.location.search);
+		    const amount = urlParams.get('amount');
+
+		    if (amount) {
+		        document.getElementById("paidAmountLabel").innerText = `결제 금액: ${amount}원`;
+		    } else {
+		        document.getElementById("paidAmountLabel").innerText = `결제 금액 정보를 불러오지 못했습니다.`;
+		    }
+		
+		
+		
+		document.addEventListener('DOMContentLoaded', () => {
+		const contractHallCheckbox = document.getElementById('contract_hall_ch');
+	    const payHallCheckbox = document.getElementById('pay_hall');
+	    const payButtons = document.querySelectorAll('.payBtn');
+	    const otherButtons = document.querySelectorAll('.btn');
+
+	    // 체크 여부 확인 함수
+	    function toggleDisabled() {
+	        if(payHallCheckbox.checked) {
+	            payButtons.forEach(btn => btn.disabled = true);
+	            otherButtons.forEach(btn => btn.disabled = true);
+	            payHallCheckbox.disabled = true; // 체크 해제 방지
+	        }
+	    }
+
+	    // 초기 로드 시 확인
+	    toggleDisabled();
+
+	    // 체크박스 클릭 이벤트 (체크 해제 방지용)
+	    payHallCheckbox.addEventListener('click', (e) => {
+	        if(payHallCheckbox.checked) {
+	            e.preventDefault(); // 체크 해제 방지
+	        }
+	    });
+		contractHallCheckbox.addEventListener('click', (e) => {
+			        if(contractHallCheckbox.checked) {
+			            e.preventDefault(); // 체크 해제 방지
+			        }
+			    });
+	});
+	</script>
 	<style>
 	
 
@@ -88,20 +134,6 @@
 			font-size: 12px;
 		}
 		
-		.btn {
-			background: rgb(217, 137, 243);
-			color: white;
-			border: none;
-			padding: 8px 16px;
-			border-radius: 6px;
-			cursor: pointer;
-			font-size: 12px;
-			transition: background 0.3s ease;
-		}
-		
-		.btn:hover {
-			background: rgb(128, 128, 255);
-		}
 		
 		
 		
@@ -182,6 +214,18 @@
 					</div>
 				</div>
 			</div>
+			<div class="total-card">				
+				<h3 th:if="${discount != 0}">💡 저장된 상품은 패키지 상품으로 <span th:text="|${discount}%|"></span> 할인 적용됩니다.</h3>
+				<h5 th:if="${discount != 0}">⚠️ 개별항목 수정시 할인적용이 불가능 합니다.</h5>
+			<form class="total">
+				<div class="total">총 예상 견적: <span th:text="${total_cost}"style="text-decoration: underline;"></span> 원
+					<input type="hidden" name="cost" th:value="${total_cost}">
+					<input type="hidden" name="product_name" th:value="'전체 플랜 결제'">
+					<button type="button" class="payBtn">전체 항목 결제하기</button>				
+			
+				</div>
+			</form>
+			</div>
 			
 			<!-- 웨딩홀 카드 -->
 			<form th:action="@{/saveprogress.do}">
@@ -202,11 +246,16 @@
 								<label for="hall_contract">계약완료</label>
 							</div>
 							<div class="control-row">
-								<input type="checkbox" name="pay_hall" id="pay_hall"  th:field="*{planprog.pay_hall_ch}"/>
+								<input type="checkbox" class="check_box" name="pay_hall" id="pay_hall"  th:field="*{planprog.pay_hall_ch}"/>
 								<label for="hall_paid">결제완료</label>
-								<input type="number" name="pay_hall" class="amount-input" th:value="${planprog.pay_hall}" />
-							</div>
-							<button type="button" class="btn" onclick="location.href='makeplan.do'">
+								<label id="paidAmountLabel"></label>
+								<form class="pay">		
+										<input type="hidden" name="cost" th:value="${hallInfo.cost}">
+										<input type="hidden" name="product_name" th:value="${hallInfo.product_name}">
+										<button type="button" class="payBtn">항목 결제하기</button>
+								</form>
+								</div>
+							<button type="button" class="btn" onclick="location.href='planner/WeddingDIY'">
 								다른 업체 보러가기
 							</button>
 						</div>
@@ -231,7 +280,7 @@
 								<label for="studio_contract">계약완료</label>
 							</div>
 							<div class="control-row">
-								<input type="checkbox" name="pay_stud" id="pay_stud" th:field="*{planprog.pay_stud_ch}"/>
+								<input type="checkbox"  class="check_box" name="pay_stud" id="pay_stud" th:field="*{planprog.pay_stud_ch}"/>
 								<label for="studio_paid">결제완료</label>
 								<input type="number" name="pay_stud" class="amount-input" th:value="${planprog.pay_stud}" />
 							</div>
@@ -256,16 +305,21 @@
 						</div>
 						<div class="card-controls">
 							<div class="control-row">
-								<input type="checkbox" name="contract_dres_ch" id="contract_dres_ch" th:field="*{planprog.contract_dres_ch}"/>
+								<input type="checkbox"  class="check_box" name="contract_dres_ch" id="contract_dres_ch" th:field="*{planprog.contract_dres_ch}"/>
 								<label for="dress_contract">계약완료</label>
 							</div>
 							<div class="control-row">
 								<input type="checkbox" name="pay_dres" id="dress_paid" th:field="*{planprog.pay_dres_ch}"/>
 								<label for="dress_paid">결제완료</label>
-								<input type="number" name="pay_dres" class="amount-input" th:value="${planprog.pay_dres}" />
-							</div>
-							<button type="button" class="btn" onclick="location.href='makeplan.do'">
-								업데이트
+								<label id="paidAmountLabel"></label>
+								<form class="pay">
+									<input type="hidden" name="cost" th:value="${dressInfo.cost}">
+									<input type="hidden" name="product_name" th:value="${dressInfo.product_name}">
+									<button type="button" class="payBtn">항목 결제하기</button>
+								</form>
+								</div>
+								<button type="button" class="btn" onclick="location.href='makeplan.do'">
+									업데이트
 							</button>
 						</div>
 					</div>
@@ -289,7 +343,7 @@
 								<label for="makeup_contract">계약완료</label>
 							</div>
 							<div class="control-row">
-								<input type="checkbox" name="pay_make" id="makeup_paid" th:field="*{planprog.pay_make_ch}"/>
+								<input type="checkbox"  class="check_box" name="pay_make" id="makeup_paid" th:field="*{planprog.pay_make_ch}"/>
 								<label for="makeup_paid">결제완료</label>
 								<input type="number" name="pay_make" class="amount-input" th:value="${planprog.pay_make}" />
 							</div>
