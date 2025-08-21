@@ -1,0 +1,80 @@
+<!-- src/main/resources/templates/admin-loan.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>대출 승인</title>
+  <link rel="stylesheet" th:href="@{/css/admin-loan.css}">
+</head>
+<body>
+<div class="page">
+  
+
+  <section class="content">
+    <h1>대출 승인</h1>
+
+    <div th:if="${msg}" class="alert" th:text="${msg}"></div>
+
+    <form method="get" class="toolbar">
+      <input type="text" name="q" th:value="${q}" placeholder="이메일/상품명 검색">
+      <select name="status">
+        <option th:value="" th:selected="${status==null or status==''}">전체</option>
+        <option th:value="PENDING"  th:selected="${status=='PENDING'}">대기</option>
+        <option th:value="APPROVED" th:selected="${status=='APPROVED'}">승인</option>
+        <option th:value="REJECTED" th:selected="${status=='REJECTED'}">거절</option>
+      </select>
+      <button type="submit">검색</button>
+    </form>
+
+    <table class="list">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>사용자</th>
+          <th>상품명</th>
+          <th>금액</th>
+          <th>기간(개월)</th>
+          <th>상태</th>
+          <th>신청일</th>
+          <th>결정자</th>
+          <th>결정일</th>
+          <th>메모</th>
+          <th>액션</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="row : ${rows}">
+          <td th:text="${row.applicationId}">1</td>
+          <td th:text="${row.userEmail}">user@ex.com</td>
+          <td th:text="${row.productName}">상품</td>
+          <td th:text="${#numbers.formatInteger(row.amount, 3, 'COMMA')}">100,000</td>
+          <td th:text="${row.termMonths}">12</td>
+          <td th:text="${row.status}">PENDING</td>
+          <td th:text="${#dates.format(row.requestedAt,'yyyy-MM-dd HH:mm')}"></td>
+          <td th:text="${row.decidedBy}">-</td>
+          <td th:text="${#dates.format(row.decidedAt,'yyyy-MM-dd HH:mm')}"></td>
+          <td th:text="${row.memo}">-</td>
+          <td>
+            <form th:action="@{|/admin/loan/${row.applicationId}/approve|}" method="post" th:if="${row.status=='PENDING'}" style="display:inline">
+              <input type="hidden" name="memo" value="관리자 승인">
+              <button type="submit">승인</button>
+            </form>
+            <form th:action="@{|/admin/loan/${row.applicationId}/reject|}" method="post" th:if="${row.status=='PENDING'}" style="display:inline">
+              <input type="hidden" name="memo" value="관리자 거절">
+              <button type="submit">거절</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <div class="pagination" th:with="last=${T(java.lang.Math).ceil(total / (size*1.0))}">
+      <a th:if="${page>1}" th:href="@{|/admin/loan?page=${page-1}&size=${size}&q=${q}&status=${status}|}">이전</a>
+      <span th:text="|${page} / ${last.intValue()}|"></span>
+      <a th:if="${page<last}" th:href="@{|/admin/loan?page=${page+1}&size=${size}&q=${q}&status=${status}|}">다음</a>
+    </div>
+  </section>
+</div>
+</body>
+</html>

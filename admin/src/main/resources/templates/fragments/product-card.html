@@ -1,22 +1,37 @@
 <!-- templates/products/fragments/product-card.html -->
 <div th:fragment="card(product)">
   <div class="product-card">
-    <img th:src="${product.thumbUrl != null ? product.thumbUrl : '/images/placeholder.png'}"
-         alt="상품 이미지"
-         class="product-thumb"/>
-
-    <div class="product-info">
-      <h3 th:text="${product.name}">상품명</h3>
-      <p th:text="${product.category}">카테고리</p>
-      <p th:text="${product.enterpriseName}">업체명</p>
-      <p class="price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + ' 원'">0 원</p>
+    <!-- 상품 썸네일 -->
+    <div class="thumb-wrap">
+      <img th:src="${product.thumbUrl != null ? product.thumbUrl : '/images/placeholder.png'}"
+           alt="상품 이미지"
+           class="product-thumb"/>
     </div>
 
+    <!-- 상품 기본정보 -->
+    <div class="product-info">
+      <h3 class="product-name" th:text="${product.name}">상품명</h3>
+      <p class="category" th:text="${product.category}">카테고리</p>
+      <p class="enterprise" th:text="${product.enterpriseName}">업체명</p>
+      <p class="desc" th:text="${product.description}">상품 설명이 들어갑니다.</p>
+    </div>
+
+    <!-- 가격/메타 -->
+    <div class="product-meta">
+      <p class="price" 
+         th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + ' 원'">0 원</p>
+      <p class="created" th:text="${#dates.format(product.createdAt, 'yyyy-MM-dd')}">2025-08-21</p>
+    </div>
+
+    <!-- 액션 버튼 -->
     <div class="product-actions">
-      <a th:href="@{'/admin/products/' + ${product.id} + '/edit'}">수정</a>
+      <a class="btn edit"
+         th:href="@{'/admin/products/' + ${product.id} + '/edit'}">수정</a>
+
       <form th:action="@{'/admin/products/' + ${product.id} + '/delete'}"
-            method="post" style="display:inline;">
-        <button type="submit" onclick="return confirm('삭제하시겠습니까?');">삭제</button>
+            method="post" class="inline">
+        <button type="submit" class="btn danger"
+                onclick="return confirm('삭제하시겠습니까?');">삭제</button>
       </form>
     </div>
   </div>

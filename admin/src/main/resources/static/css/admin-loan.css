@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+/* 상단바 */
+.topbar{ position:sticky; top:0; z-index:10; background:#f2d6f1; border-bottom:1px solid #ecd6ef; }
+.topbar__inner{ max-width:var(--page-max); margin:0 auto; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 var(--page-padding); }
+.brand{ font-weight:700; color:#6a4bd4 }
+.hint{ color:#7a6c86; font-size:13px }
+
+/* 제목 */
+.headline{ font-size:24px; margin:6px 0 16px; color:#2a2238; }
+
+/* 필터 */
+.filters{ background:#fff; border:1px solid var(--gray-200); border-radius:14px; padding:12px; margin-bottom:16px; }
+.filters .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:end; }
+.filters .group{ display:flex; flex-direction:column; gap:6px; }
+.filters label{ font-size:12px; color:#666; }
+.filters select, .filters input[type="number"]{
+  height:38px; padding:0 10px; border:1px solid var(--gray-300); border-radius:10px; background:#fff;
+}
+.btn{ border:none; background:var(--violet-ink); color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; }
+.btn.primary{ background:var(--violet) }
+.btn.light{ background:#efe9fb; color:#5a43c6 }
+.btn.disabled{ opacity:.45; pointer-events:none }
+
+/* 카드 리스트 */
+.cards{ display:flex; flex-direction:column; gap:14px; }
+.loan-card{ background:#fff; border:1px solid var(--gray-200); border-radius:16px; padding:14px; }
+.loan-card__header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.loan-card .id{ display:flex; align-items:center; gap:10px; color:#302b3d; }
+.badge{ padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700; }
+.bdg-pending{ background:#fff2c2; color:#946800; }
+.bdg-approve{ background:#e6fbef; color:#0a8d5a; }
+.bdg-reject{ background:#ffe8ea; color:#c02c45; }
+.when{ color:#7a7288; font-size:13px; }
+
+.loan-card__body{ display:flex; gap:14px; flex-wrap:wrap; justify-content:space-between; }
+.info{ display:grid; grid-template-columns: 120px 1fr; row-gap:6px; column-gap:10px; min-width:280px; flex:1; }
+.info .label{ color:#777; }
+.info .val{ color:#222; font-weight:600; }
+.actions{ display:flex; gap:10px; align-items:center; }
+.act{ display:flex; gap:8px; }
+.act input[type="text"]{ width:220px; height:38px; padding:0 10px; border:1px solid var(--gray-300); border-radius:10px; }
+.btn.approve{ background:#42b883; }
+.btn.reject{ background:#e6506b; }
+.btn.approve:disabled, .btn.reject:disabled{ background:#d9d9de; cursor:not-allowed; }
+
+.loan-card__footer{ margin-top:10px; padding-top:8px; border-top:1px dashed var(--gray-300); color:#6a6475; font-size:13px; display:flex; gap:8px; flex-wrap:wrap; }
+.loan-card__footer .sep{ opacity:.5 }
+
+/* 비어있을 때 */
+.empty{ padding:30px; text-align:center; color:#7a6c86; background:#fff; border:1px dashed var(--gray-300); border-radius:12px; }
+
+/* 페이저 */
+.pager{ display:flex; align-items:center; gap:10px; margin-top:16px; }
+.pg-info{ color:#534c6b; }
