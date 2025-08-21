@@ -36,5 +36,7 @@ public interface LoanService {
 	int costcalculate(int earningsint, int monthlyinstallmentint, int costint);
 
 	void resetpaidmonthlyamount();
+	
+	
 
 }

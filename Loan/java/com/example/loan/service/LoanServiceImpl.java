@@ -146,15 +146,12 @@ public class LoanServiceImpl implements LoanService {
 
 	@Override
 	public UserLoanVO getuserloan(String useremail) {
-		// TODO Auto-generated method stub
 		 
 		return userLoanMapper.getUserLoan(useremail);
 	}
 
 	@Override
-	public int costcalculate(int earningsint, int monthlyinstallmentint, int costint) {
-		// TODO Auto-generated method stub
-		
+	public int costcalculate(int earningsint, int monthlyinstallmentint, int costint) {	
 		
 		return earningsint -monthlyinstallmentint-costint;
 	}

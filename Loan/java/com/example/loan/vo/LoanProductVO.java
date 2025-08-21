@@ -33,7 +33,6 @@ public class LoanProductVO {
 	public void setLoanExplanation(String loanExplanation) {
 		LoanExplanation = loanExplanation;
 	}
-	
 	public int getLoanLimit() {
 		return LoanLimit;
 	}

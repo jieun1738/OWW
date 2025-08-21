@@ -1,15 +1,15 @@
 package com.example.loan.controller;
-
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.loan.vo.BankingVO;
 
-@Controller
+@RestController
+
 public class OuterController {
 	 private final RestTemplate restTemplate;
 
@@ -18,16 +18,17 @@ public class OuterController {
 	 }
 	 
 	 	@GetMapping("/{userEmail}/getaccount")
-	 	public String getAccount() {
+	 	public ResponseEntity<String> getAccount() {
 	 		String loanName = "getAccount";
 	        String url = "http://banking-service/" + loanName;
-	       //여기는 나중에 뱅킹 구현되면 구현해야함 //BankingVO account = restTemplate.getForObject(url, BankingVO.class);
+	       //여기는 나중에 뱅킹 구현되면 구현해야함 
+	       BankingVO account = restTemplate.getForObject(url, BankingVO.class);
 	        
-			return "";
+			return ResponseEntity.ok("요청이 완료되었습니다.");
 	 	}
 	 	
-	 	@PutMapping("/{userEmail}/withdraw")//이건 banking에 보내는 쪽
-	 	public String updateAccount(@RequestParam("/setAccountamount") int Accountamount,
+	 	@PutMapping("/{userEmail}/updateAccount")//이건 banking에 보내는 쪽
+	 	public ResponseEntity<String> updateAccount(@RequestParam("/setAccountamount") int Accountamount,
 	 			@RequestParam("/setAccountnumber") int Accountnumber) 
 	 	{
 	 		
@@ -35,9 +36,9 @@ public class OuterController {
 	 		bankingVO.setAccountamount(Accountamount);
 	 		bankingVO.setAccountnumber(Accountnumber);
 	 		String url = "http://banking-service/" + "updateAccount";
-	        restTemplate.put(url, bankingVO);
+	        restTemplate.put(url, bankingVO);//뱅킹에 보내는 명령
 	         
-			return "";
+			return ResponseEntity.ok("요청이 완료되었습니다.");
 	 		
 	 	}
 	 
