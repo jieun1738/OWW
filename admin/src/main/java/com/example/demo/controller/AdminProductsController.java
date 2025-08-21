@@ -1,14 +1,18 @@
 package com.example.demo.controller;
 
-
-import com.example.demo.mapper.ProductMapper;
-import com.example.demo.vo.ProductDto;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import com.example.demo.mapper.ProductMapper;
+import com.example.demo.vo.ProductVO;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -20,7 +24,7 @@ public class AdminProductsController {
         this.productMapper = productMapper;
     }
 
-    /** 리스트 + 검색 + 페이징 */
+    /** 리스트 + 검색(q: 업체/상품명) + 카테고리 필터 + 페이징 */
     @GetMapping
     public String list(@RequestParam(defaultValue = "") String q,
                        @RequestParam(required = false) Integer category,
@@ -30,7 +34,7 @@ public class AdminProductsController {
 
         int offset = Math.max(0, (page - 1) * size);
         int total = productMapper.count(q, category);
-        List<ProductDto> rows = productMapper.findAll(q, category, offset, size);
+        List<ProductVO> rows = productMapper.findAll(q, category, offset, size);
 
         model.addAttribute("rows", rows);
         model.addAttribute("total", total);
@@ -38,38 +42,36 @@ public class AdminProductsController {
         model.addAttribute("size", size);
         model.addAttribute("q", q);
         model.addAttribute("category", category);
-        model.addAttribute("active", "products"); 
-
         return "admin-products"; // 목록 템플릿
     }
 
-    /** 등록 폼 */
+ // 등록 폼
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("dto", new ProductDto());
+        model.addAttribute("dto", new ProductVO());
         model.addAttribute("mode", "create");
         return "admin-product-form";
     }
 
     /** 등록 처리 */
     @PostMapping
-    public String create(@ModelAttribute ProductDto dto) {
+    public String create(@ModelAttribute ProductVO dto) {
+        // product_no가 트리거 자동채번이면 dto.setProductNo(null);
         productMapper.insert(dto);
         return "redirect:/admin/products";
     }
 
-    /** 수정 폼 */
+ // 수정 폼
     @GetMapping("/{id}")
     public String editForm(@PathVariable int id, Model model) {
-        ProductDto dto = productMapper.findById(id);
-        model.addAttribute("dto", dto);
+        model.addAttribute("dto", productMapper.findById(id));
         model.addAttribute("mode", "edit");
         return "admin-product-form";
     }
 
     /** 수정 처리 */
     @PostMapping("/{id}")
-    public String update(@PathVariable int id, @ModelAttribute ProductDto dto) {
+    public String update(@PathVariable int id, @ModelAttribute ProductVO dto) {
         dto.setProductNo(id);
         productMapper.update(dto);
         return "redirect:/admin/products";

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${mode=='edit'} ? '상품 수정' : '상품 등록'"></title>
+  <link rel="stylesheet" th:href="@{/css/admin-products.css}">
+</head>
+<body>
+
+<!-- 사이드바 불러오기 -->
+<div th:replace="fragments/admin-sidebar :: sidebar"></div>
+
+<div class="form-container">
+  <h1 th:text="${mode=='edit'} ? '상품 수정' : '상품 등록'"></h1>
+
+  <!-- form action: 등록 or 수정 -->
+  <form th:action="${mode=='edit'} ? @{|/admin/products/${dto.productNo}|} : @{/admin/products}" 
+        method="post" enctype="multipart/form-data">
+
+    <!-- 카테고리 선택 -->
+    <div class="form-group">
+      <label>카테고리</label>
+      <select name="category" required>
+        <option value="0" th:selected="${dto.category==0}">웨딩홀</option>
+        <option value="1" th:selected="${dto.category==1}">스튜디오</option>
+        <option value="2" th:selected="${dto.category==2}">드레스</option>
+        <option value="3" th:selected="${dto.category==3}">메이크업</option>
+      </select>
+    </div>
+
+    <!-- 상품 이름 -->
+    <div class="form-group">
+      <label>상품명</label>
+      <input type="text" name="productName" th:value="${dto.productName}" required/>
+    </div>
+
+    <!-- 가격 -->
+    <div class="form-group">
+      <label>가격</label>
+      <input type="number" name="cost" th:value="${dto.cost}" required/>
+    </div>
+
+    <!-- 주소 -->
+    <div class="form-group">
+      <label>지역</label>
+      <input type="text" name="address" th:value="${dto.address}" placeholder="지역 입력 (예: 서울 강남구)" required/>
+    </div>
+
+    <!-- 대표 이미지 -->
+    <div class="form-group">
+      <label>대표 이미지</label>
+      <input type="file" name="imgFile"/>
+      <div class="preview" th:if="${dto.img}">
+        <img th:src="@{${dto.img}}" alt="미리보기"/>
+      </div>
+    </div>
+
+    <!-- 설명 -->
+    <div class="form-group">
+      <label>내용</label>
+      <textarea name="description" rows="5" th:text="${dto.description}"></textarea>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" 
+              th:text="${mode=='edit'} ? '수정 완료' : '등록'"></button>
+      <a th:href="@{/admin/products}" class="btn">목록</a>
+    </div>
+
+  </form>
+</div>
+
+</body>
+</html>

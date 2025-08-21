@@ -1,17 +1,19 @@
 package com.example.demo.vo;
-import lombok.Data;
+
 import java.util.Date;
+
+import lombok.Data;
 
 @Data
 public class LoanVO {
-    private Long   applicationId;
-    private String userEmail;
-    private String productName;
-    private Long   amount;
-    private Integer termMonths;
-    private String status;       
-    private Date   requestedAt;
-    private Date   decidedAt;
-    private String decidedBy;
-    private String memo;
+    private Long   applicationId;  // application_id
+    private String userEmail;      // user_email
+    private String productName;    // product_name
+    private Long   amount;         // amount
+    private Integer termMonths;    // term_months
+    private String status;         // PENDING / APPROVED / REJECTED
+    private Date   requestedAt;    // requested_at
+    private Date   decidedAt;      // decided_at
+    private String decidedBy;      // decided_by
+    private String memo;           // memo
 }
