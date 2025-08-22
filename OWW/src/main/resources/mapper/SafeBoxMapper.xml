@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.SafeBoxMapper">
+
+
+    <!-- 목표 금액 조회 -->
+    <select id="findTargetAmount" resultType="long">
+        SELECT target_amount
+          FROM SAFE_GOAL
+         WHERE user_email = #{email}
+    </select>
+
+    <!-- 목표 금액 저장/갱신 (MERGE 문) -->
+    <insert id="upsertTargetAmount">
+        MERGE INTO SAFE_GOAL g
+        USING (SELECT #{email} AS user_email, #{target} AS target_amount FROM dual) s
+           ON (g.user_email = s.user_email)
+        WHEN MATCHED THEN
+            UPDATE SET g.target_amount = s.target_amount
+        WHEN NOT MATCHED THEN
+            INSERT (goal_id, user_email, target_amount, saved_amount, regular)
+            VALUES (SEQ_SAFE_GOAL.NEXTVAL, s.user_email, s.target_amount, 0, 'N')
+    </insert>
+
+    <!-- 총 저축액 조회 -->
+    <select id="sumSaved" resultType="long">
+        SELECT NVL(SUM(amount), 0)
+          FROM SAFE_SAVING_LOG
+         WHERE user_email = #{email}
+    </select>
+
+    <!-- 저축 내역 삽입 -->
+    <insert id="insertSaving">
+        INSERT INTO SAFE_SAVING_LOG (saving_id, user_email, amount, memo, saved_at)
+        VALUES (SEQ_SAFE_SAVING.NEXTVAL, #{email}, #{amount}, #{memo}, SYSDATE)
+    </insert>
+
+  <!-- 이번 달 일별 합계 -->
+<select id="selectDailyThisMonth" resultType="com.example.demo.vo.PeriodAmt">
+    SELECT TO_CHAR(TRUNC(saved_at), 'YYYY-MM-DD') AS period,
+           SUM(amount)                            AS amount
+      FROM SAFE_SAVING_LOG
+     WHERE user_email = #{email}
+       AND saved_at >= TRUNC(SYSDATE, 'MM')
+    GROUP BY TRUNC(saved_at)
+    ORDER BY period
+</select>
+
+<!-- 최근 12개월 월별 합계 -->
+<select id="selectMonthly12" resultType="com.example.demo.vo.PeriodAmt">
+    SELECT TO_CHAR(TRUNC(saved_at,'MM'), 'YYYY-MM') AS period,
+           SUM(amount)                              AS amount
+      FROM SAFE_SAVING_LOG
+     WHERE user_email = #{email}
+       AND saved_at >= TRUNC(ADD_MONTHS(SYSDATE,-11),'MM')
+    GROUP BY TRUNC(saved_at,'MM')
+    ORDER BY period
+</select>
+
+
+</mapper>

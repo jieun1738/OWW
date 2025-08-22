@@ -1,5 +1,4 @@
 package com.oww.oww1.controller;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,17 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SafeboxController {
 
     // 루트로 들어오면 금고 화면으로 리다이렉트
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/mypage";
-    }
+	/*
+	 * @GetMapping("/") public String home() { return "redirect:/mypage/safe_box"; }
+	 */
 
     // 금고 화면
     @GetMapping("/mypage/safe_box")
-    public String safeBox(Model model) {
+    public String safeBox(Model model){
         model.addAttribute("goal", new GoalView(10_000_000L, 7_000_000L, true));
         return "safe/safe_box";
     }
+
 
     
     @GetMapping("/hello")

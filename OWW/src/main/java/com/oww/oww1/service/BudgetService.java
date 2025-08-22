@@ -1,66 +1,44 @@
+// com.sboot.moabayo.service.CardProductService
 package com.oww.oww1.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.oww.oww1.VO.BudgetVO;
-import com.oww.oww1.VO.PaymentDTO;
-import com.oww.oww1.VO.PlanProgressVO;
-import com.oww.oww1.VO.PlanVO;
-import com.oww.oww1.VO.ProductVO;
-import com.oww.oww1.mapper.MypageMapper;
+import com.oww.oww1.mapper.BudgetMapper;
+import com.oww.oww1.VO.BudgetForm;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class BudgetService {
-	@Autowired
-	private MypageMapper mypageMapper;
-	
-	BudgetVO userBudget;
-	   public BudgetVO getBudget(String email) {
-	        this.userBudget = mypageMapper.getBudget(email);
-	        return userBudget;
-	   }
-	   
-	   public int sumBudget(String email) {
-		   int sumBudget = mypageMapper.sumBudget(email);		   
-		   return sumBudget;
-	   }
-	   
-	   public List <ProductVO> getProductInfo(String email) {
-	        return mypageMapper.getProductInfo(email);
-	       
-	   }
-	   public PlanVO getPlan(String email) {
-		   return mypageMapper.getPlan(email);
-	   }
-	   
-	   public int getContractProgess(int plan_no) {
-		 return mypageMapper.getContractProgress(plan_no);  
-	   }
-	   
-	   public int getPaidProgess(int plan_no) {
-			 return mypageMapper.getPaidProgress(plan_no);  
-		   }
 
-	   public Boolean setProgress(PlanProgressVO planprogvo) {
-		   return mypageMapper.setProgress(planprogvo);		
-	   }
-	   
-	   public PlanProgressVO getPlanProgress(int plan_no){
-		   return mypageMapper.getPlanProgress(plan_no);
-	   }
+    private final BudgetMapper budgetMapper;
 
-	   public int getDiscount(int package_no) {
-		return mypageMapper.getDiscount(package_no);
-	   }
-	   public int savePayment(PaymentDTO payment) {
-		   return mypageMapper.savePayment(payment);
-	   }
-	   
-	   public int updateContract(String contract_category, String YorN, int plan_no) {
-		   return mypageMapper.updateContract(contract_category, YorN, plan_no);
-	   }
+    @Transactional
+    public BudgetForm getBudget(String email) {
+    	String key = normalizeEmail(email);
+    	return (BudgetForm) budgetMapper.findByUserEmail(key);
+    }
+    
+    
+	/* 아래는 공용 메서드입니다. 참고해주세요 */
+    private String normalizeEmail(String email) {
+        return (email == null || email.isBlank())
+                ? "test@test.com"   // 컨트롤러/다른 서비스와 동일한 폴백 이메일로 통일
+                : email.trim();
+    }
+
+
+	public Object totalForSidebar(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void save(String email, @Valid BudgetForm budget) {
+		// TODO Auto-generated method stub
+		
+	}
 }
