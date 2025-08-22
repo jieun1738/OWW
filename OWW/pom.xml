@@ -113,6 +113,13 @@
     <scope>runtime</scope>
 </dependency>
 
+<!-- Spring Boot 2/3 공통 -->
+		<dependency>
+  			<groupId>nz.net.ultraq.thymeleaf</groupId>
+  			<artifactId>thymeleaf-layout-dialect</artifactId>
+  			<!-- 또는 호환 최신 -->
+		</dependency>
+
 
 
 	</dependencies>  

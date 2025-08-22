@@ -1,51 +1,42 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
-<footer>
-	<div class="footer-container">
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="siteFooter">
+		<footer class="site-footer">
+			<div class="site-footer__inner">
+				<section class="site-footer__sec">
+					<h4>회사 정보</h4>
+					<p>OwnWeddingWallet(주) | 대표: 박지은</p>
+					<p>사업자등록번호: 123-45-67890</p>
+					<p>통신판매업신고: 제2025-가상시-0001호</p>
+					<h4>
+						<a href="#" class="site-footer__linkHeading">개인 정보 처리 방침</a> | <a
+							href="#" class="site-footer__linkHeading">이용 약관</a>
+					</h4>
+				</section>
 
-		<!-- 회사 정보 -->
-		<div class="footer-section">
-			<h4>회사 정보</h4>
-			<p class="footer-text">OwnWeddingWallet(주) &nbsp; | &nbsp; 대표: 박지은</p>
-			<p class="footer-text">사업자등록번호: 123-45-67890</p>
-			<p class="footer-text">통신판매업신고: 제2025-가상시-0001호</p>
+				<section class="site-footer__sec">
+					<h4>고객센터</h4>
+					<p>전화: 02-1234-5678</p>
+					<p>이메일: support@oww.co.kr</p>
+					<h4>
+						<a href="#" class="site-footer__linkHeading">문의하기</a>
+					</h4>
+				</section>
+				
+				<section class="site-footer__sec">
+					<h4>주소</h4>
+					<p>가상시 가상구 예식로 123, 플래너타워 8층</p>
+					<p>우편번호: 01234</p>
+					<h4>
+						<a href="#" class="site-footer__linkHeading">찾아오는 길</a>
+					</h4>
+				</section>
+			</div>
 
-			<!-- 버튼 제목처럼 보이게 -->
-			<h4>
-				<a href="#" class="footer-link-heading">개인 정보 처리 방침</a> &nbsp; |
-				&nbsp; <a href="#" class="footer-link-heading">사이트 이용 약관</a>
-			</h4>
-		</div>
-
-		<!-- 고객센터 -->
-		<div class="footer-section">
-			<h4>고객센터</h4>
-			<p class="footer-text">문의 전화: 0000-0000 (평일 10:00 ~ 17:00)</p>
-			<p class="footer-text">이메일: help@wedding-planner.co.kr</p>
-
-			<!-- 버튼 제목처럼 보이게 -->
-			<h4>
-				<a href="#" class="footer-link-heading">문의하기</a>
-			</h4>
-		</div>
-
-		<!-- 주소 -->
-		<div class="footer-section">
-			<h4>주소</h4>
-			<p class="footer-text">가상시 가상구 예식로 123, 플래너타워 8층</p>
-			<p class="footer-text">우편번호: 01234</p>
-
-			<!-- 버튼 제목처럼 보이게 -->
-			<h4>
-				<a href="#" class="footer-link-heading">찾아오는 길</a>
-			</h4>
-		</div>
-
+			<div class="site-footer__bottom">&copy; 2025 Wedding Planner Co. All
+				rights reserved.</div>
+		</footer>
 	</div>
-
-
-	<div class="footer-bottom">&copy; 2025 Wedding Planner Co. All
-		rights reserved.</div>
-</footer>
+</body>
 </html>

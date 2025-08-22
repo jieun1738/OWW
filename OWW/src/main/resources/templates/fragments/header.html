@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
-<header>
-	<!-- tsparticles container -->
-	<div id="tsparticles"></div>
-	<h1 class="logo">
-		<a href="#">
-			<img src="/img/demo.png" alt="프로필" class="logo">
-		</a>
-	</h1>
-</header>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!-- 파라미터: active (현재 메뉴) -->
+	<div th:fragment="siteHeader(active)">
+		<header class="site-header">
+			<div class="site-header__inner">
+				<h1 class="brand">
+					<a th:href="@{/}">
+						<img src="/img/demo.png" alt="프로필" class="logo">
+					</a>
+				</h1>
+				<div id="tsparticles" class="site-header__fx" aria-hidden="true"></div>
+			</div>
+		</header>
 
-<!-- header 애니메이션 script -->
 <script>
 tsParticles.load("tsparticles", {
   particles: {
@@ -57,5 +59,6 @@ tsParticles.load("tsparticles", {
   }
 });
 </script>
-
+</div>
+</body>
 </html>
