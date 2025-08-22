@@ -2,7 +2,7 @@ package com.wedding.oww.vo;
 
 import lombok.*;
 
-@Getter @Setter
+@Data
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class PlanVO {
     private Long planNo;
