@@ -7,7 +7,7 @@ import lombok.Data;
 public class DraftItemDTO {
     private Integer category;     // 0~3
     private String categoryName;  // 라벨
-    private Long productNo;
+    private int productNo;
     private String productName;
     private Integer cost;
     private String img;

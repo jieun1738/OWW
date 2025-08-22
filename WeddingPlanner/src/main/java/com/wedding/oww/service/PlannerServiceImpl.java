@@ -111,9 +111,9 @@ public class PlannerServiceImpl implements PlannerService {
             // 대표 썸네일: 홀 이미지 우선, 없으면 첫 제품
             String thumb = null;
             if (pl.getHall() != null) {
-                ProductVO hall = prods.stream()
-                        .filter(p -> p.getProductNo().equals(pl.getHall()))
-                        .findFirst().orElse(null);
+            	ProductVO hall = prods.stream()
+            	        .filter(p -> pl.getHall() != null && (long) p.getProductNo() == pl.getHall())
+            	        .findFirst().orElse(null);
                 if (hall != null) thumb = hall.getImg();
             }
             if (thumb == null && !prods.isEmpty()) {
