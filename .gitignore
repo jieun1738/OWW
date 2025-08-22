@@ -2,3 +2,17 @@
 mypage (2).zip
 mypage.zip
 mypage+munubar.zip
+
+target/
+build/
+*.class
+*.jar
+*.war
+.settings/
+.project
+.classpath
+bin/
+
+# 보안 파일 제외
+oww_loginService/src/main/resources/application.properties
+

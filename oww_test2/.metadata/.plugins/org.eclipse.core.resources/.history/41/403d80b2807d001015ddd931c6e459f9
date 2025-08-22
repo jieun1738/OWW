@@ -1,0 +1,150 @@
+// ========================================
+// auth.js - 인증 관련 JS
+// ========================================
+
+// ======================
+// 유틸 함수
+// ======================
+
+// 쿠키 가져오기
+function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+}
+
+// 쿠키 삭제
+function deleteCookie(name) {
+    document.cookie = name + '=; Max-Age=0; path=/';
+}
+
+// Base64 디코딩 (UTF-8 대응)
+function b64DecodeUnicode(str) {
+    return decodeURIComponent(atob(str).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+
+// ======================
+// UI 토글 함수
+// ======================
+function showLoggedInState() {
+    document.getElementById('logged-in-section').style.display = 'block';
+    document.getElementById('logged-out-section').style.display = 'none';
+    document.getElementById('service-cards').style.display = 'block';
+    document.getElementById('login-notice').style.display = 'none';
+}
+
+function showLoggedOutState() {
+    document.getElementById('logged-in-section').style.display = 'none';
+    document.getElementById('logged-out-section').style.display = 'block';
+    document.getElementById('service-cards').style.display = 'none';
+    document.getElementById('login-notice').style.display = 'block';
+}
+
+// 사용자 정보 업데이트
+function updateUserInfo(name, email) {
+    document.getElementById('user-name-header').textContent = name + '님';
+    document.getElementById('user-name-display').textContent = name;
+    document.getElementById('user-name-display2').textContent = name;
+    document.getElementById('modal-user-name').textContent = name;
+    document.getElementById('user-email-display').textContent = email;
+}
+
+// ======================
+// 로그인/로그아웃
+// ======================
+function login() {
+    window.location.href = '/auth/oauth2/authorization/google';
+}
+
+function logout() {
+    deleteCookie('jwt-token');
+    showLoggedOutState();
+    updateUserInfo('사용자', 'user@example.com');
+}
+
+/// ======================
+// 로그인 상태 확인
+// ======================
+function checkLoginStatus() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginSuccess = urlParams.get('login');
+
+    const token = getCookie('jwt-token');
+    if (token) {
+        try {
+            const payloadStr = b64DecodeUnicode(token.split('.')[1]);
+            const payload = JSON.parse(payloadStr);
+            const userName = payload.username || payload.name || '사용자';
+            const userEmail = payload.sub || payload.email || 'user@example.com';
+            updateUserInfo(userName, userEmail);
+
+            // 로그인 UI 표시
+            showLoggedInState();
+
+            // 계좌 정보 로드 (정의되어 있으면)
+            if (typeof loadAccountInfo === 'function') {
+                loadAccountInfo();
+            }
+
+            if (loginSuccess === 'success') {
+                showWelcomeModal(userName);
+                // 주소창에서 login 파라미터 제거
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        } catch(e) {
+            console.error('JWT 파싱 오류:', e);
+            showLoggedInState(); // 예외 발생해도 로그인 UI 유지
+            updateUserInfo('사용자', 'user@example.com');
+        }
+    } else {
+        showLoggedOutState();
+    }
+}
+
+
+// ======================
+// 웰컴 모달
+// ======================
+function showWelcomeModal(userName) {
+    const modal = document.getElementById('welcome-modal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+function closeWelcomeModal() {
+    const modal = document.getElementById('welcome-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// ======================
+// DOMContentLoaded 이벤트
+// ======================
+document.addEventListener('DOMContentLoaded', () => {
+    // 로그인 상태 확인
+    checkLoginStatus();
+
+    // 인증 버튼 이벤트 (.auth-btn)
+    document.querySelectorAll('.auth-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = btn.dataset.url;
+            const redirect = btn.dataset.redirect;
+
+            fetch(url, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('인증 필요 또는 에러 발생');
+                window.location.href = redirect;
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+        });
+    });
+});

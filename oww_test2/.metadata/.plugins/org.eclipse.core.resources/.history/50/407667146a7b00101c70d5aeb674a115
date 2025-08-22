@@ -1,0 +1,25 @@
+package com.oww.gateway.config;
+
+import com.oww.gateway.filter.JwtAuthenticationFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class GatewayFilterConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public GatewayFilterConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    // ✅ JwtAuthenticationFilter가 @Component로 등록되어 있다면 이 설정은 불필요
+    // 하지만 혹시 Bean 등록 문제가 있다면 아래 코드 추가
+    
+    /*
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+    */
+}

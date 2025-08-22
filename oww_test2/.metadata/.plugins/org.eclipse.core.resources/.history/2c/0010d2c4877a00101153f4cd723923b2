@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Own Wedding Wallet</title>
+    <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">Own Wedding Wallet</h1>
+            <div class="auth-section">
+                <div id="logged-out-section" style="display: none;">
+                    <button onclick="login()" class="login-btn">로그인</button>
+                </div>
+                <div id="logged-in-section" style="display: none;">
+                    <span id="user-name-header">사용자님</span>
+                    <button onclick="logout()" class="logout-btn">로그아웃</button>
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            <div class="nav-item">
+                <a href="/banking/banking_main" class="nav-link">뱅킹서비스</a>
+                <div class="dropdown">
+                    <a href="/banking/banking_createAccount">계좌생성</a>
+                    <a href="/banking/banking_transfer_1">이체</a>
+                    <a href="/banking/banking_safebox">세이프박스</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#wedding" class="nav-link">웨딩플래너</a>
+                <div class="dropdown">
+                    <a href="#">추천테마</a>
+                    <a href="#">DIY</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#loan" class="nav-link">대출</a>
+                <div class="dropdown">
+                    <a href="#">대출상품</a>
+                    <a href="#">대출상환</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a href="#mypage" class="nav-link">마이페이지</a>
+            </div>
+        </nav>
+
+        <!-- 로그인 전 안내 메시지 -->
+        <section id="login-notice" class="login-notice" style="display: none;">
+            <div class="notice-card">
+                <h2>🔒 로그인이 필요합니다</h2>
+                <p>Own Wedding Wallet의 모든 서비스를 이용하시려면 먼저 로그인해주세요.</p>
+                <button onclick="login()" class="big-login-btn">Google로 로그인하기</button>
+            </div>
+        </section>
+
+        <!-- 로그인 후 서비스 카드들 -->
+        <section id="service-cards" class="service-cards" style="display: none;">
+            <article class="service-card">
+                <div class="service-card-left">
+                    <h1><span id="user-name-display">사용자</span>님의 통장</h1>
+                    <h2>123-4567-89012</h2>
+                    <div class="balance-text">
+                        잔액: <span class="balance-amount">₩1,234,567</span>
+                    </div>
+                    <h3>이메일: <span id="user-email-display">user@example.com</span></h3>
+                </div>
+
+                <div class="service-card-right">
+                    <button class="history-btn" onclick="location.href='/banking/banking_transfer_1'">이체하기</button>
+                    <button class="history-btn" onclick="alert('내역조회 준비중')">내역조회</button>
+                </div>
+            </article>
+
+            <article class="service-card">
+                <div class="service-card-left">
+                    <h1><span id="user-name-display2">사용자</span>님의 세이프박스</h1>
+                    <div class="balance-text">
+                        잔액: <span class="balance-amount">₩5,000,000</span>
+                    </div>
+                </div>
+                
+                <div class="service-card-right">
+                    <button class="history-btn" onclick="location.href='/banking/banking_safebox'">관리하기</button>
+                </div>
+            </article>
+        </section>
+
+        <footer>&copy; 2025 Own Wedding Wallet. All rights reserved.</footer>
+    </div>
+
+    <!-- 환영 모달 -->
+    <div id="welcome-modal" class="welcome-modal">
+        <h2>🎉 환영합니다!</h2>
+        <p><span id="modal-user-name">사용자</span>님, Own Wedding Wallet에 오신 것을 환영합니다.</p>
+        <button onclick="closeWelcomeModal()">시작하기</button>
+    </div>
+
+    <script>
+        // 페이지 로드 시 로그인 상태 확인
+        window.onload = function() {
+            checkLoginStatus();
+        };
+
+        // 로그인 상태 확인
+        function checkLoginStatus() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const loginSuccess = urlParams.get('login');
+            
+            // URL에서 login=success 파라미터 제거
+            if (loginSuccess) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // 쿠키에서 JWT 토큰 확인
+            const token = getCookie('jwt-token');
+            
+            if (token) {
+                // 로그인된 상태
+                showLoggedInState();
+                
+                // JWT에서 사용자 정보 추출
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const userName = payload.name || payload.username || '사용자';
+                    const userEmail = payload.email || payload.sub || 'user@example.com';
+                    
+                    // 사용자 정보 표시
+                    updateUserInfo(userName, userEmail);
+                    
+                    console.log('✅ 로그인 상태 확인됨:', userName, userEmail);
+                    
+                    if (loginSuccess === 'success') {
+                        showWelcomeModal(userName);
+                    }
+                } catch (e) {
+                    console.error('JWT 파싱 오류:', e);
+                    // 토큰이 있지만 파싱 실패시에도 로그인 상태 유지
+                    showLoggedInState();
+                    updateUserInfo('사용자', 'user@example.com');
+                }
+            } else {
+                // 로그인되지 않은 상태
+                showLoggedOutState();
+            }
+        }
+
+        // 사용자 정보 업데이트
+        function updateUserInfo(userName, userEmail) {
+            document.getElementById('user-name-header').textContent = userName + '님';
+            document.getElementById('user-name-display').textContent = userName;
+            document.getElementById('user-name-display2').textContent = userName;
+            document.getElementById('user-email-display').textContent = userEmail;
+            document.getElementById('modal-user-name').textContent = userName;
+        }
+
+        // 로그인된 상태 UI 표시
+        function showLoggedInState() {
+            document.getElementById('logged-out-section').style.display = 'none';
+            document.getElementById('logged-in-section').style.display = 'flex';
+            document.getElementById('login-notice').style.display = 'none';
+            document.getElementById('service-cards').style.display = 'flex';
+        }
+
+        // 로그인되지 않은 상태 UI 표시
+        function showLoggedOutState() {
+            document.getElementById('logged-out-section').style.display = 'block';
+            document.getElementById('logged-in-section').style.display = 'none';
+            document.getElementById('login-notice').style.display = 'block';
+            document.getElementById('service-cards').style.display = 'none';
+        }
+
+        // 환영 모달 표시
+        function showWelcomeModal(userName) {
+            const modal = document.getElementById('welcome-modal');
+            modal.classList.add('show');
+        }
+
+        // 환영 모달 닫기
+        function closeWelcomeModal() {
+            const modal = document.getElementById('welcome-modal');
+            modal.classList.remove('show');
+        }
+
+        // 로그인 함수
+        function login() {
+            // Login 서비스로 리다이렉트
+            window.location.href = '/auth/oauth2/authorization/google';
+        }
+
+        // 로그아웃 함수
+        function logout() {
+            // 쿠키 삭제
+            deleteCookie('jwt-token');
+            
+            // 로그아웃 상태로 변경
+            showLoggedOutState();
+            
+            // 사용자 정보 초기화
+            updateUserInfo('사용자', 'user@example.com');
+            
+            console.log('👋 로그아웃되었습니다.');
+        }
+
+        // 쿠키 가져오기
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // 쿠키 삭제
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+        }
+
+        // 잔액 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const balanceElements = document.querySelectorAll('.balance-amount');
+            
+            balanceElements.forEach(element => {
+                const targetValue = parseInt(element.textContent.replace(/[^\d]/g, ''));
+                let currentValue = 0;
+                const increment = targetValue / 50;
+                
+                const updateBalance = () => {
+                    currentValue += increment;
+                    if (currentValue < targetValue) {
+                        element.textContent = formatCurrency(Math.floor(currentValue));
+                        requestAnimationFrame(updateBalance);
+                    } else {
+                        element.textContent = formatCurrency(targetValue);
+                    }
+                };
+                
+                // 로그인 상태일 때만 애니메이션 실행
+                if (document.getElementById('service-cards').style.display !== 'none') {
+                    updateBalance();
+                }
+            });
+        });
+
+        // 통화 포맷
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW'
+            }).format(amount);
+        }
+    </script>
+</body>
+</html>

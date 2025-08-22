@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Own Wedding Wallet</title>
+<link rel="stylesheet" href="/css/main.css" />
+<style>
+/* 환영 모달 전체 */
+.welcome-modal {
+	display: none; /* 초기에는 숨김 */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	justify-content: center; /* 중앙정렬 */
+	align-items: center; /* 중앙정렬 */
+	z-index: 2000; /* 최상단 */
+	text-align: center;
+}
+
+/* 모달 보이기 */
+.welcome-modal.show {
+	display: flex;
+}
+
+/* 모달 박스 */
+.welcome-modal .modal-content {
+	background: #fff;
+	padding: 40px;
+	border-radius: 20px;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	max-width: 400px;
+	width: 90%;
+	text-align: center;
+	font-family: 'Noto Sans KR', 'Segoe UI', sans-serif; /* 한글 폰트 */
+}
+
+/* 버튼 스타일 */
+.welcome-modal .modal-content button {
+	margin-top: 20px;
+	padding: 12px 30px;
+	background: #ff726f; /* main.css 버튼 색상과 통일 */
+	color: #fff;
+	border: none;
+	border-radius: 20px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.3s ease;
+}
+
+.welcome-modal .modal-content button:hover {
+	background: #ff5a57;
+	transform: translateY(-2px);
+	box-shadow: 0 5px 15px rgba(255, 114, 111, 0.3);
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1 class="logo">Own Wedding Wallet</h1>
+			<div class="auth-section">
+				<div id="logged-out-section" style="display: none;">
+					<button onclick="login()" class="login-btn">로그인</button>
+				</div>
+				<div id="logged-in-section" style="display: none;">
+					<span id="user-name-header">사용자님</span>
+					<button onclick="logout()" class="logout-btn">로그아웃</button>
+				</div>
+			</div>
+		</header>
+
+		<nav>
+			<div class="nav-item">
+				<a href="/banking/banking_main" class="nav-link">뱅킹서비스</a>
+				<div class="dropdown">
+					<a href="/banking/banking_createAccount">계좌생성</a> <a
+						href="/banking/banking_transfer_1">이체</a> <a
+						href="/banking/banking_safebox">세이프박스</a>
+				</div>
+			</div>
+			<div class="nav-item">
+				<a href="#wedding" class="nav-link">웨딩플래너</a>
+				<div class="dropdown">
+					<a href="#">추천테마</a> <a href="#">DIY</a>
+				</div>
+			</div>
+			<div class="nav-item">
+				<a href="#loan" class="nav-link">대출</a>
+				<div class="dropdown">
+					<a href="#">대출상품</a> <a href="#">대출상환</a>
+				</div>
+			</div>
+			<div class="nav-item">
+				<a href="#mypage" class="nav-link">마이페이지</a>
+			</div>
+		</nav>
+
+		<section id="login-notice" class="login-notice" style="display: none;">
+			<div class="notice-card">
+				<h2>🔒 로그인이 필요합니다</h2>
+				<p>Own Wedding Wallet의 모든 서비스를 이용하시려면 먼저 로그인해주세요.</p>
+				<button onclick="login()" class="big-login-btn">Google로
+					로그인하기</button>
+			</div>
+		</section>
+
+		<section id="service-cards" class="service-cards"
+			style="display: none;">
+			<article class="service-card">
+				<div class="service-card-left">
+					<h1>
+						<span id="user-name-display">사용자</span>님의 통장
+					</h1>
+					<h2>123-4567-89012</h2>
+					<div class="balance-text">
+						잔액: <span class="balance-amount">₩1,234,567</span>
+					</div>
+					<h3>
+						이메일: <span id="user-email-display">user@example.com</span>
+					</h3>
+				</div>
+
+				<div class="service-card-right">
+					<button class="history-btn"
+						onclick="location.href='/banking/banking_transfer_1'">이체하기</button>
+					<button class="history-btn" onclick="alert('내역조회 준비중')">내역조회</button>
+				</div>
+			</article>
+
+			<article class="service-card">
+				<div class="service-card-left">
+					<h1>
+						<span id="user-name-display2">사용자</span>님의 세이프박스
+					</h1>
+					<div class="balance-text">
+						잔액: <span class="balance-amount">₩5,000,000</span>
+					</div>
+				</div>
+				<div class="service-card-right">
+					<button class="history-btn"
+						onclick="location.href='/banking/banking_safebox'">관리하기</button>
+				</div>
+			</article>
+		</section>
+
+		<footer>&copy; 2025 Own Wedding Wallet. All rights reserved.</footer>
+	</div>
+
+	<div id="welcome-modal" class="welcome-modal">
+		<div class="modal-content">
+			<h2>🎉 환영합니다!</h2>
+			<p>
+				<span id="modal-user-name">사용자</span>님, Own Wedding Wallet에 오신 것을
+				환영합니다.
+			</p>
+			<button onclick="closeWelcomeModal()">시작하기</button>
+		</div>
+	</div>
+
+	<script>
+    // 페이지 로드 시 로그인 상태 확인
+    window.onload = function() { checkLoginStatus(); };
+
+    function checkLoginStatus() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const loginSuccess = urlParams.get('login');
+
+        if (loginSuccess) window.history.replaceState({}, document.title, window.location.pathname);
+
+        const token = getCookie('jwt-token');
+        if (token) {
+            showLoggedInState();
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const userName = payload.name || payload.username || '사용자';
+                const userEmail = payload.email || payload.sub || 'user@example.com';
+                updateUserInfo(userName, userEmail);
+                if (loginSuccess === 'success') showWelcomeModal(userName);
+            } catch(e) {
+                console.error('JWT 파싱 오류:', e);
+                updateUserInfo('사용자', 'user@example.com');
+            }
+        } else {
+            showLoggedOutState();
+        }
+    }
+
+    function updateUserInfo(userName, userEmail) {
+        document.getElementById('user-name-header').textContent = userName + '님';
+        document.getElementById('user-name-display').textContent = userName;
+        document.getElementById('user-name-display2').textContent = userName;
+        document.getElementById('user-email-display').textContent = userEmail;
+        document.getElementById('modal-user-name').textContent = userName;
+    }
+
+    function showLoggedInState() {
+        document.getElementById('logged-out-section').style.display = 'none';
+        document.getElementById('logged-in-section').style.display = 'flex';
+        document.getElementById('login-notice').style.display = 'none';
+        document.getElementById('service-cards').style.display = 'flex';
+    }
+
+    function showLoggedOutState() {
+        document.getElementById('logged-out-section').style.display = 'block';
+        document.getElementById('logged-in-section').style.display = 'none';
+        document.getElementById('login-notice').style.display = 'block';
+        document.getElementById('service-cards').style.display = 'none';
+    }
+
+    function showWelcomeModal(userName) {
+        const modal = document.getElementById('welcome-modal');
+        modal.classList.add('show');
+    }
+
+    function closeWelcomeModal() {
+        document.getElementById('welcome-modal').classList.remove('show');
+    }
+
+    function login() {
+        window.location.href = '/auth/oauth2/authorization/google';
+    }
+
+    function logout() {
+        deleteCookie('jwt-token');
+        showLoggedOutState();
+        updateUserInfo('사용자', 'user@example.com');
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function deleteCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+package oww.banking.vo;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import lombok.Data;
+
+@Data
+public class SafeboxGoalVO {
+	    private int safeboxId;
+	    private String userEmail;
+	    private BigDecimal balance;
+	    private LocalDateTime createdAt;
+}

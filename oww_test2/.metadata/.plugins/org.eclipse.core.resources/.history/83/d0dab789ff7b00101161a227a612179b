@@ -1,0 +1,5 @@
+package oww.banking.service;
+
+public class EmailService {
+
+}

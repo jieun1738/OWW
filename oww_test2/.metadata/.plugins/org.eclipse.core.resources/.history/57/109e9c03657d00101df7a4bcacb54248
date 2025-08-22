@@ -1,0 +1,63 @@
+// ========================================
+// 계좌 관련 함수들
+// ========================================
+
+function loadAccountInfo() {
+    fetch('http://localhost:8201/api/banking/api/account', {
+        method: 'GET',
+        credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // 일반 계좌 처리
+            if (data.hasAccount) {
+                // 계좌 있음 - 실제 데이터 표시
+                document.querySelector('.service-card:first-child .balance-amount').textContent =
+                    `₩${data.balance.toLocaleString()}`;
+                document.querySelector('.service-card:first-child h2').textContent =
+                    data.accountNumber;
+            } else {
+                // 계좌 없음 - 생성 유도 (기존 코드 그대로)
+            }
+            
+            // 세이프박스 처리 (기존 코드 그대로)
+        } else {
+            console.error('API 응답 실패:', data.message);
+        }
+    })
+    .catch(err => {
+        console.error('계좌 정보 로드 실패:', err);
+    });
+}
+
+// 계좌 생성 페이지로 이동
+function goToCreateAccount() {
+    window.location.href = '/banking/createAccount';
+}
+
+// 세이프박스 생성 페이지로 이동
+function goToCreateSafebox() {
+    window.location.href = '/banking/safebox';
+}
+
+// Banking 서비스 버튼 이벤트 설정
+function setupBankingButtons() {
+    document.querySelectorAll('.banking-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = btn.dataset.url;
+            const redirect = btn.dataset.redirect;
+            
+            fetch(url, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('인증 필요');
+                window.location.href = redirect;
+            })
+            .catch(err => alert(err.message));
+        });
+    });
+}

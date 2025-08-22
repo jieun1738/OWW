@@ -1,0 +1,252 @@
+package oww.banking.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import oww.banking.mapper.AccountMapper;
+import oww.banking.mapper.UserMapper;
+import oww.banking.util.BankingJwtUtil;
+import oww.banking.vo.AccountVO;
+import oww.banking.vo.UserVO;
+
+@Service
+@Transactional
+public class AccountService {
+
+    @Autowired
+    private AccountMapper accountMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private EmailService emailService;
+
+    // 이메일 인증번호 저장용 (실제로는 Redis나 DB에 저장하는 것이 좋음)
+    private Map<String, String> emailVerificationCodes = new HashMap<>();
+
+    @Autowired
+    private BankingJwtUtil jwtUtil; // JWT 유틸
+
+    public Map<String, Object> login(String email, int password) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            UserVO user = userMapper.findByEmail(email);
+            if (user != null && verifyAccountPassword(user.getUserNo(), password)) {
+                // 수정된 부분: username 인자 추가
+                String token = jwtUtil.generateToken((long)user.getUserNo(), user.getUsername(), user.getRole());
+                result.put("success", true);
+                result.put("message", "로그인 성공");
+                result.put("token", token);
+            } else {
+                result.put("success", false);
+                result.put("message", "로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "로그인 중 오류 발생: " + e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 계좌 생성
+     * @param name 이름
+     * @param birth 생년월일
+     * @param email 이메일
+     * @param password 계좌 비밀번호
+     * @param emailCode 이메일 인증번호
+     * @return 생성 결과 메시지
+     */
+    public String createAccount(String name, String birth, String email, int password, String emailCode) {
+        try {
+            // 1. 이메일 인증번호 확인
+            if (!verifyEmailCode(email, emailCode)) {
+                return "이메일 인증번호가 올바르지 않습니다.";
+            }
+
+            // 2. 이미 계좌가 존재하는지 확인
+            if (accountMapper.existsByEmail(email)) {
+                return "이미 계좌가 존재하는 이메일입니다.";
+            }
+
+            // 3. 사용자 정보 확인/생성 (UserMapper 필요)
+            UserVO user = userMapper.findByEmail(email);
+            if (user == null) {
+                // 새 사용자 생성
+                user = new UserVO();
+                user.setUserEmail(email);
+                user.setUsername(name); // 이름(username) 설정
+                user.setActive(true);
+                user.setRole("USER");
+                userMapper.createUser(user);
+            }
+
+            // 4. 계좌 생성
+            AccountVO account = new AccountVO();
+            account.setUserEmail(email);
+            account.setAccountName(name + "의 계좌");
+            account.setBalance(0); // 초기 잔액 0원
+            account.setAccountPassword(password);
+
+            int result = accountMapper.createAccount(account);
+            
+            if (result > 0) {
+                // 인증번호 삭제 (사용 완료)
+                emailVerificationCodes.remove(email);
+                return "계좌가 성공적으로 생성되었습니다.";
+            } else {
+                return "계좌 생성에 실패했습니다.";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "계좌 생성 중 오류가 발생했습니다: " + e.getMessage();
+        }
+    }
+
+    /**
+     * 이메일 인증번호 발송 - 개선된 버전
+     * @param email 이메일 주소
+     * @return 발송 결과 메시지
+     */
+    public String sendEmailVerification(String email) {
+        try {
+            System.out.println("📧 이메일 인증번호 발송 시작: " + email);
+            
+            // 1. 이메일 유효성 검사
+            if (email == null || email.trim().isEmpty() || !email.contains("@")) {
+                System.out.println("❌ 잘못된 이메일 형식: " + email);
+                throw new IllegalArgumentException("유효하지 않은 이메일 주소입니다.");
+            }
+            
+            // 2. 6자리 랜덤 인증번호 생성
+            String code = generateVerificationCode();
+            System.out.println("✅ 인증번호 생성 완료: " + code);
+            
+            // 3. 인증번호 저장
+            emailVerificationCodes.put(email, code);
+            System.out.println("✅ 인증번호 저장 완료");
+            
+            // 4. EmailService가 null인지 확인
+            if (emailService == null) {
+                System.out.println("❌ EmailService가 주입되지 않았습니다!");
+                throw new RuntimeException("EmailService가 초기화되지 않았습니다.");
+            }
+            
+            // 5. 실제 이메일 발송
+            System.out.println("📧 EmailService.sendVerificationEmail 호출 중...");
+            emailService.sendVerificationEmail(email, code, null);
+            System.out.println("✅ 이메일 발송 완료!");
+            
+            return "인증번호가 이메일로 발송되었습니다.";
+            
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ 입력값 오류: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.out.println("❌ 이메일 발송 실패: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            e.printStackTrace();
+            
+            // 구체적인 오류 메시지 제공
+            if (e.getMessage() != null) {
+                if (e.getMessage().contains("Authentication failed")) {
+                    return "이메일 인증 설정에 문제가 있습니다. 관리자에게 문의하세요.";
+                } else if (e.getMessage().contains("Mail server connection failed")) {
+                    return "메일 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.";
+                }
+            }
+            
+            return "인증번호 발송에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        }
+    }
+
+    /**
+     * 이메일 인증번호 확인
+     * @param email 이메일
+     * @param inputCode 입력된 인증번호
+     * @return 인증 성공 여부
+     */
+    public boolean verifyEmailCode(String email, String inputCode) {
+        String storedCode = emailVerificationCodes.get(email);
+        return storedCode != null && storedCode.equals(inputCode);
+    }
+
+    /**
+     * 6자리 랜덤 인증번호 생성
+     * @return 인증번호
+     */
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000); // 100000~999999
+        return String.valueOf(code);
+    }
+
+    /**
+     * 이메일로 계좌 조회
+     * @param email 이메일
+     * @return 계좌 정보
+     */
+    public AccountVO getAccountByEmail(String email) {
+        return accountMapper.findAccountByEmail(email);
+    }
+
+    /**
+     * 계좌 ID로 계좌 조회
+     * @param accountId 계좌 ID
+     * @return 계좌 정보
+     */
+    public AccountVO getAccountById(int accountId) {
+        return accountMapper.findAccountById(accountId);
+    }
+
+    /**
+     * 계좌 비밀번호 확인
+     * @param accountId 계좌 ID
+     * @param password 비밀번호
+     * @return 확인 결과
+     */
+    public boolean verifyAccountPassword(int accountId, int password) {
+        return accountMapper.verifyPassword(accountId, password);
+    }
+    
+    // 이메일 기반으로 비밀번호 확인
+    public boolean verifyAccountPassword(long userNo, int password) {
+        return userMapper.verifyPassword(userNo, password);
+    }
+
+    /**
+     * 계좌 잔액 업데이트
+     * @param accountId 계좌 ID
+     * @param newBalance 새로운 잔액
+     * @return 업데이트 성공 여부
+     */
+    public boolean updateBalance(int accountId, int newBalance) {
+        int result = accountMapper.updateBalance(accountId, newBalance);
+        return result > 0;
+    }
+
+    /**
+     * 모든 계좌 조회 (관리자용)
+     * @return 모든 계좌 목록
+     */
+    public List<AccountVO> getAllAccounts() {
+        return accountMapper.findAllAccounts();
+    }
+
+    /**
+     * 계좌 존재 여부 확인
+     * @param email 이메일
+     * @return 존재 여부
+     */
+    public boolean isAccountExists(String email) {
+        return accountMapper.existsByEmail(email);
+    }
+}

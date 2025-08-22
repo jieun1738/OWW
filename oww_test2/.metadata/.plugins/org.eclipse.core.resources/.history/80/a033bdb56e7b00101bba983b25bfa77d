@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>계좌 개설</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap"
+	rel="stylesheet" />
+<link rel="stylesheet" href="/css/account_css.css" />
+<link rel="stylesheet" href="/css/page.css" />
+
+<style>
+/* page.css의 body 스타일을 이 페이지에서만 오버라이드 */
+body {
+	display: block !important; /* flex를 block으로 변경 */
+	justify-content: initial !important;
+	align-items: initial !important;
+}
+
+.container {
+	width: 600px !important; /* 크기 키우기 */
+	margin: 50px auto !important; /* 가운데 정렬 */
+}
+</style>
+</head>
+
+<body>
+
+	<header>
+		<h1 class="logo">Own Wedding Wallet</h1>
+	</header>
+
+	<nav>
+		<div class="nav-item">
+			<a href="/banking_main" class="nav-link">뱅킹서비스</a>
+			<div class="dropdown">
+				<a href="/createAccount">계좌생성</a> <a href="banking_transfer_1">이체</a>
+				<a href="banking_safebox">세이프박스</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#wedding" class="nav-link">웨딩플래너</a>
+			<div class="dropdown">
+				<a href="#">추천테마</a> <a href="#">DIY</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#loan" class="nav-link">대출</a>
+			<div class="dropdown">
+				<a href="#">대출상품</a> <a href="#">대출상환</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#mypage" class="nav-link">마이페이지</a>
+		</div>
+	</nav>
+
+	<!-- 전체 입력폼을 form으로 감싸기 -->
+	<form action="/account/create" method="post">
+		<section class="container" role="main" aria-label="계좌 개설 폼">
+			<h2>계좌 개설</h2>
+
+			<article class="section">
+				<label for="name">이름</label> <input type="text" id="name"
+					name="name" placeholder="홍길동" autocomplete="name" required />
+			</article>
+
+			<article class="section">
+				<label for="birth">생년월일 (6자리)</label> <input type="text" id="birth"
+					name="birth" placeholder="950101" maxlength="6" pattern="\d{6}"
+					title="6자리 숫자 입력" autocomplete="bday" required />
+			</article>
+
+			<article class="section">
+				<label for="email">이메일 주소</label> <input type="email" id="email"
+					name="email" placeholder="example@email.com" autocomplete="email"
+					required />
+			</article>
+
+			<article class="section">
+				<button type="button" onclick="sendEmailVerification()"
+					style="width: 100%;">인증 이메일 발송</button>
+			</article>
+
+			<article class="section" id="emailVerifySection"
+				style="display: none;">
+				<label for="emailCode">인증번호 입력</label> <input type="text"
+					id="emailCode" name="emailCode" placeholder="6자리 입력" maxlength="6" />
+				<button type="button" onclick="verifyEmailCode()"
+					style="margin-top: 8px; width: 100%;">✅ 인증 확인</button>
+			</article>
+
+			<article class="section">
+				<label for="passwordInput">계좌 비밀번호 (숫자 4자리)</label>
+				<div id="passwordDisplay" class="password-box" tabindex="0"
+					aria-label="계좌 비밀번호 입력창" role="textbox" aria-readonly="true"
+					onclick="showKeypad()" onkeydown="preventTyping(event)">● ● ●
+					●</div>
+				<input type="hidden" id="passwordInput" name="password"
+					maxlength="4" required />
+				<div class="keypad" id="keypad" aria-label="숫자 키패드"
+					style="display: none;">
+					<button type="button" onclick="addNumber('1')">1</button>
+					<button type="button" onclick="addNumber('2')">2</button>
+					<button type="button" onclick="addNumber('3')">3</button>
+					<button type="button" onclick="addNumber('4')">4</button>
+					<button type="button" onclick="addNumber('5')">5</button>
+					<button type="button" onclick="addNumber('6')">6</button>
+					<button type="button" onclick="addNumber('7')">7</button>
+					<button type="button" onclick="addNumber('8')">8</button>
+					<button type="button" onclick="addNumber('9')">9</button>
+					<button type="button" onclick="hideKeypad()">취소</button>
+					<button type="button" onclick="addNumber('0')">0</button>
+					<button type="button" onclick="removeNumber()">삭제</button>
+				</div>
+			</article>
+
+			<article class="section">
+				<div class="terms-inline">
+					<input type="checkbox" id="agree" name="agree" required /> <label
+						for="agree">약관에 동의합니다.</label> <a href="#"
+						onclick="openModal(event)" class="terms-link">[약관 보기]</a>
+				</div>
+			</article>
+
+			<article class="section">
+				<button class="submit-btn" type="submit">계좌 개설하기</button>
+			</article>
+
+		</section>
+	</form>
+
+
+	<!-- 약관 모달 -->
+	<div id="termsModal" class="modal" role="dialog" aria-modal="true"
+		aria-labelledby="modalTitle" aria-describedby="modalDesc">
+		<div class="modal-content">
+			<span class="close" onclick="closeModal()" aria-label="모달 닫기">&times;</span>
+			<h3 id="modalTitle">계좌 개설 약관</h3>
+			<div id="modalDesc">
+				<p>본인은 계좌 개설에 필요한 모든 정보를 사실대로 입력하였으며, 전자금융거래법 및 관련 법률에 따라 제공되는
+					서비스를 이용함에 있어 아래 약관에 동의합니다.</p>
+				<h4>제1조 (목적)</h4>
+				<p>...</p>
+				<h4>제2조 (개인정보의 수집 및 이용)</h4>
+				<p>...</p>
+				<h4>제3조 (계좌 이용 및 해지)</h4>
+				<p>...</p>
+				<h4>제4조 (비밀번호 보호)</h4>
+				<p>...</p>
+			</div>
+		</div>
+	</div>
+
+	<footer> &copy; 2025 Wedding Planner Co. All rights reserved.
+	</footer>
+
+<script src="/js/auth-buttons.js"></script>
+
+	<script >
+		window.onload = function() {
+			// 키패드 자동 열림 방지
+			document.activeElement.blur();
+		};
+
+		const passwordInput = document.getElementById("passwordInput");
+		const passwordDisplay = document.getElementById("passwordDisplay");
+		const keypad = document.getElementById("keypad");
+
+		function showKeypad() {
+			keypad.style.display = "grid";
+		}
+		function hideKeypad() {
+			keypad.style.display = "none";
+		}
+		function updateDisplay() {
+			const length = passwordInput.value.length;
+			let display = "";
+			for (let i = 0; i < 4; i++) {
+				display += i < length ? "● " : "• ";
+			}
+			passwordDisplay.textContent = display.trim();
+		}
+		function addNumber(num) {
+			if (passwordInput.value.length < 4) {
+				passwordInput.value += num;
+				updateDisplay();
+			}
+		}
+		function removeNumber() {
+			passwordInput.value = passwordInput.value.slice(0, -1);
+			updateDisplay();
+		}
+		function preventTyping(event) {
+			event.preventDefault();
+		}
+		function openModal(e) {
+			e.preventDefault();
+			document.getElementById("termsModal").style.display = "flex";
+		}
+		function closeModal() {
+			document.getElementById("termsModal").style.display = "none";
+		}
+		function submitForm() {
+			if (passwordInput.value.length !== 4) {
+				alert("비밀번호 4자리를 입력해주세요.");
+				showKeypad();
+				passwordDisplay.focus();
+				return false;
+			}
+			if (!document.getElementById("agree").checked) {
+				alert("약관에 동의해야 계좌를 개설할 수 있습니다.");
+				return false;
+			}
+			alert("계좌 개설이 완료되었습니다!");
+			return true;
+		}
+		updateDisplay();
+		passwordDisplay.addEventListener("keydown", preventTyping);
+
+		function sendEmailVerification() {
+			const email = document.getElementById("email").value;
+			if (!email || !email.includes("@")) {
+				alert("유효한 이메일 주소를 입력하세요.");
+				return;
+			}
+			alert("인증 이메일이 발송되었습니다.");
+			document.getElementById("emailVerifySection").style.display = "block";
+		}
+
+		function verifyEmailCode() {
+			const code = document.getElementById("emailCode").value;
+			if (code === "123456") {
+				alert("이메일 인증이 완료되었습니다.");
+			} else {
+				alert("인증번호가 올바르지 않습니다.");
+			}
+		}
+	</script>
+
+</body>
+</html>

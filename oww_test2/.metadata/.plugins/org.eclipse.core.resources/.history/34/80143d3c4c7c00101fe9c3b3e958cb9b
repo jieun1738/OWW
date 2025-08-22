@@ -1,0 +1,111 @@
+package com.oww.gateway.filter;
+
+import com.oww.gateway.util.JwtUtil;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+/**
+ * JWT 토큰을 검증하고 요청 헤더에 사용자 정보를 추가하는 게이트웨이 필터입니다.
+ * @Component 애노테이션을 통해 Spring Bean으로 자동 등록됩니다.
+ */
+@Component("JwtAuthentication")
+public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
+
+    // 필드 주입 대신 final 키워드와 생성자 주입을 사용합니다.
+    private final JwtUtil jwtUtil;
+
+    // JwtUtil을 생성자를 통해 주입받습니다.
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+        super(Config.class);
+        this.jwtUtil = jwtUtil;
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        return (exchange, chain) -> {
+            System.out.println("🔍 Gateway JWT 필터 진입");
+            
+            // 쿠키에서 jwt-token 읽기
+            String cookieToken = exchange.getRequest()
+                    .getCookies()
+                    .getFirst("jwt-token") != null ?
+                    exchange.getRequest()
+                            .getCookies()
+                            .getFirst("jwt-token")
+                            .getValue() : null;
+
+            // Authorization 헤더 가져오기
+            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
+            System.out.println("Authorization 헤더: " + (authHeader != null ? "있음" : "없음"));
+            System.out.println("쿠키 토큰: " + (cookieToken != null ? "있음" : "없음"));
+
+            // 헤더 없으면 쿠키에서 가져오기
+            if ((authHeader == null || !authHeader.startsWith("Bearer ")) && cookieToken != null) {
+                authHeader = "Bearer " + cookieToken;
+                System.out.println("✅ 쿠키에서 JWT 토큰 사용");
+            }
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                System.out.println("❌ JWT 토큰이 없음");
+                return onError(exchange, "Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
+            }
+
+            String token = authHeader.substring(7);
+
+            try {
+                if (!jwtUtil.validateToken(token)) {
+                    System.out.println("❌ JWT 토큰 검증 실패");
+                    return onError(exchange, "Invalid JWT token", HttpStatus.UNAUTHORIZED);
+                }
+
+                String username = jwtUtil.getUsernameFromToken(token);
+                String role = jwtUtil.extractRole(token);
+                String userNo = jwtUtil.extractUserNo(token); // userNo 추출
+
+                System.out.println("✅ JWT 토큰 검증 성공");
+                System.out.println(" - Username: " + username);
+                System.out.println(" - Role: " + role);
+                System.out.println(" - UserNo: " + userNo);
+
+                // Banking 서비스가 기대하는 헤더 추가
+                ServerWebExchange mutatedExchange = exchange.mutate()
+                        .request(r -> r.header("Authorization", "Bearer " + token)
+                                .header("X-User-No", userNo)
+                                .header("X-Username", username)
+                                .header("X-User-Role", role))
+                        .build();
+
+                System.out.println("✅ 헤더 전달 완료 - Banking 서비스로 요청 전달");
+
+                return chain.filter(mutatedExchange);
+
+            } catch (Exception e) {
+                System.err.println("❌ JWT 토큰 처리 중 오류: " + e.getMessage());
+                e.printStackTrace();
+                return onError(exchange, "JWT token validation failed", HttpStatus.UNAUTHORIZED);
+            }
+        };
+    }
+
+    private Mono<Void> onError(ServerWebExchange exchange, String errorMessage, HttpStatus status) {
+        System.out.println("❌ JWT 필터 오류: " + errorMessage);
+        exchange.getResponse().setStatusCode(status);
+        exchange.getResponse().getHeaders().add("Content-Type", "application/json");
+
+        String body = String.format("{\"error\": \"%s\", \"message\": \"%s\"}",
+                status.getReasonPhrase(), errorMessage);
+
+        return exchange.getResponse().writeWith(
+                Mono.just(exchange.getResponse().bufferFactory().wrap(body.getBytes()))
+        );
+    }
+
+    public static class Config {
+    }
+}

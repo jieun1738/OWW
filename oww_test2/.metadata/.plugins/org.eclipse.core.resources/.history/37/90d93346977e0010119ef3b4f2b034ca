@@ -1,0 +1,251 @@
+package oww.banking.controller;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import jakarta.servlet.http.HttpSession;
+import oww.banking.service.AccountService;
+import oww.banking.service.SafeboxService;
+import oww.banking.vo.AccountVO;
+import oww.banking.vo.SafeboxGoalVO;
+import oww.banking.vo.SafeboxHistoryVO;
+import oww.banking.vo.SafeboxVO;
+
+@Controller
+@RequestMapping("/safebox")
+public class SafeboxController {
+
+    @Autowired
+    private SafeboxService safeboxService;
+    
+    @Autowired
+    private AccountService accountService;
+
+    /**
+     * 세이프박스 메인 페이지
+     */
+    @GetMapping("/main")
+    public String safeboxMain(HttpSession session, Model model) {
+        String userEmail = (String) session.getAttribute("userEmail");
+        if (userEmail == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            // 계좌 정보 조회
+            AccountVO account = accountService.getAccountByEmail(userEmail);
+            
+            // 세이프박스 정보 조회
+            SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+            
+            // 총 자산 계산
+            BigDecimal totalAssets = safeboxService.getTotalAssets(userEmail);
+            
+            // 정기저금 목표 리스트 조회
+            List<SafeboxGoalVO> goals = safeboxService.getSavingGoals(userEmail);
+
+            model.addAttribute("account", account);
+            model.addAttribute("safebox", safebox);
+            model.addAttribute("balance", account != null ? account.getBalance() : BigDecimal.ZERO);
+            model.addAttribute("safeboxBalance", safebox != null ? safebox.getBalance() : BigDecimal.ZERO);
+            model.addAttribute("totalAssets", totalAssets);
+            model.addAttribute("goals", goals);
+
+            return "safebox/main"; // 실제 HTML 파일명에 맞게 수정
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "세이프박스 정보를 불러오는 중 오류가 발생했습니다.");
+            return "error";
+        }
+    }
+
+    /**
+     * 세이프박스 금액 설정 (AJAX)
+     */
+    @PostMapping("/setAmount")
+    @ResponseBody
+    public Map<String, Object> setSafeboxAmount(@RequestParam("amount") BigDecimal amount, 
+                                               HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        String userEmail = (String) session.getAttribute("userEmail");
+        
+        if (userEmail == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        try {
+            boolean success = safeboxService.setSafeboxAmount(userEmail, amount);
+            
+            if (success) {
+                result.put("success", true);
+                result.put("message", "세이프박스 금액이 설정되었습니다.");
+                
+                // 업데이트된 잔액 정보 반환
+                AccountVO account = accountService.getAccountByEmail(userEmail);
+                SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+                
+                result.put("accountBalance", account.getBalance());
+                result.put("safeboxBalance", safebox.getBalance());
+            } else {
+                result.put("success", false);
+                result.put("message", "세이프박스 설정에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "오류가 발생했습니다: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    /**
+     * 정기저금통 설정 (AJAX)
+     */
+    @PostMapping("/createGoal")
+    @ResponseBody
+    public Map<String, Object> createSavingGoal(@RequestParam("goalAmount") BigDecimal goalAmount,
+                                               @RequestParam("startDate") String startDateStr,
+                                               @RequestParam("endDate") String endDateStr,
+                                               @RequestParam("cycle") String cycle,
+                                               HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        String userEmail = (String) session.getAttribute("userEmail");
+        
+        if (userEmail == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(startDateStr);
+            LocalDate endDate = LocalDate.parse(endDateStr);
+            
+            // 기본 제목 설정 (실제로는 프론트에서 받아올 수도 있음)
+            String title = "정기저금 목표 - " + goalAmount + "원";
+            
+            boolean success = safeboxService.createSavingGoal(userEmail, title, goalAmount, 
+                                                            startDate, endDate, cycle);
+            
+            if (success) {
+                result.put("success", true);
+                result.put("message", "정기저금통이 설정되었습니다.");
+            } else {
+                result.put("success", false);
+                result.put("message", "정기저금통 설정에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "오류가 발생했습니다: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    /**
+     * 저축 목표 상세 페이지
+     */
+    @GetMapping("/goal/{goalId}")
+    public String goalDetail(@PathVariable("goalId") int goalId, Model model, HttpSession session) {
+        String userEmail = (String) session.getAttribute("userEmail");
+        if (userEmail == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            // 저축 내역 조회
+            List<SafeboxHistoryVO> history = safeboxService.getSavingHistory(goalId);
+            
+            // 총 저축 금액 조회
+            BigDecimal totalSaved = safeboxService.getTotalSavedAmount(goalId);
+
+            model.addAttribute("history", history);
+            model.addAttribute("totalSaved", totalSaved);
+            model.addAttribute("goalId", goalId);
+
+            return "safebox/goal-detail";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "저축 목표 정보를 불러오는 중 오류가 발생했습니다.");
+            return "error";
+        }
+    }
+
+    /**
+     * 사용자의 모든 저축 내역 조회 (AJAX)
+     */
+    @GetMapping("/history")
+    @ResponseBody
+    public Map<String, Object> getAllHistory(HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        String userEmail = (String) session.getAttribute("userEmail");
+        
+        if (userEmail == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        try {
+            List<SafeboxHistoryVO> history = safeboxService.getAllSavingHistory(userEmail);
+            result.put("success", true);
+            result.put("history", history);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "저축 내역을 불러오는 중 오류가 발생했습니다.");
+        }
+
+        return result;
+    }
+
+    /**
+     * 세이프박스 정보 조회 (AJAX)
+     */
+    @GetMapping("/info")
+    @ResponseBody
+    public Map<String, Object> getSafeboxInfo(HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        String userEmail = (String) session.getAttribute("userEmail");
+        
+        if (userEmail == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        try {
+            AccountVO account = accountService.getAccountByEmail(userEmail);
+            SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+            BigDecimal totalAssets = safeboxService.getTotalAssets(userEmail);
+
+            result.put("success", true);
+            result.put("accountBalance", account != null ? account.getBalance() : BigDecimal.ZERO);
+            result.put("safeboxBalance", safebox != null ? safebox.getBalance() : BigDecimal.ZERO);
+            result.put("totalAssets", totalAssets);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "세이프박스 정보를 불러오는 중 오류가 발생했습니다.");
+        }
+
+        return result;
+    }
+}

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="oww.banking.mapper.UserMapper">
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="UserResultMap" type="oww.banking.vo.UserVO">
+        <id property="userNo" column="userno"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="name" column="name"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="isActive" column="is_active"/>
+        <result property="providerId" column="provider_id"/>
+        <result property="provider" column="provider"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+    <!-- 이메일로 사용자 조회 -->
+    <select id="findByEmail" parameterType="String" resultMap="UserResultMap">
+        SELECT 
+            userno,
+            user_email,
+            name,
+            created_at,
+            updated_at,
+            is_active,
+            provider_id,
+            provider,
+            role
+        FROM users 
+        WHERE user_email = #{email}
+        AND is_active = 1
+    </select>
+
+    <!-- 이메일로 사용자 존재 여부 확인 -->
+    <select id="existsByEmail" parameterType="String" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM users 
+        WHERE user_email = #{email}
+        AND is_active = 1
+    </select>
+
+    <!-- 새 사용자 생성 -->
+    <insert id="createUser" parameterType="oww.banking.vo.UserVO">
+        <selectKey keyProperty="userNo" resultType="int" order="BEFORE">
+            SELECT USER_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO users (
+            userno,
+            user_email,
+            name,
+            created_at,
+            updated_at,
+            is_active,
+            provider_id,
+            provider,
+            role
+        ) VALUES (
+            #{userNo},
+            #{userEmail},
+            #{name},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP,
+            #{isActive},
+            #{providerId},
+            #{provider},
+            #{role}
+        )
+    </insert>
+
+    <!-- 사용자 정보 업데이트 -->
+    <update id="updateUser" parameterType="oww.banking.vo.UserVO">
+        UPDATE users 
+        SET 
+            name = #{name},
+            updated_at = CURRENT_TIMESTAMP,
+            is_active = #{isActive},
+            provider_id = #{providerId},
+            provider = #{provider},
+            role = #{role}
+        WHERE user_email = #{userEmail}
+    </update>
+
+</mapper>

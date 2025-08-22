@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="oww.banking.mapper.AccountMapper">
+
+    <!-- 단일 테스트 쿼리 -->
+    <select id="findAccountById" parameterType="int" resultType="oww.banking.vo.AccountVO">
+        SELECT 
+            account_id as accountId,
+            user_email as userEmail,
+            account_number as accountNumber,
+            balance,
+            created_at as createdAt,
+            account_password as accountPassword
+        FROM account 
+        WHERE account_id = #{accountId}
+    </select>
+
+</mapper>

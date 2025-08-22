@@ -1,0 +1,96 @@
+package oww.banking.config;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import oww.banking.util.BankingJwtUtil;
+
+import java.io.IOException;
+import java.util.List;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final BankingJwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                  HttpServletResponse response, 
+                                  FilterChain filterChain) throws ServletException, IOException {
+        
+        String path = request.getRequestURI();
+        log.debug("JWT 필터 처리: {}", path);
+        
+        // 인증이 필요 없는 경로는 패스
+        if (path.equals("/health") || path.startsWith("/actuator")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        String token = extractToken(request);
+        
+        if (token != null && jwtUtil.validateToken(token)) {
+            try {
+                String username = jwtUtil.getUsernameFromToken(token);
+                Long userNo = jwtUtil.extractUserNo(token);
+                String role = jwtUtil.extractRole(token);
+                
+                log.info("JWT 토큰 검증 성공: userNo={}, username={}, role={}", userNo, username, role);
+                
+                // Spring Security 인증 객체 생성
+                UsernamePasswordAuthenticationToken authToken = 
+                    new UsernamePasswordAuthenticationToken(
+                        username, 
+                        null, 
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+                
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                
+                // 요청에 사용자 정보 추가 (컨트롤러에서 사용할 수 있도록)
+                request.setAttribute("userNo", userNo);
+                request.setAttribute("username", username);
+                request.setAttribute("userRole", role);
+                
+            } catch (Exception e) {
+                log.error("JWT 토큰 처리 중 오류: {}", e.getMessage());
+                SecurityContextHolder.clearContext();
+            }
+        } else {
+            log.warn("유효하지 않은 JWT 토큰: {}", token != null ? "토큰 있음" : "토큰 없음");
+        }
+        
+        filterChain.doFilter(request, response);
+    }
+    
+    private String extractToken(HttpServletRequest request) {
+        // Authorization 헤더에서 토큰 추출
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        
+        // 쿠키에서 토큰 추출
+        if (request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                if ("jwt-token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        
+        return null;
+    }
+}

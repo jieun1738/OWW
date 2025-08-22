@@ -1,0 +1,134 @@
+package com.oww.login.config;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+
+import com.oww.login.repository.UserRepository;
+import com.oww.login.util.JwtUtil;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+	private final JwtUtil jwtUtil;
+	private final UserRepository userRepository;
+
+	public OAuth2LoginSuccessHandler(JwtUtil jwtUtil, UserRepository userRepository) {
+		this.jwtUtil = jwtUtil;
+		this.userRepository = userRepository;
+	}
+
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
+
+		OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+		String email = oAuth2User.getAttribute("email");
+		String name = oAuth2User.getAttribute("name");
+
+		try {
+			Long userNo = userRepository.findByEmailAndIsActiveTrue(email)
+					.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")).getUserNo();
+
+			String jwtToken = jwtUtil.generateToken(userNo, name);
+			String refreshToken = jwtUtil.generateRefreshToken(userNo, name);
+
+			// 토큰 길이 체크
+			System.out.println("JWT 토큰 길이: " + jwtToken.length());
+			if (jwtToken.length() > 4000) {
+				System.err.println("경고: JWT 토큰이 너무 깁니다!");
+			}
+
+			// 응답 커밋 상태 확인
+			if (response.isCommitted()) {
+				System.err.println("응답이 이미 커밋되었습니다!");
+				return;
+			}
+
+			// 쿠키 생성 및 설정
+			Cookie jwtCookie = createJwtCookie("jwt-token", jwtToken, 24 * 60 * 60);
+			Cookie refreshCookie = createJwtCookie("refresh-token", refreshToken, 7 * 24 * 60 * 60);
+			refreshCookie.setHttpOnly(true);
+
+			response.addCookie(jwtCookie);
+			response.addCookie(refreshCookie);
+
+			// 쿠키 설정 확인
+			System.out.println("=== 쿠키 설정 완료 ===");
+			System.out.println(
+					"JWT Cookie - Name: " + jwtCookie.getName() + ", Value length: " + jwtCookie.getValue().length());
+			System.out.println(
+					"Refresh Cookie - Name: " + refreshCookie.getName() + ", HttpOnly: " + refreshCookie.isHttpOnly());
+
+			// 응답 헤더 확인
+			System.out.println("Set-Cookie 헤더 수: " + response.getHeaders("Set-Cookie").size());
+			for (String setCookieHeader : response.getHeaders("Set-Cookie")) {
+				System.out.println("Set-Cookie: " + setCookieHeader);
+			}
+			// 리다이렉트
+			String redirectUrl = buildRedirectUrl("http://localhost:8201/", "login", "success");
+			System.out.println("리다이렉트 URL: " + redirectUrl);
+
+			getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+
+		} catch (Exception e) {
+			System.err.println("로그인 처리 실패: " + e.getMessage());
+			e.printStackTrace();
+
+			String errorUrl = buildRedirectUrl("http://localhost:8201/", "login", "error");
+			getRedirectStrategy().sendRedirect(request, response, errorUrl);
+		}
+	}
+
+	/**
+	 * JWT 쿠키 생성 공통 메서드
+	 */
+	private Cookie createJwtCookie(String name, String value, int maxAge) {
+		Cookie cookie = new Cookie(name, value);
+		cookie.setHttpOnly(false); // 개발환경: JS에서 읽기 가능
+		cookie.setPath("/"); // 모든 경로에서 사용 가능
+		cookie.setMaxAge(maxAge);
+		cookie.setSecure(false); // 개발환경: HTTP에서도 사용 가능
+		// 🔥 핵심: 도메인 설정으로 모든 localhost 포트에서 쿠키 공유
+		cookie.setDomain("localhost");
+
+		// 개발환경에서 SameSite 설정 (선택사항)
+		// 최신 브라우저에서는 이 설정이 중요할 수 있음
+
+		System.out.println("쿠키 생성: " + name + " (도메인: localhost, 경로: /, MaxAge: " + maxAge + ")");
+
+		return cookie;
+	}
+
+	/**
+	 * 리다이렉트 URL 생성 (파라미터 포함)
+	 */
+	private String buildRedirectUrl(String baseUrl, String paramName, String paramValue) {
+		try {
+			String encodedValue = URLEncoder.encode(paramValue, StandardCharsets.UTF_8.toString());
+			return baseUrl + "?" + paramName + "=" + encodedValue;
+		} catch (Exception e) {
+			System.err.println("URL 인코딩 실패: " + e.getMessage());
+			return baseUrl; // 기본 URL 반환
+		}
+	}
+
+	/**
+	 * 디버그 모드 확인 (개발환경 판단)
+	 */
+	private boolean isDebugMode() {
+		// 환경변수나 프로파일로 판단 가능
+		String profile = System.getProperty("spring.profiles.active", "dev");
+		return "dev".equals(profile) || "local".equals(profile);
+	}
+}

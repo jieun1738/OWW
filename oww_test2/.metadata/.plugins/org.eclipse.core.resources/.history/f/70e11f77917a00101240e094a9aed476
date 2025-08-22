@@ -1,0 +1,60 @@
+package oww.banking.config;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Collections;
+
+public class GatewayUserInfoFilter extends OncePerRequestFilter {
+    
+    private static final Logger log = LoggerFactory.getLogger(GatewayUserInfoFilter.class);
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                  HttpServletResponse response, 
+                                  FilterChain filterChain) throws ServletException, IOException {
+        
+        // Gateway에서 전달한 헤더 정보 추출
+        String userId = request.getHeader("X-User-Id");
+        String username = request.getHeader("X-Username");
+        String userRole = request.getHeader("X-User-Role");
+        
+        // 디버깅용 로그
+        log.info("=== Banking Service Request Info ===");
+        log.info("Request URI: {}", request.getRequestURI());
+        log.info("User ID from Gateway: {}", userId);
+        log.info("Username from Gateway: {}", username);
+        log.info("User Role from Gateway: {}", userRole);
+        
+        // Gateway에서 사용자 정보가 전달된 경우
+        if (username != null && userRole != null) {
+            // Spring Security Context에 인증 정보 설정
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + userRole);
+            UsernamePasswordAuthenticationToken authentication = 
+                new UsernamePasswordAuthenticationToken(
+                    username, 
+                    null, 
+                    Collections.singletonList(authority)
+                );
+            
+            // SecurityContext에 인증 정보 저장
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            
+            log.info("✅ User authenticated in Banking Service: {}", username);
+        } else {
+            log.warn("⚠️ No user information from Gateway");
+        }
+        
+        // 다음 필터로 진행
+        filterChain.doFilter(request, response);
+    }
+}

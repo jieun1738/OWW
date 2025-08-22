@@ -1,0 +1,278 @@
+// ========================================
+// 계좌 관련 함수들
+// ========================================
+
+// 계좌 정보 로드
+function loadAccountInfo() {
+    // 로딩 상태 표시
+    showLoadingState();
+    
+    fetch('http://localhost:8201/api/banking/account', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('계좌 정보 로드 성공:', data);
+        
+        // 일반 계좌 처리
+        handleAccountDisplay(data);
+        
+        // 세이프박스 처리
+        handleSafeboxDisplay(data);
+        
+        // 로딩 상태 해제
+        hideLoadingState();
+    })
+    .catch(error => {
+        console.error('계좌 정보 로드 실패:', error);
+        handleAccountLoadError(error);
+    });
+}
+
+// 계좌 표시 처리
+function handleAccountDisplay(data) {
+    const accountCard = document.querySelector('.service-card:first-child');
+    
+    if (!accountCard) {
+        console.error('계좌 카드 요소를 찾을 수 없습니다');
+        return;
+    }
+    
+    if (data.hasAccount && data.accountNumber && data.balance !== undefined) {
+        // 계좌 있음 - 실제 데이터 표시
+        updateAccountInfo(data.accountNumber, data.balance);
+    } else {
+        // 계좌 없음 - 생성 유도
+        showCreateAccountPrompt();
+    }
+}
+
+// 세이프박스 표시 처리
+function handleSafeboxDisplay(data) {
+    const safeboxCard = document.querySelector('.service-card:nth-child(2)');
+    
+    if (!safeboxCard) {
+        console.error('세이프박스 카드 요소를 찾을 수 없습니다');
+        return;
+    }
+    
+    if (data.hasSafebox && data.safeboxBalance !== undefined) {
+        // 세이프박스 있음
+        updateSafeboxInfo(data.safeboxBalance);
+    } else {
+        // 세이프박스 없음
+        showCreateSafeboxPrompt();
+    }
+}
+
+// 계좌 정보 업데이트
+function updateAccountInfo(accountNumber, balance) {
+    const balanceElement = document.querySelector('.service-card:first-child .balance-amount');
+    const accountNumberElement = document.querySelector('.service-card:first-child h2');
+    
+    if (balanceElement) {
+        balanceElement.textContent = `₩${balance.toLocaleString()}`;
+    }
+    if (accountNumberElement) {
+        accountNumberElement.textContent = accountNumber;
+    }
+}
+
+// 세이프박스 정보 업데이트
+function updateSafeboxInfo(safeboxBalance) {
+    const safeboxBalanceElement = document.querySelector('.service-card:nth-child(2) .balance-amount');
+    
+    if (safeboxBalanceElement) {
+        safeboxBalanceElement.textContent = `₩${safeboxBalance.toLocaleString()}`;
+    }
+}
+
+// 계좌 생성 안내 표시
+function showCreateAccountPrompt() {
+    const accountCard = document.querySelector('.service-card:first-child');
+    if (accountCard) {
+        accountCard.innerHTML = `
+            <div class="no-service-notice">
+                <h2>📭 계좌가 없습니다</h2>
+                <p>Own Wedding Wallet 계좌를 생성해주세요</p>
+                <button onclick="goToCreateAccount()" class="create-service-btn">
+                    계좌 생성하기
+                </button>
+            </div>
+        `;
+    }
+}
+
+// 세이프박스 생성 안내 표시
+function showCreateSafeboxPrompt() {
+    const safeboxCard = document.querySelector('.service-card:nth-child(2)');
+    if (safeboxCard) {
+        safeboxCard.innerHTML = `
+            <div class="no-service-notice">
+                <h2>🔒 세이프박스가 없습니다</h2>
+                <p>세이프박스를 생성하여 안전하게 자금을 보관하세요</p>
+                <button onclick="goToCreateSafebox()" class="create-service-btn">
+                    세이프박스 생성하기
+                </button>
+            </div>
+        `;
+    }
+}
+
+// 로딩 상태 표시
+function showLoadingState() {
+    const serviceCards = document.getElementById('service-cards');
+    if (serviceCards) {
+        serviceCards.classList.add('loading');
+        
+        // 각 카드에 로딩 표시
+        document.querySelectorAll('.service-card').forEach(card => {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading-overlay';
+            loadingDiv.innerHTML = '<div class="loading-spinner">로딩중...</div>';
+            card.appendChild(loadingDiv);
+        });
+    }
+}
+
+// 로딩 상태 해제
+function hideLoadingState() {
+    const serviceCards = document.getElementById('service-cards');
+    if (serviceCards) {
+        serviceCards.classList.remove('loading');
+        
+        // 로딩 오버레이 제거
+        document.querySelectorAll('.loading-overlay').forEach(overlay => {
+            overlay.remove();
+        });
+    }
+}
+
+// 계좌 로드 에러 처리
+function handleAccountLoadError(error) {
+    console.error('계좌 정보 로드 중 오류:', error);
+    hideLoadingState();
+    
+    // 에러 메시지 표시
+    const serviceCards = document.getElementById('service-cards');
+    if (serviceCards) {
+        serviceCards.innerHTML = `
+            <div class="error-notice">
+                <h2>⚠️ 서비스 연결 오류</h2>
+                <p>계좌 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.</p>
+                <button onclick="loadAccountInfo()" class="retry-btn">
+                    다시 시도
+                </button>
+            </div>
+        `;
+    }
+}
+
+// 계좌 생성 페이지로 이동
+function goToCreateAccount() {
+    navigateToService('/banking/createAccount');
+}
+
+// 세이프박스 생성 페이지로 이동
+function goToCreateSafebox() {
+    navigateToService('/banking/safebox');
+}
+
+// 서비스 페이지 이동 (공통 함수)
+function navigateToService(path) {
+    // 로그인 상태 확인
+    if (!isUserLoggedIn()) {
+        alert('로그인이 필요합니다.');
+        login();
+        return;
+    }
+    
+    window.location.href = path;
+}
+
+// 로그인 상태 확인 함수 (auth.js에서 가져와야 함)
+function isUserLoggedIn() {
+    // 실제 구현은 auth.js의 로그인 상태 확인 로직 사용
+    return localStorage.getItem('isLoggedIn') === 'true' || 
+           sessionStorage.getItem('userToken') !== null;
+}
+
+// Banking 서비스 버튼 이벤트 설정
+function setupBankingButtons() {
+    document.querySelectorAll('.banking-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const url = btn.dataset.url;
+            const redirect = btn.dataset.redirect;
+            
+            if (!url || !redirect) {
+                console.error('버튼에 필요한 데이터 속성이 없습니다:', btn);
+                return;
+            }
+            
+            // 로그인 상태 확인
+            if (!isUserLoggedIn()) {
+                alert('로그인이 필요합니다.');
+                login();
+                return;
+            }
+            
+            // 버튼 비활성화 (중복 클릭 방지)
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = '처리중...';
+            
+            fetch(url, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`인증 실패 (${response.status})`);
+                }
+                window.location.href = redirect;
+            })
+            .catch(error => {
+                console.error('뱅킹 서비스 접근 실패:', error);
+                alert(`서비스 접근에 실패했습니다: ${error.message}`);
+            })
+            .finally(() => {
+                // 버튼 상태 복구
+                btn.disabled = false;
+                btn.textContent = originalText;
+            });
+        });
+    });
+}
+
+// 계좌 정보 새로고침
+function refreshAccountInfo() {
+    console.log('계좌 정보 새로고침 시작');
+    loadAccountInfo();
+}
+
+// 페이지 로드 시 실행
+document.addEventListener('DOMContentLoaded', function() {
+    // 뱅킹 버튼 이벤트 설정
+    setupBankingButtons();
+    
+    // 로그인된 상태라면 계좌 정보 로드
+    if (isUserLoggedIn()) {
+        loadAccountInfo();
+    }
+});

@@ -1,0 +1,16 @@
+package oww.banking.vo;
+
+import java.time.LocalDateTime;
+
+import lombok.Data;
+
+@Data
+public class AccountVO {
+
+	private int accountId;
+	private String userEmail;
+	private String accountName;
+	private int balance;
+	private LocalDateTime createdAt;  // Timestamp → LocalDateTime 변경
+	private int accountPassword;
+}

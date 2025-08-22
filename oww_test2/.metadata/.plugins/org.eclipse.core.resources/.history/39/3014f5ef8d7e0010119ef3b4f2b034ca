@@ -1,0 +1,19 @@
+package oww.banking.vo;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import lombok.Data;
+
+@Data
+public class SafeboxGoalVO {
+    private int goalId;
+    private int safeboxId;
+    private String title;
+    private BigDecimal targetAmount;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String paymentType; // "daily" or "monthly"
+    private LocalDateTime createdAt;
+
+}

@@ -1,0 +1,149 @@
+package com.oww.gateway.filter;
+
+import com.oww.gateway.util.JwtUtil;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+/**
+ * JWT 토큰을 검증하고 요청 헤더에 사용자 정보를 추가하는 게이트웨이 필터입니다.
+ * @Component 애노테이션을 통해 Spring Bean으로 자동 등록됩니다.
+ */
+@Component
+public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<JwtAuthenticationGatewayFilterFactory.Config> {
+
+    private final JwtUtil jwtUtil;
+
+    public JwtAuthenticationGatewayFilterFactory(JwtUtil jwtUtil) {
+        super(Config.class);
+        this.jwtUtil = jwtUtil;
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        return (exchange, chain) -> {
+            System.out.println("🔍 [JWT Filter] 인증 필터 시작");
+            
+            ServerHttpRequest request = exchange.getRequest();
+            String requestPath = request.getPath().toString();
+            System.out.println("🔍 [JWT Filter] 요청 경로: " + requestPath);
+
+            // JWT 토큰 추출 (쿠키 우선, 헤더 대안)
+            String jwtToken = extractJwtToken(request);
+            
+            if (jwtToken == null) {
+                System.out.println("❌ [JWT Filter] JWT 토큰이 없음 - 로그인 페이지로 리다이렉트");
+                return redirectToLogin(exchange);
+            }
+
+            try {
+                // JWT 토큰 검증
+                if (!jwtUtil.validateToken(jwtToken)) {
+                    System.out.println("❌ [JWT Filter] JWT 토큰 검증 실패 - 로그인 페이지로 리다이렉트");
+                    return redirectToLogin(exchange);
+                }
+
+                // 사용자 정보 추출
+                String username = jwtUtil.getUsernameFromToken(jwtToken);
+                String role = jwtUtil.extractRole(jwtToken);
+                String userNo = jwtUtil.extractUserNo(jwtToken);
+
+                System.out.println("✅ [JWT Filter] JWT 토큰 검증 성공");
+                System.out.println("   - Username: " + username);
+                System.out.println("   - Role: " + role);
+                System.out.println("   - UserNo: " + userNo);
+
+                // 다운스트림 서비스로 전달할 헤더 추가
+                ServerWebExchange mutatedExchange = exchange.mutate()
+                        .request(r -> r.header("Authorization", "Bearer " + jwtToken)
+                                .header("X-User-No", userNo != null ? userNo : "")
+                                .header("X-Username", username != null ? username : "")
+                                .header("X-User-Role", role != null ? role : "USER"))
+                        .build();
+
+                System.out.println("✅ [JWT Filter] 헤더 추가 완료 - 다운스트림 서비스로 요청 전달");
+                System.out.println("   - 대상 서비스: " + request.getURI());
+
+                return chain.filter(mutatedExchange);
+
+            } catch (Exception e) {
+                System.err.println("❌ [JWT Filter] JWT 토큰 처리 중 예외 발생: " + e.getMessage());
+                e.printStackTrace();
+                return redirectToLogin(exchange);
+            }
+        };
+    }
+
+    /**
+     * JWT 토큰 추출 (쿠키 우선, Authorization 헤더 대안)
+     */
+    private String extractJwtToken(ServerHttpRequest request) {
+        // 1. 쿠키에서 jwt-token 확인
+        String cookieToken = request.getCookies()
+                .getFirst("jwt-token") != null ?
+                request.getCookies()
+                        .getFirst("jwt-token")
+                        .getValue() : null;
+
+        if (cookieToken != null) {
+            System.out.println("✅ [JWT Filter] 쿠키에서 JWT 토큰 발견");
+            return cookieToken;
+        }
+
+        // 2. Authorization 헤더에서 확인
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            System.out.println("✅ [JWT Filter] Authorization 헤더에서 JWT 토큰 발견");
+            return authHeader.substring(7);
+        }
+
+        System.out.println("❌ [JWT Filter] JWT 토큰을 찾을 수 없음 (쿠키, 헤더 모두 없음)");
+        return null;
+    }
+
+    /**
+     * 로그인 페이지로 리다이렉트
+     */
+    private Mono<Void> redirectToLogin(ServerWebExchange exchange) {
+        System.out.println("🔄 [JWT Filter] 로그인 페이지로 리다이렉트: /auth/login");
+        
+        exchange.getResponse().setStatusCode(HttpStatus.FOUND);
+        exchange.getResponse().getHeaders().add("Location", "/auth/login");
+        return exchange.getResponse().setComplete();
+    }
+
+    /**
+     * JSON 에러 응답 (API 요청용 - 필요시 사용)
+     */
+    private Mono<Void> createErrorResponse(ServerWebExchange exchange, String errorMessage, HttpStatus status) {
+        System.out.println("❌ [JWT Filter] JSON 에러 응답: " + errorMessage);
+        
+        exchange.getResponse().setStatusCode(status);
+        exchange.getResponse().getHeaders().add("Content-Type", "application/json");
+
+        String body = String.format("{\"error\": \"%s\", \"message\": \"%s\", \"timestamp\": \"%s\"}",
+                status.getReasonPhrase(), errorMessage, java.time.Instant.now());
+
+        return exchange.getResponse().writeWith(
+                Mono.just(exchange.getResponse().bufferFactory().wrap(body.getBytes()))
+        );
+    }
+
+    public static class Config {
+        // 필요시 설정 값들 추가 가능
+        private boolean redirectOnFailure = true;
+        
+        public boolean isRedirectOnFailure() {
+            return redirectOnFailure;
+        }
+        
+        public void setRedirectOnFailure(boolean redirectOnFailure) {
+            this.redirectOnFailure = redirectOnFailure;
+        }
+    }
+}

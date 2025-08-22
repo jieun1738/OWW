@@ -1,0 +1,77 @@
+package com.oww.login.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.oww.login.entity.User;
+import com.oww.login.oauth.CustomOAuth2User;
+import com.oww.login.service.AuthService;
+import com.oww.login.util.JwtUtil;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@RequestMapping("/oauth2")
+@RequiredArgsConstructor
+@Slf4j
+public class OAuth2Controller {
+
+    private final AuthService authService;
+    private final JwtUtil jwtUtil; // 이 줄 추가
+
+    @Value("${app.oauth2.redirect-uri:http://localhost:3000/oauth2/redirect}")
+    private String redirectUri;
+
+    @GetMapping("/success")
+    public String oauth2LoginSuccess(@AuthenticationPrincipal OAuth2User oAuth2User,
+                                     Model model,
+                                     HttpServletResponse response) {
+
+        if (!(oAuth2User instanceof CustomOAuth2User)) {
+            log.error("OAuth2User is not an instance of CustomOAuth2User");
+            model.addAttribute("error", "인증 실패");
+            return "redirect:/oauth2/failure";
+        }
+
+        CustomOAuth2User customUser = (CustomOAuth2User) oAuth2User;
+        User user = customUser.getUser();
+
+        // JWT 토큰 생성
+        String jwtToken = jwtUtil.generateToken(user.getUserNo(), user.getName());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUserNo(), user.getName());
+
+        // 쿠키 설정
+        Cookie jwtCookie = new Cookie("jwt-token", jwtToken);
+        jwtCookie.setHttpOnly(false);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(24 * 60 * 60);
+        jwtCookie.setSecure(false);
+        response.addCookie(jwtCookie);
+
+        Cookie refreshCookie = new Cookie("refresh-token", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        response.addCookie(refreshCookie);
+
+        log.info("OAuth2 로그인 성공: {} - JWT 토큰 설정 완료", user.getEmail());
+
+        return "redirect:http://localhost:8201/?login=success";
+    }
+
+    @GetMapping("/failure")
+    public String oauth2LoginFailure(Model model) {
+        log.warn("OAuth2 로그인 실패");
+        model.addAttribute("error", "소셜 로그인에 실패했습니다.");
+        return "login-result";
+    }
+}

@@ -1,0 +1,10 @@
+spring.application.name=oww
+
+# 서버 포트
+server.port=8200
+
+# Eureka 서버 설정
+eureka.instance.hostname=192.168.56.1
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+eureka.client.service-url.defaultZone=http://localhost:8200/eureka/

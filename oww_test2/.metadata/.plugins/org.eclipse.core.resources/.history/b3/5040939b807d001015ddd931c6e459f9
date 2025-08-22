@@ -1,0 +1,57 @@
+// ========================================
+// 공통 유틸리티 함수들
+// ========================================
+
+// UTF-8로 JWT 디코딩
+function b64DecodeUnicode(str) {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+
+// JWT 쿠키 읽기
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// 쿠키 삭제
+function deleteCookie(name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+}
+
+// 사용자 정보 업데이트
+function updateUserInfo(userName, userEmail) {
+    document.getElementById('user-name-header').textContent = userName + '님';
+    document.getElementById('user-name-display').textContent = userName;
+    document.getElementById('user-name-display2').textContent = userName;
+    document.getElementById('user-email-display').textContent = userEmail;
+    document.getElementById('modal-user-name').textContent = userName;
+}
+
+// 로그인 상태 UI 표시
+function showLoggedInState() {
+    document.getElementById('logged-out-section').style.display = 'none';
+    document.getElementById('logged-in-section').style.display = 'flex';
+    document.getElementById('login-notice').style.display = 'none';
+    document.getElementById('service-cards').style.display = 'flex';
+}
+
+// 로그아웃 상태 UI 표시
+function showLoggedOutState() {
+    document.getElementById('logged-out-section').style.display = 'block';
+    document.getElementById('logged-in-section').style.display = 'none';
+    document.getElementById('login-notice').style.display = 'block';
+    document.getElementById('service-cards').style.display = 'none';
+}
+
+// Welcome 모달 표시
+function showWelcomeModal(userName) {
+    document.getElementById('welcome-modal').classList.add('show');
+}
+
+// Welcome 모달 닫기
+function closeWelcomeModal() {
+    document.getElementById('welcome-modal').classList.remove('show');
+}

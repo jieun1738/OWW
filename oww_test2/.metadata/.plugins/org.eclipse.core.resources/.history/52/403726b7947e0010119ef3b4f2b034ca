@@ -1,0 +1,232 @@
+package oww.banking.service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import oww.banking.mapper.AccountMapper;
+import oww.banking.mapper.SafeboxMapper;
+import oww.banking.vo.AccountVO;
+import oww.banking.vo.SafeboxGoalVO;
+import oww.banking.vo.SafeboxHistoryVO;
+import oww.banking.vo.SafeboxVO;
+
+@Service
+public class SafeboxService {
+
+    @Autowired
+    private SafeboxMapper safeboxMapper;
+    
+    @Autowired
+    private AccountMapper accountMapper;
+
+    /**
+     * 세이프박스 금액 설정 (계좌에서 세이프박스로 이동)
+     */
+    @Transactional
+    public boolean setSafeboxAmount(String userEmail, BigDecimal amount) {
+        try {
+            // 계좌 정보 조회
+            AccountVO account = accountMapper.findAccountByEmail(userEmail);
+            if (account == null) {
+                throw new RuntimeException("계좌를 찾을 수 없습니다.");
+            }
+
+            // 세이프박스 존재 여부 확인
+            SafeboxVO safebox = safeboxMapper.findSafeboxByEmail(userEmail);
+            BigDecimal currentSafeboxBalance = BigDecimal.ZERO;
+            
+            if (safebox == null) {
+                // 세이프박스가 없으면 생성
+                SafeboxVO newSafebox = new SafeboxVO(userEmail, amount);
+                safeboxMapper.createSafebox(newSafebox);
+            } else {
+                if (safebox.getBalance() != null) {
+                    currentSafeboxBalance = safebox.getBalance();
+                }
+                // 기존 세이프박스 금액 업데이트
+                Map<String, Object> params = new HashMap<>();
+                params.put("safeboxId", safebox.getSafeboxId());
+                params.put("balance", amount);
+                safeboxMapper.updateSafeboxBalance(params);
+            }
+
+            // 계좌 잔액 업데이트 (전체 잔액에서 세이프박스 금액을 뺀 만큼)
+            BigDecimal accountBalance = BigDecimal.valueOf(account.getBalance()); // int를 BigDecimal로 변환
+            BigDecimal totalBalance = accountBalance.add(currentSafeboxBalance);
+            BigDecimal newAccountBalance = totalBalance.subtract(amount);
+            
+            if (newAccountBalance.compareTo(BigDecimal.ZERO) < 0) {
+                throw new RuntimeException("잔액이 부족합니다.");
+            }
+            
+            // AccountMapper의 updateBalance 메서드에 맞게 수정 - int와 BigDecimal로 호출
+            accountMapper.updateBalance(account.getAccountId(), newAccountBalance.doubleValue());
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 정기저금통 설정
+     */
+    @Transactional
+    public boolean createSavingGoal(String userEmail, String title, BigDecimal targetAmount, 
+                                  LocalDate startDate, LocalDate endDate, String paymentType) {
+        try {
+            // 세이프박스 조회 (없으면 생성)
+            SafeboxVO safebox = safeboxMapper.findSafeboxByEmail(userEmail);
+            if (safebox == null) {
+                SafeboxVO newSafebox = new SafeboxVO(userEmail, BigDecimal.ZERO);
+                safeboxMapper.createSafebox(newSafebox);
+                safebox = safeboxMapper.findSafeboxByEmail(userEmail); // 생성된 세이프박스 다시 조회
+            }
+
+            // 정기저금 목표 생성
+            SafeboxGoalVO goal = new SafeboxGoalVO(safebox.getSafeboxId(), title, targetAmount, 
+                                                 startDate, endDate, paymentType);
+            safeboxMapper.createSafeboxGoal(goal);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 사용자의 세이프박스 정보 조회
+     */
+    public SafeboxVO getSafeboxByEmail(String userEmail) {
+        return safeboxMapper.findSafeboxByEmail(userEmail);
+    }
+
+    /**
+     * 사용자의 정기저금 목표 리스트 조회
+     */
+    public List<SafeboxGoalVO> getSavingGoals(String userEmail) {
+        SafeboxVO safebox = safeboxMapper.findSafeboxByEmail(userEmail);
+        if (safebox == null) {
+            return null;
+        }
+        return safeboxMapper.findGoalsBySafeboxId(safebox.getSafeboxId());
+    }
+
+    /**
+     * 특정 목표의 저축 내역 조회
+     */
+    public List<SafeboxHistoryVO> getSavingHistory(int goalId) {
+        return safeboxMapper.findHistoryByGoalId(goalId);
+    }
+
+    /**
+     * 특정 목표의 총 저축 금액 조회
+     */
+    public BigDecimal getTotalSavedAmount(int goalId) {
+        BigDecimal result = safeboxMapper.getTotalSavedAmountByGoalId(goalId);
+        if (result != null) {
+            return result;
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    /**
+     * 사용자의 모든 저축 내역 조회
+     */
+    public List<SafeboxHistoryVO> getAllSavingHistory(String userEmail) {
+        return safeboxMapper.findHistoryByUserEmail(userEmail);
+    }
+
+    /**
+     * 자동 저축 실행 (스케줄러에서 호출)
+     */
+    @Transactional
+    public boolean executeAutoSaving(int goalId, BigDecimal amount) {
+        try {
+            // 목표 정보 조회
+            SafeboxGoalVO goal = safeboxMapper.findGoalById(goalId);
+            if (goal == null) {
+                return false;
+            }
+
+            // 세이프박스 정보 조회 - SafeboxMapper에서 직접 조회하도록 수정
+            SafeboxVO safebox = safeboxMapper.findSafeboxBySafeboxId(goal.getSafeboxId());
+            if (safebox == null) {
+                return false;
+            }
+
+            // 계좌에서 금액 차감 및 세이프박스에 추가
+            AccountVO account = accountMapper.findAccountByEmail(safebox.getUserEmail());
+            if (account == null) {
+                return false;
+            }
+            
+            BigDecimal accountBalance = BigDecimal.valueOf(account.getBalance()); // int를 BigDecimal로 변환
+            
+            if (accountBalance.compareTo(amount) < 0) {
+                return false; // 잔액 부족
+            }
+
+            // 계좌 잔액 업데이트 - int와 double로 호출
+            accountMapper.updateBalance(account.getAccountId(), accountBalance.subtract(amount).doubleValue());
+
+            // 세이프박스 잔액 업데이트
+            BigDecimal safeboxBalance = BigDecimal.ZERO;
+            if (safebox.getBalance() != null) {
+                safeboxBalance = safebox.getBalance();
+            }
+            Map<String, Object> safeboxParams = new HashMap<>();
+            safeboxParams.put("safeboxId", safebox.getSafeboxId());
+            safeboxParams.put("balance", safeboxBalance.add(amount));
+            safeboxMapper.updateSafeboxBalance(safeboxParams);
+
+            // 저축 내역 기록
+            SafeboxHistoryVO history = new SafeboxHistoryVO(goalId, amount, LocalDate.now());
+            safeboxMapper.createSafeboxHistory(history);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 세이프박스 존재 여부 확인
+     */
+    public boolean hasSafebox(String userEmail) {
+        return safeboxMapper.existsByEmail(userEmail);
+    }
+
+    /**
+     * 사용자의 총 자산 조회 (계좌 잔액 + 세이프박스 잔액)
+     */
+    public BigDecimal getTotalAssets(String userEmail) {
+        AccountVO account = accountMapper.findAccountByEmail(userEmail);
+        SafeboxVO safebox = safeboxMapper.findSafeboxByEmail(userEmail);
+        
+        BigDecimal accountBalance = BigDecimal.ZERO;
+        BigDecimal safeboxBalance = BigDecimal.ZERO;
+        
+        if (account != null) {
+            accountBalance = BigDecimal.valueOf(account.getBalance()); // int를 BigDecimal로 변환
+        }
+        
+        if (safebox != null && safebox.getBalance() != null) {
+            safeboxBalance = safebox.getBalance();
+        }
+        
+        return accountBalance.add(safeboxBalance);
+    }
+}
+}

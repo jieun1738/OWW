@@ -1,0 +1,103 @@
+package com.oww.gateway.filter;
+
+import com.oww.gateway.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@Component
+public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public JwtAuthenticationFilter() {
+        super(Config.class);
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        return (exchange, chain) -> {
+
+            // 쿠키에서 jwt-token 읽기
+            String cookieToken = exchange.getRequest()
+                    .getCookies()
+                    .getFirst("jwt-token") != null ?
+                    exchange.getRequest()
+                            .getCookies()
+                            .getFirst("jwt-token")
+                            .getValue() : null;
+
+            // Authorization 헤더 가져오기
+            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
+            // 헤더 없으면 쿠키에서 가져오기
+            if ((authHeader == null || !authHeader.startsWith("Bearer ")) && cookieToken != null) {
+                authHeader = "Bearer " + cookieToken;
+            }
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return onError(exchange, "Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
+            }
+
+            String token = authHeader.substring(7);
+
+            try {
+                if (!jwtUtil.validateToken(token)) {
+                    return onError(exchange, "Invalid JWT token", HttpStatus.UNAUTHORIZED);
+                }
+
+                String username = jwtUtil.getUsernameFromToken(token);
+                String role = jwtUtil.extractRole(token);
+                
+                // ✅ userId를 final로 선언
+                final Long userId;
+                try {
+                    Long extractedUserId = jwtUtil.extractUserId(token);
+                    userId = (extractedUserId != null) ? extractedUserId : 0L;
+                } catch (Exception e) {
+                    userId = 0L; // userId 클레임이 없으면 기본값
+                }
+
+                // Downstream 서비스로 헤더 추가
+                ServerWebExchange mutatedExchange = exchange.mutate()
+                        .request(r -> r.header("Authorization", "Bearer " + token)
+                                .header("X-User-Id", String.valueOf(userId))
+                                .header("X-Username", username)
+                                .header("X-User-Role", role))
+                        .build();
+
+                System.out.println("🔍 JWT 필터 - 헤더 전달:");
+                System.out.println("   X-User-Id: " + userId);
+                System.out.println("   X-Username: " + username);
+                System.out.println("   X-User-Role: " + role);
+
+                return chain.filter(mutatedExchange);
+
+            } catch (Exception e) {
+                System.err.println("❌ JWT 토큰 검증 실패: " + e.getMessage());
+                return onError(exchange, "JWT token validation failed", HttpStatus.UNAUTHORIZED);
+            }
+        };
+    }
+
+    private Mono<Void> onError(ServerWebExchange exchange, String errorMessage, HttpStatus status) {
+        exchange.getResponse().setStatusCode(status);
+        exchange.getResponse().getHeaders().add("Content-Type", "application/json");
+
+        String body = String.format("{\"error\": \"%s\", \"message\": \"%s\"}",
+                status.getReasonPhrase(), errorMessage);
+
+        return exchange.getResponse().writeWith(
+                Mono.just(exchange.getResponse().bufferFactory().wrap(body.getBytes()))
+        );
+    }
+
+    public static class Config {
+    }
+}

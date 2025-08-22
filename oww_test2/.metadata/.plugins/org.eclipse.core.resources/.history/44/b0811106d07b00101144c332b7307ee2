@@ -1,0 +1,24 @@
+// 모든 인증 버튼에 이벤트 부여
+document.addEventListener('DOMContentLoaded', function() {
+    // .auth-btn 클래스를 가진 버튼을 찾아서 이벤트 부착
+    document.querySelectorAll('.auth-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); // 버튼 기본 동작 막기
+            const url = btn.dataset.url;       // 요청 URL
+            const redirect = btn.dataset.redirect; // 인증 성공 후 이동할 페이지
+
+            fetch(url, {
+                method: 'GET',
+                credentials: 'include'  // 쿠키(JWT) 포함
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('인증 필요 또는 에러 발생');
+                // 요청 성공하면 지정한 페이지로 이동
+                window.location.href = redirect;
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+        });
+    });
+});

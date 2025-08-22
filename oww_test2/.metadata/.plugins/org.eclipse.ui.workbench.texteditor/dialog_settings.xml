@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<section name="java.lang.Class">
+		<item key="replaceBarOpen" value="false"/>
+		<item key="selection" value="username"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="safebox"/>
+			<item value="main"/>
+			<item value="findaccountbyuserno"/>
+			<item value="username"/>
+			<item value="user name"/>
+			<item value="user ame"/>
+			<item value="user"/>
+			<item value="String userEmail = (String) userInfo.get(&quot;userEmail&quot;);"/>
+			<item value="authentication"/>
+			<item value="@GetMapping(value = &quot;/api/account&quot;, produces = &quot;application/json&quot;)"/>
+			<item value="&quot;/api/account&quot;"/>
+			<item value="=== /api/account 요청 수신 ===&#x0A;Authentication: 윤영식`"/>
+			<item value="=== /api/account 요청 수신 ===&#x0A;Authentication: 윤영식"/>
+			<item value="eureka.instance.prefer-ip-address=true"/>
+			<item value=".authorizeHttpRequests(auth -&gt; auth"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="287"/>
+		<item key="DIALOG_Y_ORIGIN" value="159"/>
+		<item key="DIALOG_WIDTH" value="322"/>
+		<item key="DIALOG_HEIGHT" value="385"/>
+		<item key="DIALOG_FONT_NAME" value="1|맑은 고딕|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕"/>
+	</section>
+</section>

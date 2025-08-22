@@ -1,0 +1,17 @@
+# ===============================
+# Eureka 서버 기본 설정
+# ===============================
+spring.application.name=oww
+server.port=8200
+
+# 모든 네트워크 인터페이스에서 접속 가능
+server.address=0.0.0.0
+
+# Eureka 서버 설정
+eureka.instance.hostname=192.168.56.1   # A 컴퓨터 실제 IP
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+eureka.client.service-url.defaultZone=http://192.168.56.1:8200/eureka/
+
+# 로깅 (선택)
+logging.level.com.netflix.eureka=DEBUG

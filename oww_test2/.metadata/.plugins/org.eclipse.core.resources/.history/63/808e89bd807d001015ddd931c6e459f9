@@ -1,0 +1,118 @@
+// ========================================
+// 계좌 관련 함수들
+// ========================================
+
+function loadAccountInfo() {
+	const url = 'http://localhost:8201/api/banking/account';
+	console.log('API 호출 URL:', url); // 디버깅용
+	fetch(url, {
+		method: 'GET',
+		credentials: 'include'
+	})
+		.then(res => res.json())
+		.then(data => {
+			if (data.success) {
+				// 일반 계좌 처리
+				if (data.hasAccount) {
+					// 계좌 있음 - 실제 데이터 표시
+					document.querySelector('.service-card:first-child .balance-amount').textContent =
+						`₩${data.balance.toLocaleString()}`;
+					document.querySelector('.service-card:first-child h2').textContent =
+						data.accountNumber;
+					// 사용자 이름도 업데이트
+					document.querySelector('#user-name-display').textContent = data.userName;
+					document.querySelector('#user-email-display').textContent = data.userEmail;
+				} else {
+					// 계좌 없음 - 생성 유도
+					document.querySelector('.service-card:first-child').innerHTML = `
+                    <div style="text-align: center; padding: 30px; width: 100%;">
+                        <h2>📭 계좌가 없습니다</h2>
+                        <p style="margin: 15px 0; color: #666;">
+                            Own Wedding Wallet 계좌를 생성해주세요
+                        </p>
+                        <button onclick="goToCreateAccount()"
+                                style="padding: 12px 30px;
+                                       background: #ff726f;
+                                       color: white;
+                                       border: none;
+                                       border-radius: 20px;
+                                       cursor: pointer;
+                                       font-weight: 600;">
+                            계좌 생성하기
+                        </button>
+                    </div>
+                `;
+				}
+
+				// 세이프박스 처리
+				if (data.hasSafebox) {
+					document.querySelector('.service-card:nth-child(2) .balance-amount').textContent =
+						`₩${data.safeboxBalance.toLocaleString()}`;
+				} else {
+					document.querySelector('.service-card:nth-child(2)').innerHTML = `
+                    <div style="text-align: center; padding: 30px; width: 100%;">
+                        <h2>🔒 세이프박스가 없습니다</h2>
+                        <p style="margin: 15px 0; color: #666;">
+                            세이프박스를 생성하여 안전하게 자금을 보관하세요
+                        </p>
+                        <button onclick="goToCreateSafebox()"
+                                style="padding: 12px 30px;
+                                       background: #ff726f;
+                                       color: white;
+                                       border: none;
+                                       border-radius: 20px;
+                                       cursor: pointer;
+                                       font-weight: 600;">
+                            세이프박스 생성하기
+                        </button>
+                    </div>
+                `;
+				}
+
+				// 서비스 카드 표시
+				document.getElementById('service-cards').style.display = 'block';
+			} else {
+				console.error('API 응답 실패:', data.message);
+			}
+		})
+		.catch(err => {
+			console.error('계좌 정보 로드 실패:', err);
+		});
+}
+
+// 계좌 생성 페이지로 이동
+function goToCreateAccount() {
+	window.location.href = '/banking/createAccount';
+}
+
+// 세이프박스 생성 페이지로 이동
+function goToCreateSafebox() {
+	window.location.href = '/banking/safebox';
+}
+
+// Banking 서비스 버튼 이벤트 설정
+function setupBankingButtons() {
+	document.querySelectorAll('.banking-btn').forEach(btn => {
+		btn.addEventListener('click', function(e) {
+			e.preventDefault();
+			const url = btn.dataset.url;
+			const redirect = btn.dataset.redirect;
+
+			fetch(url, {
+				method: 'GET',
+				credentials: 'include'
+			})
+				.then(res => {
+					if (!res.ok) throw new Error('인증 필요');
+					window.location.href = redirect;
+				})
+				.catch(err => alert(err.message));
+		});
+	});
+}
+
+// 페이지 로드 시 실행
+document.addEventListener('DOMContentLoaded', function() {
+	loadAccountInfo();
+	setupBankingButtons();
+});
