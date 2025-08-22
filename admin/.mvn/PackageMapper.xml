@@ -1,0 +1,22 @@
+<mapper namespace="com.example.demo.mapper.PackageMapper">
+  <resultMap id="PackageResult" type="com.example.demo.vo.PackageVO">
+    <id property="packageNo" column="package_no"/>
+    <result property="type" column="type"/>
+    <result property="hall" column="hall"/>
+    <result property="studio" column="studio"/>
+    <result property="dress" column="dress"/>
+    <result property="makeup" column="makeup"/>
+  </resultMap>
+
+  <select id="findAll" resultMap="PackageResult">
+    SELECT * FROM package ORDER BY package_no DESC
+  </select>
+
+  <insert id="insert" parameterType="com.example.demo.vo.PackageVO">
+    <selectKey keyProperty="packageNo" order="BEFORE" resultType="long">
+      SELECT seq_package_no.NEXTVAL FROM dual
+    </selectKey>
+    INSERT INTO package (package_no, type, hall, studio, dress, makeup)
+    VALUES (#{packageNo}, #{type}, #{hall}, #{studio}, #{dress}, #{makeup})
+  </insert>
+</mapper>
