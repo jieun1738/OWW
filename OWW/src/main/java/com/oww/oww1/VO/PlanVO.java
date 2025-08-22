@@ -1,52 +1,17 @@
 package com.oww.oww1.VO;
 
-public class PlanVO {
-	int plan_no, package_no, hall, studio, dress, makeup;
-	
-	String user_email;
-	
-	
-	public int getPackage_no() {
-		return package_no;
-	}
-	public void setPackage_no(int package_no) {
-		this.package_no = package_no;
-	}
+import lombok.*;
 
-	public int getPlan_no() {
-		return plan_no;
-	}
-	public void setPlan_no(int plan_no) {
-		this.plan_no = plan_no;
-	}
-	public int getHall() {
-		return hall;
-	}
-	public void setHall(int hall) {
-		this.hall = hall;
-	}
-	public int getStudio() {
-		return studio;
-	}
-	public void setStudio(int studio) {
-		this.studio = studio;
-	}
-	public int getDress() {
-		return dress;
-	}
-	public void setDress(int dress) {
-		this.dress = dress;
-	}
-	public int getMakeup() {
-		return makeup;
-	}
-	public void setMakeup(int makeup) {
-		this.makeup = makeup;
-	}
-	public String getUser_email() {
-		return user_email;
-	}
-	public void setUser_email(String user_email) {
-		this.user_email = user_email;
-	}
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
+public class PlanVO {
+    private int plan_no;
+    private String user_email;
+    private int package_no;  // null이면 DIY
+    private int hall;
+    private int studio;
+    private int dress;
+    private int makeup;
 }
+
+

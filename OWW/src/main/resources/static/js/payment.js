@@ -2,10 +2,12 @@ const payButtons = document.querySelectorAll('.payBtn');
 
 	payButtons.forEach(btn => {
 	    btn.addEventListener('click', () => {
+			const user_email = "user2@example.com";/*토큰의 email값 받아서 넣어주기*/
 	        const form = btn.closest('form'); // 해당 버튼이 속한 form
 	        const itemName = form.querySelector('input[name="product_name"]').value;
 	        const amount = form.querySelector('input[name="cost"]').value;
-
+			const category = form.querySelector('input[name="category"]').value;
+			const discount = form.querySelector('input[name="discount"]').value;
 	        const IMP = window.IMP;
 	        IMP.init('imp87271311');
 
@@ -13,8 +15,10 @@ const payButtons = document.querySelectorAll('.payBtn');
 	            pg: 'kakaopay',
 	            pay_method: 'card',
 	            merchant_uid: `order_${new Date().getTime()}`,
-	            name: itemName,
-	            amount: amount
+				name: itemName,
+	            amount: amount,
+				buyer_email: user_email,
+				category: category
 	        };
 
 	        IMP.request_pay(requestData, (res) => {
@@ -28,13 +32,16 @@ const payButtons = document.querySelectorAll('.payBtn');
 	        });
 			
 			function savePaymentToDB(paymentInfo) {
-			    fetch('/payment/success', {
+			    return fetch('/payment/success', {
 			        method: 'POST',
 			        headers: { 'Content-Type': 'application/json' },
 			        body: JSON.stringify({
 			            orderId: paymentInfo.imp_uid,
 			            amount: paymentInfo.paid_amount,
-			            itemName: paymentInfo.item_name
+			            itemName: paymentInfo.item_name,
+						user_email: paymentInfo.buyer_email,
+						category: category,
+						discount: discount
 			        })
 			    })
 			    .then(res => res.json())

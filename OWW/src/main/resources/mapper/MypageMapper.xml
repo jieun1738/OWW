@@ -121,4 +121,19 @@
 		WHERE plan_no = #{plan_no}
 	</update>
 	
+	<update id="savePayment" parameterType="com.oww.oww1.VO.PaymentDTO">
+		UPDATE plan_progress
+		SET
+		${contract_category_str} = 'Y',
+		${pay_category_str} = #{amount}
+		WHERE plan_no = #{plan_no}
+	</update>
+	
+	<update id="updateContract">
+   		UPDATE plan_progress
+    		SET ${contract_category} = #{YorN}
+    		WHERE plan_no = #{plan_no}
+	</update>
+	
+	
 </mapper>

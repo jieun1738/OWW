@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oww.oww1.VO.BudgetVO;
+import com.oww.oww1.VO.PaymentDTO;
 import com.oww.oww1.VO.PlanProgressVO;
 import com.oww.oww1.VO.PlanVO;
 import com.oww.oww1.VO.ProductVO;
@@ -54,5 +55,12 @@ public class BudgetService {
 
 	   public int getDiscount(int package_no) {
 		return mypageMapper.getDiscount(package_no);
+	   }
+	   public int savePayment(PaymentDTO payment) {
+		   return mypageMapper.savePayment(payment);
+	   }
+	   
+	   public int updateContract(String contract_category, String YorN, int plan_no) {
+		   return mypageMapper.updateContract(contract_category, YorN, plan_no);
 	   }
 }

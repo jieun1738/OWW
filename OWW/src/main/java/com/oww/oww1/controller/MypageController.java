@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oww.oww1.OwwApplication;
 import com.oww.oww1.VO.PaymentDTO;
@@ -35,11 +36,14 @@ public class MypageController {
 
 	@GetMapping("/mypage")
 	public String goMypage(Model model) {
-		String user_email = "user1@example.com";
+		String user_email = "user2@example.com";
 		model.addAttribute("totalBudget", budservice.getBudget(user_email));
 		int sumBudget=budservice.sumBudget(user_email);
 		model.addAttribute("sumBudget", sumBudget);	
 		List<ProductVO> user_product = budservice.getProductInfo(user_email);
+		
+		System.out.println(user_product);
+		
 		int total_cost =0;
 		for (ProductVO imsi :user_product) {
 			
@@ -96,37 +100,99 @@ public class MypageController {
 		
 	}
 	
-	@GetMapping("/saveprogress.do")
-	public String goSave_progress(@ModelAttribute PlanProgressVO ppgvo, Model model) {
-		String user_email = "user1@example.com";
-		System.out.println("입력받은 내용:"+ppgvo.getPay_hall());
-		ppgvo.setContract_hall(ppgvo.getContract_hall_ch() ? "Y" : "N");
-		ppgvo.setContract_stud(ppgvo.getContract_stud_ch() ? "Y" : "N");
-		ppgvo.setContract_dres(ppgvo.getContract_dres_ch() ? "Y" : "N");
-		ppgvo.setContract_make(ppgvo.getContract_make_ch() ? "Y" : "N");	
-		ppgvo.setPlan_no(budservice.getPlan(user_email).getPlan_no());
-		budservice.setProgress(ppgvo);
-		
-		System.out.println(ppgvo.getContract_hall());
-		System.out.println(ppgvo.getContract_hall_ch());
-		
-		System.out.println("저장중");
-		System.out.println(ppgvo.getPay_hall());
-		return "redirect:/mypage";
-	}
+	/*
+	 * @GetMapping("/saveprogress.do") public String goSave_progress(@ModelAttribute
+	 * PlanProgressVO ppgvo, Model model) { String user_email = "user1@example.com";
+	 * System.out.println("입력받은 내용:"+ppgvo.getPay_hall());
+	 * ppgvo.setContract_hall(ppgvo.getContract_hall_ch() ? "Y" : "N");
+	 * ppgvo.setContract_stud(ppgvo.getContract_stud_ch() ? "Y" : "N");
+	 * ppgvo.setContract_dres(ppgvo.getContract_dres_ch() ? "Y" : "N");
+	 * ppgvo.setContract_make(ppgvo.getContract_make_ch() ? "Y" : "N");
+	 * ppgvo.setPlan_no(budservice.getPlan(user_email).getPlan_no());
+	 * budservice.setProgress(ppgvo);
+	 * 
+	 * System.out.println(ppgvo.getContract_hall());
+	 * System.out.println(ppgvo.getContract_hall_ch());
+	 * 
+	 * System.out.println("저장중"); System.out.println(ppgvo.getPay_hall()); return
+	 * "redirect:/mypage"; }
+	 */
 	
-	@PostMapping("/payment/success")
-	public Map<String, Object> paymentSuccess(@RequestBody PaymentDTO payment) {
+	@PostMapping("payment/success")
+	public String paymentSuccess(@RequestBody PaymentDTO payment) {
 	    Map<String, Object> result = new HashMap<>();
 	    try {
+	    	System.out.println("결제 정보 받음: " + payment);
 	        // DB에 저장
-	        paymentService.savePayment(payment); 
+	    	int plan_no=budservice.getPlan(payment.getUser_email()).getPlan_no();
+	    	payment.setPlan_no(plan_no);
+	    	int category=payment.getCategory();
+	    	double real_pay_ratio = (100-payment.getDiscount())/100.0;
+	    	if(category==4) {
+	    		List<ProductVO> all_productInfo = budservice.getProductInfo(payment.getUser_email());
+	    		for(ProductVO imsi:all_productInfo) {
+	    			
+	    				payment.setCategory(imsi.getCategory());
+	    				payment.setAmount((int)(imsi.getCost()*real_pay_ratio));
+	    				payment.setItemName(imsi.getProduct_name());
+	    				payment.getCategorytoString();
+	    				int aa_in =budservice.savePayment(payment); 
+	    		    		if(aa_in>0) {
+	    		    			result.put("success", true);
+	    		    			System.out.println(payment.getPay_category_str()+" 결제 정보 저장완료: " + payment);
+	    		    		}
+	    		    		else 
+	    		    			result.put("success", false);
+	    			
+	    		}
+	    	
+	    	}else {
+	    	payment.getCategorytoString();
+	    	int aa =budservice.savePayment(payment); 
+	    	if(aa>0) {
 	        result.put("success", true);
+	        System.out.println("결제 정보 저장완료: " + payment);
+	    	}
+	    	else 
+	    		result.put("success", false);
+	    	}
+	    	
 	    } catch (Exception e) {
+	        result.put("success", false);
+	        result.put("error", e.getMessage());
+	    }
+	    
+	    return "redirect:/mypage";
+	}
+	
+	
+	
+	@PostMapping("/mypage/updateContract")
+	@ResponseBody
+	public Map<String, Object> updateContract(@RequestBody Map<String, Object> param){
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	    		String user_email = "user2@example.com";
+	    		int plan_no=budservice.getPlan(user_email).getPlan_no();
+	        String contract_category = (String)param.get("baseName");
+	        boolean checked = (boolean) param.get("checked");
+	        String YorN = checked?"Y":"N";
+	        int updated = budservice.updateContract(contract_category, YorN, plan_no); // DB 저장
+	       
+	     // progress 계산
+	        int contract_y_count = budservice.getContractProgess(plan_no);
+			System.out.println(contract_y_count);
+			int contract_progress_width = contract_y_count*100/4;
+	        
+
+	        result.put("success", true);
+	        result.put("progress", contract_progress_width);
+	    } catch(Exception e) {
 	        result.put("success", false);
 	        result.put("error", e.getMessage());
 	    }
 	    return result;
 	}
+
 	
 }

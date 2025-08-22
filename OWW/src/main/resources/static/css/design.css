@@ -516,6 +516,12 @@ nav {
 .btn:hover {
 	background: rgb(128, 128, 255);
 }
+
+.underline-width {
+  display: inline-block; /* width를 적용하기 위해 필요 */
+  width: 40px; /* 원하는 너비 설정 */
+  text-decoration: underline;
+}
 .payBtn{
 	background: rgb(217, 137, 243);
 	color: white;
