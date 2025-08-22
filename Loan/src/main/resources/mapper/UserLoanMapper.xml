@@ -40,6 +40,13 @@
 	SET paidmonthlyamount = 0
 </update>
 
+<select id="getloanexist" resultType="int" parameterType="String">
+    SELECT COUNT(*) 
+    FROM user_loans 
+    WHERE user_email = #{userEmail}
+</select>
+
+
 
 </mapper>
 

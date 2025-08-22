@@ -1,68 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html>
 <head>
 <meta charset="UTF-8">
 <title>대출상품 상세</title>
+  <link rel="stylesheet" th:href="@{/css/design.css}">
+<link rel="stylesheet" th:href="@{/css/Detail.css}">
+<link rel="stylesheet" th:href="@{/css/icons.css}">
 </head>
 <body>
-<div style="border:1px solid #333; padding:10px; margin-bottom:10px; text-align: center;">
-	<h1 th:text="${loandetails.loanName}"></h1>
-<p>상세 설명: <span th:text="${loandetails.LoanExplanation}"></span></p>
-<p>대출 한도: <span th:text="${loandetails.LoanLimit}"></span></p>
-<p>대출 기간(개월): <span th:text="${loandetails.LoanPeriod}"></span></p>
-<p>상환 방식: 
-    <span th:switch="${loandetails.LoanRepaymentType}">
-        <span th:case="0">원리금 균등상환</span>
-        <span th:case="1">원금균등상환</span>
-        <span th:case="*">-</span>
-    </span>
-</p>
-<p>이자율(%): <span th:text="${loandetails.InterestRate}">이자율</span></p>
+
+<div class="card" style="max-width: 500px; margin: 40px auto; padding: 20px; text-align: left;">
+    <h1 class="title" th:text="${loandetails.loanName}">상품명</h1>
+    
+    <p><strong>상세 설명:</strong> <span th:text="${loandetails.LoanExplanation}">설명</span></p>
+    <p><strong>대출 한도:</strong> <span th:text="${loandetails.LoanLimit}">-</span></p>
+    <p><strong>대출 기간(개월):</strong> <span th:text="${loandetails.LoanPeriod}">-</span></p>
+    <p><strong>상환 방식:</strong>
+        <span th:switch="${loandetails.LoanRepaymentType}">
+            <span th:case="0">원리금 균등상환</span>
+            <span th:case="1">원금균등상환</span>
+            <span th:case="*">-</span>
+        </span>
+    </p>
+    <p><strong>이자율(%):</strong> <span th:text="${loandetails.InterestRate}">-</span></p>
 </div>
-<form th:action="@{/insertloan}" id="loanForm">
-대출금 입력:
-<input type="text" name="loanamount" id="loanamount">
-<input type="hidden" name="loanname" th:value="${loandetails.loanName}">
-<input type="hidden" name="loanperiod" th:value="${loandetails.LoanPeriod}">
-<input type="hidden" name="loanrepaymenttype" th:value="${loandetails.LoanRepaymentType}">
-<input type="hidden" name="interestrate" th:value="${loandetails.InterestRate}">
-<button type="submit">가입하기</button>
+
+<form th:action="@{/insertloan}" id="loanForm" class="loan-form" style="max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+    <label for="loanamount">대출금 입력:</label>
+    <input type="text" name="loanamount" id="loanamount" class="input-field" placeholder="숫자만 입력">
+    <input type="hidden" name="loanname" th:value="${loandetails.loanName}">
+    <input type="hidden" name="loanperiod" th:value="${loandetails.LoanPeriod}">
+    <input type="hidden" name="loanrepaymenttype" th:value="${loandetails.LoanRepaymentType}">
+    <input type="hidden" name="interestrate" th:value="${loandetails.InterestRate}">
+    <button type="submit" class="btn primary">가입하기</button>
 </form>
+
 <script th:inline="javascript">
-  document.getElementById('loanForm').addEventListener('submit', function(event) {
+document.getElementById('loanForm').addEventListener('submit', function(event) {
     const loanamountInput = document.getElementById('loanamount');
     const loanamount = loanamountInput.value.trim();
-
-    // 서버에서 받아오는 loanLimit (숫자) - Thymeleaf 변수 삽입
     const loanLimit = /*[[${loandetails.LoanLimit}]]*/ 0;
 
-    if (loanamount === '') {
-      alert('대출금을 입력하세요.');
-      event.preventDefault();
-      return;
-    }
-
-    if (!/^\d+(\.\d+)?$/.test(loanamount)) {  // 숫자 검사 (정수 또는 소수)
-      alert('숫자만 입력 가능합니다.');
-      event.preventDefault();
-      return;
-    }
-
+    if (loanamount === '') { alert('대출금을 입력하세요.'); event.preventDefault(); return; }
+    if (!/^\d+(\.\d+)?$/.test(loanamount)) { alert('숫자만 입력 가능합니다.'); event.preventDefault(); return; }
     const amountNum = Number(loanamount);
-
-    if (amountNum <= 0) {
-      alert('대출금은 0보다 커야 합니다.');
-      event.preventDefault();
-      return;
-    }
-
-    if (amountNum > loanLimit) {
-      alert('대출금은 대출 한도 ' + loanLimit + '원을 초과할 수 없습니다.');
-      event.preventDefault();
-      return;
-    }
-  });
+    if (amountNum <= 0) { alert('대출금은 0보다 커야 합니다.'); event.preventDefault(); return; }
+    if (amountNum > loanLimit) { alert('대출금은 대출 한도 ' + loanLimit + '원을 초과할 수 없습니다.'); event.preventDefault(); return; }
+});
 </script>
+
 </body>
 </html>

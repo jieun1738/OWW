@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>대출 상환</title>
+  <meta charset="UTF-8">
+  <title>대출 상환</title>
+  <link rel="stylesheet" type="text/css" href="/css/repayment.css">
 </head>
 <body>
 	
-<div th:if="${infoMessage}" style="color:blue; text-align:center; font-size:1.2em;">
+<!-- 안내 메시지 -->
+<div th:if="${infoMessage}" class="info-message">
     <p th:text="${infoMessage}"></p>
 </div>
 
-<!-- 실제 대출 정보와 폼은 infoMessage가 없을 때만 보여주기 -->
+<!-- 대출 정보 카드 -->
 <div th:if="${infoMessage == null}">
-    <div style="border:1px solid #333; padding:10px; margin-bottom:10px; text-align: center;">
+    <div class="loan-card">
         <h1 th:text="${userloan.loanName}"></h1>
         <p>상세 설명: <span th:text="${userloan.LoanExplanation}"></span></p>
         <p>대출 금액: <span th:text="${userloan.LoanAmount}"></span></p>
@@ -25,54 +27,65 @@
             </span>
         </p>
         <p>이자율(%): <span th:text="${userloan.InterestRate}"></span></p>
-    </div>
 
-    <progress id="progress" value="${userloan.LoanCurrentAmount}" min="0" max="${userloan.LoanAmount}"></progress>
-    <p>월 납입금: <span th:text="${monthlyinstallment}"></span></p>
-    <p>이번달에 납입한 금액: <span th:text="${userloan.paidmonthlyamount}"></span></p>
-    <form action="/repaymentloan" id="repayment">
-        납부할 금액 입력<input type="text" name="paidamaount" id="paidamount"  th:value="${monthlyinstallment - userloan.paidmonthlyamount}">
-        <button type="submit">상환하기</button>
-    </form>
+        <progress id="progress" 
+                  th:value="${userloan.LoanCurrentAmount}" 
+                  min="0" 
+                  th:max="${userloan.LoanAmount}">
+        </progress>
+
+        <p>월 납입금: <span th:text="${monthlyinstallment}"></span></p>	
+        <p>이번달에 납입한 금액: <span th:text="${userloan.paidmonthlyamount}"></span></p>
+
+        <form action="/repaymentloan" id="repayment">
+            <label for="paidamount">납부할 금액 입력</label><br>
+            <input type="text" name="paidamaount" id="paidamount"  
+                   th:value="${monthlyinstallment - userloan.paidmonthlyamount}">
+            <button type="submit">상환하기</button>
+        </form>
+    </div>
 </div>
 
 <script th:inline="javascript">
 document.getElementById('repayment').addEventListener('submit', function(event){
-	const paidamountinput = document.getElementById(paidamount);
+	const paidamountinput = document.getElementById("paidamount");
 	const paidamount = paidamountinput.value.trim();
 	
     const monthlyinstallment = /*[[${monthlyinstallment}]]*/ 0;
     const paidThisMonth = /*[[${userloan.paidmonthlyamount}]]*/ 0;	
-	const currentaccount =  /*[[${loandetails.LoanLimit}]]*/ 0;//계좌 받아오는 게 미구현 상태임
+	const currentaccount =  /*[[${loandetails.LoanLimit}]]*/ 0; // 계좌 받아오는 게 미구현 상태임
+	
 	if (paidamount == ''){
 		alert('상환 금액을 입력하세요.');
-	      event.preventDefault();
-	      return;
-	} if (!/^\d+(\.\d+)?$/.test(paidamount)) {  // 숫자 검사 (정수 또는 소수)
-	      alert('숫자만 입력 가능합니다.');
-	      event.preventDefault();
-	      return;
-	    }
-	 const paidamountNum = Number(paidamount);
+	    event.preventDefault();
+	    return;
+	} 
+	if (!/^\d+(\.\d+)?$/.test(paidamount)) {  
+	    alert('숫자만 입력 가능합니다.');
+	    event.preventDefault();
+	    return;
+	}
+	
+	const paidamountNum = Number(paidamount);
 
-	    if (paidamountNum <= 0) {
-	      alert('상환 금액은 0보다 커야 합니다.');	
-	      event.preventDefault();
-	      return;
-	    }
+	if (paidamountNum <= 0) {
+	    alert('상환 금액은 0보다 커야 합니다.');	
+	    event.preventDefault();
+	    return;
+	}
 
-	    if (paidamountNum > currentaccount) {
-	      alert('상환 금액은 계좌 잔액 ' + currentaccount + '원을 초과할 수 없습니다.');
-	      event.preventDefault();
-	      return;
-	    }
-	    if (paidamountNum > (monthlyinstallment - paidThisMonth)) {
-	        alert('상환 금액이 이번달 납입해야 할 남은 금액을 초과할 수 없습니다.');
-	        event.preventDefault();
-	        return;
-	    }
+	if (paidamountNum > currentaccount) {
+	    alert('상환 금액은 계좌 잔액 ' + currentaccount + '원을 초과할 수 없습니다.');
+	    event.preventDefault();
+	    return;
+	}
+	if (paidamountNum > (monthlyinstallment - paidThisMonth)) {
+	    alert('상환 금액이 이번달 납입해야 할 남은 금액을 초과할 수 없습니다.');
+	    event.preventDefault();
+	    return;
+	}
 });
 </script>
-</body>
 
+</body>
 </html>

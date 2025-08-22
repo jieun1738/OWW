@@ -137,9 +137,9 @@ public class LoanController {
 	}
 	
 	@GetMapping("/repayment")
-	public String repayment(@RequestParam("useremail") String useremail,RedirectAttributes redirectAttributes ,Model model){//여기에 토큰에서 이메일 정보 넣어야함
-		
-		int approve = loanservice.getuserappove(useremail);
+	public String repayment(RedirectAttributes redirectAttributes ,Model model,HttpServletRequest request){//여기에 토큰에서 이메일 정보 넣어야함
+		String useremail = request.getHeader("X-useremail");
+		int approve = loanservice.getloanapprove(useremail);
 		if(approve == 0) {
 			model.addAttribute("infoMessage", "상환할 대출이 없습니다.");
 			return "Repayment";
@@ -166,7 +166,9 @@ public class LoanController {
 	
 	@GetMapping("/costcalculate")
 	public String costcalculate(Model model,HttpServletRequest request) {
+		
 		String useremail = request.getHeader("X-useremail");
+		
 		double monthlyinstellment = loanservice.sumMonthlyInstallment(useremail);
 		
 		model.addAttribute("monthlyinstellment",monthlyinstellment);

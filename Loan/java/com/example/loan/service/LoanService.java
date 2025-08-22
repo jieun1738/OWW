@@ -24,7 +24,6 @@ public interface LoanService {
 	void insertloan(String loanname, String loanname2, int loanamountint, int loanperiodint, int loanrepaymenttypeint,
 			double interestratedouble);
 
-	int getuserappove(String useremail);
 
 
 	UserLoanVO getuserloan(String useremail);
@@ -37,6 +36,6 @@ public interface LoanService {
 
 	void resetpaidmonthlyamount();
 	
-	
+	int getloanapprove(String useremail);
 
 }

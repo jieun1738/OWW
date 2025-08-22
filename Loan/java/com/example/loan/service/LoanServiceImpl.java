@@ -128,9 +128,15 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
-	public int getuserappove(String useremail) {
+	public int getloanapprove(String useremail) {
 		// TODO Auto-generated method stub
-	int approve = userLoanMapper.getloanexist(useremail);
+	int exist = userLoanMapper.getloanexist(useremail);
+	int approve =0;
+	if (exist == 1) {
+		approve = userLoanMapper.getloanappreove(useremail);
+	}else {
+		return approve;
+	}
 		
 		return approve;
 	}
@@ -166,7 +172,6 @@ public class LoanServiceImpl implements LoanService {
 	userLoanMapper.resetpaidmonthlyamount();
 		}
 	}
-
 
 
 	

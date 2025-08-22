@@ -16,6 +16,8 @@ public interface UserLoanMapper {
 	
 	int getloanexist(String UserEmail);
 
+	int getloanappreove(String userEmail);
+	
 	int getcurrentAmount(String UserEmail);
 
 	void updatePeriod(String UserEmail);

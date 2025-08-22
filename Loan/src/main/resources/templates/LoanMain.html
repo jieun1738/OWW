@@ -1,30 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>대출</title>
+  <meta charset="UTF-8">
+  <title>대출</title>
+  <link rel="stylesheet" th:href="@{/css/design.css}">
+   <link rel="stylesheet" th:href="@{/css/icons.css}">
+  <link rel="stylesheet" th:href="@{/css/MainSideBar.css}">
 </head>
 <body>
-<form action="http://payment-service.com/main"><!-- 완성된게 아니라 예시임 -->
-<button type="submit">메인 화면으로</button>
-</form>
-<form action="/searchloan">
-<input type="text" name="search" placeholder="대출 상품명 검색" />
-<input type="hidden" name="lastUrl" value="LoanMain">
-<button type="submit">검색</button>
-</form>
-<form action="/loancomparison" method="get">
-    <button type="submit">상품 비교</button>
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <div class="header-inner">
+    </div>
+  </header>
+
+  <!-- ===== App Layout (3-Column) ===== -->
+  <div class="app">
+
+    <!-- Left Navigation -->
+<aside class="leftnav">
+  <div class="ln-title">메뉴</div>
+
+  <!-- 검색폼 -->
+  
+
+  <div class="ln-list">
+    <a href="/" class="ln-item">
+      <span>메인</span>
+      <span class="ln-dot"></span>
+    </a>
+    <a href="/loancomparison" class="ln-item">
+      <span>상품 비교</span>
+      <span class="ln-dot"></span>
+    </a>
+  </div>
+
+</aside>
+
+
+    <!-- Main Content -->
+    <main class="main">
+<form action="/searchloan" method="get" style="margin-bottom: 16px; display: flex; justify-content: center;">
+  <div class="searchbar">
+    <input type="text" name="search" placeholder="대출 상품명 검색" />
+    <input type="hidden" name="lastUrl" value="LoanMain">
+    <button type="submit" class="btn primary">검색</button>
+  </div>
 </form>
 
-<ul>
-<div>
-  <form th:each="product : ${products}" th:action="@{/loandetail}" method="get">
-    <input type="hidden" name="loanName" th:value="${product}" />
-    <button type="submit" th:text="${product}"></button>
-  </form>
+      <div class="grid">
+        <!-- 상품 카드 반복 -->
+        
+       <div class="cards">
+       
+  <div class="card" th:each="product : ${products}">
+    <h3 th:text="${product}">상품명</h3>
+    <form th:action="@{/loandetail}" method="get">
+      <input type="hidden" name="loanName" th:value="${product}">
+      <button type="submit" class="btn">자세히 보기</button>
+    </form>
+  </div>
 </div>
-</ul>
-
+      </div>
+    </main>
+  </div>
 </body>
 </html>
