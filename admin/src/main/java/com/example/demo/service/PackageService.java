@@ -11,11 +11,11 @@ import com.example.demo.vo.PackageVO;
 import com.example.demo.vo.ProductVO;
 
 @Service
-public class ProductService {
+public class PackageService {
 
     private final PackageMapper packageMapper;
 
-    public ProductService(PackageMapper packageMapper) {
+    public PackageService(PackageMapper packageMapper) {
         this.packageMapper = packageMapper;
     }
 

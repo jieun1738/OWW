@@ -34,10 +34,8 @@ public class AdminPackageController {
                        Model model) {
         model.addAttribute("packages", packageService.findAll(q, type, page, size));
         model.addAttribute("total", packageService.count(q, type));
-        model.addAttribute("q", q);
-        model.addAttribute("type", type);
-        model.addAttribute("page", page);
-        model.addAttribute("size", size);
+        model.addAttribute("q", q); model.addAttribute("type", type);
+        model.addAttribute("page", page); model.addAttribute("size", size);
         return "admin/packages/list";
     }
 

@@ -16,4 +16,8 @@ public class LoanVO {
     private Date   decidedAt;      // decided_at
     private String decidedBy;      // decided_by
     private String memo;           // memo
+	public void setLoanNo(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
 }

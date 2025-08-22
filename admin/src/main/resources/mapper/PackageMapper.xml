@@ -1,22 +1,20 @@
+<!-- src/main/resources/mapper/PackageMapper.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.PackageMapper">
 
-  <!-- package_admin_v 결과 매핑 (합계/할인가 포함) -->
   <resultMap id="PackageViewMap" type="com.example.demo.vo.PackageVO">
     <id     property="packageNo" column="package_no"/>
     <result property="type"      column="type"/>
     <result property="discount"  column="discount"/>
 
-    <!-- 구성 선택(원본 package 테이블 FK들) -->
-    <result property="hall"      column="hall_no"/>
-    <result property="studio"    column="studio_no"/>
-    <result property="dress"     column="dress_no"/>
-    <result property="makeup"    column="makeup_no"/>
+    <result property="hall"      column="hall"/>
+    <result property="studio"    column="studio"/>
+    <result property="dress"     column="dress"/>
+    <result property="makeup"    column="makeup"/>
 
-    <!-- 보기용 필드 -->
     <result property="hallName"    column="hall_name"/>
     <result property="hallAddress" column="hall_address"/>
     <result property="hallCost"    column="hall_cost"/>
@@ -35,100 +33,42 @@
     <result property="finalPrice"  column="final_price"/>
   </resultMap>
 
-  <!-- package 테이블용 매핑(Insert/Update에서 사용) -->
-  <resultMap id="PackageMap" type="com.example.demo.vo.PackageVO">
-    <id     property="packageNo" column="package_no"/>
-    <result property="type"      column="type"/>
-    <result property="hall"      column="hall"/>
-    <result property="studio"    column="studio"/>
-    <result property="dress"     column="dress"/>
-    <result property="makeup"    column="makeup"/>
-    <result property="discount"  column="discount"/>
-  </resultMap>
+  <sql id="joinCols">
+    p.package_no, p.type, p.hall, p.studio, p.dress, p.makeup, p.discount,
 
-  <!-- 목록(필터/검색/페이징) : package_admin_v에서 조회 -->
+    h.product_name AS hall_name,
+    h.address      AS hall_address,
+    h.cost         AS hall_cost,
+    h.img          AS hall_img,
+
+    s.product_name AS studio_name,
+    s.cost         AS studio_cost,
+
+    d.product_name AS dress_name,
+    d.cost         AS dress_cost,
+
+    m.product_name AS makeup_name,
+    m.cost         AS makeup_cost,
+
+    NVL(h.cost,0)+NVL(s.cost,0)+NVL(d.cost,0)+NVL(m.cost,0) AS total_price,
+    NVL(h.cost,0)+NVL(s.cost,0)+NVL(d.cost,0)+NVL(m.cost,0) - NVL(p.discount,0) AS final_price
+  </sql>
+
+  <sql id="fromJoin">
+    FROM package p
+    LEFT JOIN product h ON h.product_no = p.hall
+    LEFT JOIN product s ON s.product_no = p.studio
+    LEFT JOIN product d ON d.product_no = p.dress
+    LEFT JOIN product m ON m.product_no = p.makeup
+  </sql>
+
+  <!-- 목록 -->
   <select id="findAll" resultMap="PackageViewMap">
-    SELECT *
-      FROM package_admin_v
+    SELECT <include refid="joinCols"/>
+    <include refid="fromJoin"/>
     <where>
-      <if test="type != null">
-        type = #{type}
-      </if>
+      <if test="type != null"> p.type = #{type} </if>
       <if test="q != null and q != ''">
         AND (
-          LOWER(hall_name)   LIKE '%'||LOWER(#{q})||'%' OR
-          LOWER(studio_name) LIKE '%'||LOWER(#{q})||'%' OR
-          LOWER(dress_name)  LIKE '%'||LOWER(#{q})||'%' OR
-          LOWER(makeup_name) LIKE '%'||LOWER(#{q})||'%'
-        )
-      </if>
-    </where>
-    ORDER BY package_no DESC
-    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
-  </select>
-
-  <!-- 총 개수 -->
-  <select id="count" resultType="int">
-    SELECT COUNT(*)
-      FROM package_admin_v
-    <where>
-      <if test="type != null">
-        type = #{type}
-      </if>
-      <if test="q != null and q != ''">
-        AND (
-          LOWER(hall_name)   LIKE '%'||LOWER(#{q})||'%' OR
-          LOWER(studio_name) LIKE '%'||LOWER(#{q})||'%' OR
-          LOWER(dress_name)  LIKE '%'||LOWER(#{q})||'%' OR
-          LOWER(makeup_name) LIKE '%'||LOWER(#{q})||'%'
-        )
-      </if>
-    </where>
-  </select>
-
-  <!-- 단건 조회 -->
-  <select id="findById" resultMap="PackageViewMap">
-    SELECT * FROM package_admin_v WHERE package_no = #{id}
-  </select>
-
-  <!-- 등록 (package_no 트리거 자동채번이면 #{packageNo} null로 전달 가능) -->
-  <insert id="insert" parameterType="com.example.demo.vo.PackageVO">
-    INSERT INTO package (package_no, type, hall, studio, dress, makeup, discount)
-    VALUES (#{packageNo}, #{type}, #{hall}, #{studio}, #{dress}, #{makeup}, #{discount})
-  </insert>
-
-  <!-- 수정 -->
-  <update id="update" parameterType="com.example.demo.vo.PackageVO">
-    UPDATE package
-       SET type     = #{type},
-           hall     = #{hall},
-           studio   = #{studio},
-           dress    = #{dress},
-           makeup   = #{makeup},
-           discount = #{discount}
-     WHERE package_no = #{packageNo}
-  </update>
-
-  <!-- 할인만 수정 -->
-  <update id="updateDiscount">
-    UPDATE package
-       SET discount = #{discount}
-     WHERE package_no = #{id}
-  </update>
-
-  <!-- 삭제 -->
-  <delete id="delete">
-    DELETE FROM package WHERE package_no = #{id}
-  </delete>
-
-  <!-- 드롭다운: 카테고리별 상품 목록 -->
-  <select id="findProductsByCategory" resultType="com.example.demo.vo.ProductVO">
-    SELECT product_no   AS productNo,
-           product_name AS productName,
-           category, cost, address, img, description
-      FROM product
-     WHERE category = #{category}
-     ORDER BY product_name
-  </select>
-
-</mapper>
+          LOWER(h.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(s.product_name) LIKE '%_

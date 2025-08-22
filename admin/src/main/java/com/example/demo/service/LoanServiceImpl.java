@@ -42,4 +42,22 @@ public class LoanServiceImpl implements LoanService {
     public void reject(long id, String admin, String memo) {
         loanMapper.reject(id, admin, memo);
     }
+
+	@Override
+	public void insert(LoanVO vo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(LoanVO vo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
 }

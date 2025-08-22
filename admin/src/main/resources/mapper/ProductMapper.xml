@@ -1,76 +1,151 @@
+<!-- src/main/resources/mapper/PackageMapper.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.mapper.ProductMapper">
+<mapper namespace="com.example.demo.mapper.PackageMapper">
 
-  <resultMap id="ProductMap" type="com.example.demo.vo.ProductVO">
-    <id     property="productNo"   column="product_no"/>
-    <result property="productName" column="product_name"/>
-    <result property="category"    column="category"/>
-    <result property="cost"        column="cost"/>
-    <result property="address"     column="address"/>
-    <result property="img"         column="img"/>
-    <result property="description" column="description"/>
+  <resultMap id="PackageViewMap" type="com.example.demo.vo.PackageVO">
+    <id     property="packageNo" column="package_no"/>
+    <result property="type"      column="type"/>
+    <result property="discount"  column="discount"/>
+
+    <result property="hall"      column="hall"/>
+    <result property="studio"    column="studio"/>
+    <result property="dress"     column="dress"/>
+    <result property="makeup"    column="makeup"/>
+
+    <result property="hallName"    column="hall_name"/>
+    <result property="hallAddress" column="hall_address"/>
+    <result property="hallCost"    column="hall_cost"/>
+    <result property="hallImg"     column="hall_img"/>
+
+    <result property="studioName"  column="studio_name"/>
+    <result property="studioCost"  column="studio_cost"/>
+
+    <result property="dressName"   column="dress_name"/>
+    <result property="dressCost"   column="dress_cost"/>
+
+    <result property="makeupName"  column="makeup_name"/>
+    <result property="makeupCost"  column="makeup_cost"/>
+
+    <result property="totalPrice"  column="total_price"/>
+    <result property="finalPrice"  column="final_price"/>
   </resultMap>
 
-  <sql id="cols"> <!-- SQL 재사용을 위해 컬럼 목록을 따로 정의 -->
-    product_no, product_name, category, cost, address, img, description
+  <sql id="joinCols">
+    p.package_no, p.type, p.hall, p.studio, p.dress, p.makeup, p.discount,
+
+    h.product_name AS hall_name,
+    h.address      AS hall_address,
+    h.cost         AS hall_cost,
+    h.img          AS hall_img,
+
+    s.product_name AS studio_name,
+    s.cost         AS studio_cost,
+
+    d.product_name AS dress_name,
+    d.cost         AS dress_cost,
+
+    m.product_name AS makeup_name,
+    m.cost         AS makeup_cost,
+
+    NVL(h.cost,0)+NVL(s.cost,0)+NVL(d.cost,0)+NVL(m.cost,0) AS total_price,
+    NVL(h.cost,0)+NVL(s.cost,0)+NVL(d.cost,0)+NVL(m.cost,0) - NVL(p.discount,0) AS final_price
   </sql>
 
-  <select id="findAll" resultMap="ProductMap">
-    SELECT <include refid="cols"/>
-    FROM product
+  <sql id="fromJoin">
+    FROM package p
+    LEFT JOIN product h ON h.product_no = p.hall
+    LEFT JOIN product s ON s.product_no = p.studio
+    LEFT JOIN product d ON d.product_no = p.dress
+    LEFT JOIN product m ON m.product_no = p.makeup
+  </sql>
+
+  <!-- 목록 (검색:q는 상품명들에 LIKE, type 필터, 페이징) -->
+  <select id="findAll" resultMap="PackageViewMap">
+    SELECT <include refid="joinCols"/>
+    <include refid="fromJoin"/>
     <where>
-      <if test="q != null and q != ''"> <!--  q 파라미터가 널이 아니라 빈 문자열이 안닐떄만 sql 실행 -->
-        LOWER(product_name) LIKE '%'||LOWER(#{q})||'%'<!--  LOWER: 컬럼의 값을 항상 소문자로 변환 -> 대소문자 구뷴없는 검색가능 -->
-      </if>
-      <if test="category != null">
-        AND category = #{category}
+      <if test="type != null"> p.type = #{type} </if>
+      <if test="q != null and q != ''">
+        AND (
+          LOWER(h.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(s.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(d.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(m.product_name) LIKE '%'||LOWER(#{q})||'%'
+        )
       </if>
     </where>
-    ORDER BY product_no DESC
+    ORDER BY p.package_no DESC
     OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
   </select>
 
-<!-- 상품 개수 조회 -->
   <select id="count" resultType="int">
-    SELECT COUNT(*) FROM product
+    SELECT COUNT(*) 
+    <include refid="fromJoin"/>
     <where>
+      <if test="type != null"> p.type = #{type} </if>
       <if test="q != null and q != ''">
-        LOWER(product_name) LIKE '%'||LOWER(#{q})||'%'
-      </if>
-      <if test="category != null">
-        AND category = #{category}
+        AND (
+          LOWER(h.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(s.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(d.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+          LOWER(m.product_name) LIKE '%'||LOWER(#{q})||'%'
+        )
       </if>
     </where>
   </select>
 
-<!-- 단일 상품 조회 -->
-  <select id="findById" resultMap="ProductMap">
-    SELECT <include refid="cols"/> FROM product WHERE product_no = #{id}
+  <select id="findById" resultMap="PackageViewMap">
+    SELECT <include refid="joinCols"/>
+    <include refid="fromJoin"/>
+    WHERE p.package_no = #{id}
   </select>
 
-<!-- 등록 -->
-  <insert id="insert" parameterType="com.example.demo.vo.ProductVO">
-    INSERT INTO product(product_no, product_name, category, cost, address, img, description)
-    VALUES(#{productNo}, #{productName}, #{category}, #{cost}, #{address}, #{img}, #{description})
+  <resultMap id="PackageMap" type="com.example.demo.vo.PackageVO">
+    <id     property="packageNo" column="package_no"/>
+    <result property="type"      column="type"/>
+    <result property="hall"      column="hall"/>
+    <result property="studio"    column="studio"/>
+    <result property="dress"     column="dress"/>
+    <result property="makeup"    column="makeup"/>
+    <result property="discount"  column="discount"/>
+  </resultMap>
+
+  <insert id="insert" parameterType="com.example.demo.vo.PackageVO">
+    INSERT INTO package (package_no, type, hall, studio, dress, makeup, discount)
+    VALUES (#{packageNo}, #{type}, #{hall}, #{studio}, #{dress}, #{makeup}, #{discount})
   </insert>
 
-<!-- 수정 -->
-  <update id="update" parameterType="com.example.demo.vo.ProductVO">
-    UPDATE product SET
-      product_name = #{productName},
-      category     = #{category},
-      cost         = #{cost},
-      address      = #{address},
-      img          = #{img},
-      description  = #{description}
-    WHERE product_no = #{productNo}
+  <update id="update" parameterType="com.example.demo.vo.PackageVO">
+    UPDATE package
+       SET type = #{type},
+           hall = #{hall},
+           studio = #{studio},
+           dress = #{dress},
+           makeup = #{makeup},
+           discount = #{discount}
+     WHERE package_no = #{packageNo}
   </update>
 
-<!-- 삭제 -->
+  <update id="updateDiscount">
+    UPDATE package SET discount = #{discount}
+     WHERE package_no = #{id}
+  </update>
+
   <delete id="delete">
-    DELETE FROM product WHERE product_no = #{id}
+    DELETE FROM package WHERE package_no = #{id}
   </delete>
+
+  <!-- 드롭다운: category는 varchar(20) -->
+  <select id="findProductsByCategory" resultType="com.example.demo.vo.ProductVO">
+    SELECT product_no   AS productNo,
+           product_name AS productName,
+           category, cost, address, img, description
+      FROM product
+     WHERE category = #{category}
+     ORDER BY product_name
+  </select>
+
 </mapper>

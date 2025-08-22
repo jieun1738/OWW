@@ -11,6 +11,18 @@
 <!-- 사이드바 -->
 <aside th:replace="fragments/admin-sidebar :: sidebar (~{::#sb})"
        id="sb" th:with="active='product'"></aside>
+<div th:fragment="header">
+    <!-- 헤더 내용 -->
+</div>
+
+<div th:fragment="footer">
+    <!-- 푸터 내용 -->
+</div>
+
+
+<div th:fragment="nav">
+    
+</div>
 
 <main class="form-container">
   <h1 class="page-title" th:text="${mode=='edit'} ? '상품 수정' : '상품 등록'"></h1>

@@ -10,4 +10,7 @@ public interface LoanService {
     LoanVO findById(long id);
     void approve(long id, String admin, String memo);
     void reject(long id, String admin, String memo);
+	void insert(LoanVO vo);
+	void update(LoanVO vo);
+	void delete(Long id);
 }

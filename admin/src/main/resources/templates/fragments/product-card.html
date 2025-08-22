@@ -1,6 +1,19 @@
 <!-- templates/products/fragments/product-card.html -->
 <div th:fragment="card(product)">
   <div class="product-card">
+  <div th:fragment="header">
+    <!-- 헤더 내용 -->
+</div>
+
+<div th:fragment="footer">
+    <!-- 푸터 내용 -->
+</div>
+
+
+<div th:fragment="nav">
+    
+</div>
+  
     <!-- 상품 썸네일 -->
     <div class="thumb-wrap">
       <img th:src="${product.thumbUrl != null ? product.thumbUrl : '/images/placeholder.png'}"

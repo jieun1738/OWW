@@ -9,6 +9,18 @@
 
 <!-- 사이드바 불러오기 -->
 <div th:replace="fragments/admin-sidebar :: sidebar"></div>
+<div th:fragment="header">
+    <!-- 헤더 내용 -->
+</div>
+
+<div th:fragment="footer">
+    <!-- 푸터 내용 -->
+</div>
+
+
+<div th:fragment="nav">
+    
+</div>
 
 <div class="form-container">
   <h1 th:text="${mode=='edit'} ? '상품 수정' : '상품 등록'"></h1>
