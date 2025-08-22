@@ -1,0 +1,79 @@
+:root{
+  --violet:#8a5dd8;
+  --violet-ink:#6f3fd2;
+  --gray-50:#f7f7f8;
+  --gray-100:#ececef;
+  --gray-200:#e1e1e6;
+  --gray-300:#cfcfd6;
+  --text:#222;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color:var(--text);
+  background:#fff;
+}
+
+/* 상단바 */
+.topbar{background:#f0f0f3;border-bottom:1px solid var(--gray-200)}
+.topbar-inner{max-width:1100px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.btn-ghost{border:1px solid #bdbdc7;background:#e8e8ee;height:28px;padding:0 10px;border-radius:3px}
+.link{color:#666;text-decoration:none}
+.link:hover{text-decoration:underline}
+
+/* 레이아웃 */
+.page{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;gap:24px;padding:18px}
+.sidebar{border-right:1px solid var(--gray-200);padding-right:24px}
+.content{padding-left:8px}
+
+/* 사이드 */
+.profile{display:flex;flex-direction:column;align-items:center;gap:6px}
+.avatar{width:72px;height:72px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:28px}
+.grade{font-size:12px;color:#777}
+.name{font-weight:600}
+.divider{height:24px}
+.mymenu .item{display:block;padding:8px 6px;color:#555;border-radius:4px}
+.mymenu .item.active{background:rgba(138,93,216,.15);color:var(--violet)}
+.mini-card{margin:8px 0;padding:8px;border-left:6px solid var(--violet);background:rgba(138,93,216,.08);border-radius:4px}
+.mini-title{font-size:12px;color:#333;margin-bottom:6px}
+.mini-list{list-style:none;margin:0;padding-left:0}
+.mini-list li{font-size:12px;color:#555;line-height:1.6}
+
+/* 본문 공통 */
+.page-title{margin:4px 0 16px 0;font-size:18px;font-weight:700}
+.card{border:1px solid var(--gray-300);border-radius:2px;padding:16px;margin-bottom:18px;background:#fff}
+.card-title{font-weight:700;margin-bottom:10px}
+
+/* 진행바 */
+.progress{position:relative;background:#e6e6ea;border-radius:6px;height:14px;overflow:hidden;margin:10px 0 12px}
+.progress > span{position:absolute;left:0;top:0;height:100%;background:var(--violet);color:#fff;font-size:11px;line-height:14px;text-align:right;padding-right:6px;min-width:30px}
+.progress.titled{margin-top:14px}
+.progress.titled .title{position:absolute;left:0;top:-22px;font-size:12px;color:#555}
+
+/* 목표정보 */
+.goal-info{font-size:12px;line-height:1.7}
+.goal-info .row{display:flex;gap:8px}
+.goal-info .label{color:#666;min-width:64px}
+.goal-info .value{font-weight:600}
+.goal-info .value.violet{color:var(--violet-ink)}
+
+/* 탭 */
+.tabs{display:flex;gap:6px;margin:2px 0 10px}
+.tab{border:1px solid var(--gray-300);background:#fafafb;height:28px;padding:0 10px;border-radius:4px;cursor:pointer;font-size:12px}
+.tab.active{background:rgba(138,93,216,.12);border-color:var(--violet);color:var(--violet)}
+
+/* 차트 블록 */
+.chart-block{border:1px solid var(--gray-300);padding:14px 14px 18px;border-radius:2px;position:relative}
+.chart-caption{font-size:12px;color:#777;margin-bottom:8px}
+.chart-wrap{position:relative;height:220px;width:100%;background:#fff}
+#savingChart{width:100% !important;height:100% !important;display:block}
+.baseline{height:2px;background:#b396f0;position:absolute;left:14px;right:14px;bottom:58px;opacity:.8}
+
+/* 반응형(폭 좁을 때) */
+@media (max-width: 920px){
+  .page{grid-template-columns:1fr}
+  .sidebar{border-right:none;padding-right:0;border-bottom:1px solid var(--gray-200);padding-bottom:16px;margin-bottom:12px}
+}

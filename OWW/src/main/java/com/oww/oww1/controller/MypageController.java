@@ -19,7 +19,7 @@ import com.oww.oww1.OwwApplication;
 import com.oww.oww1.VO.PaymentDTO;
 import com.oww.oww1.VO.PlanProgressVO;
 import com.oww.oww1.VO.ProductVO;
-import com.oww.oww1.service.BudgetService;
+import com.oww.oww1.service.DashboardService;
 
 
 @Controller
@@ -27,7 +27,7 @@ public class MypageController {
 
     private final OwwApplication owwApplication;
 	@Autowired
-	BudgetService budservice;
+	DashboardService dashservice;
 	
 
     MypageController(OwwApplication owwApplication) {
@@ -37,10 +37,10 @@ public class MypageController {
 	@GetMapping("/mypage")
 	public String goMypage(Model model) {
 		String user_email = "user2@example.com";
-		model.addAttribute("totalBudget", budservice.getBudget(user_email));
-		int sumBudget=budservice.sumBudget(user_email);
+		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
+		int sumBudget=dashservice.sumBudget(user_email);
 		model.addAttribute("sumBudget", sumBudget);	
-		List<ProductVO> user_product = budservice.getProductInfo(user_email);
+		List<ProductVO> user_product = dashservice.getProductInfo(user_email);
 		
 		System.out.println(user_product);
 		
@@ -64,18 +64,18 @@ public class MypageController {
 			}
 		}
 		
-		int plan_no=budservice.getPlan(user_email).getPlan_no();
-		int package_no = budservice.getPlan(user_email).getPackage_no();
+		int plan_no=dashservice.getPlan(user_email).getPlan_no();
+		int package_no = dashservice.getPlan(user_email).getPackage_no();
 		int discount =0;
 		if(package_no==9999) {
 			model.addAttribute("discount", discount);
 			System.out.println("할인율: "+discount);
 		}else {
-			discount=budservice.getDiscount(package_no);
+			discount=dashservice.getDiscount(package_no);
 		model.addAttribute("discount", discount);
 		}
 		model.addAttribute("total_cost", total_cost*(100-discount)/100);
-		PlanProgressVO planprogvo1 = budservice.getPlanProgress(plan_no);
+		PlanProgressVO planprogvo1 = dashservice.getPlanProgress(plan_no);
 		System.out.println("홀결제:"+planprogvo1.getPay_hall());
 		planprogvo1.setPay_hall_ch(planprogvo1.getPay_hall() != 0);
 		planprogvo1.setPay_stud_ch(planprogvo1.getPay_stud() != 0);
@@ -89,11 +89,11 @@ public class MypageController {
 		
 		model.addAttribute("planprog", planprogvo1);
 		
-		int contract_y_count = budservice.getContractProgess(plan_no);
+		int contract_y_count = dashservice.getContractProgess(plan_no);
 		System.out.println(contract_y_count);
 		model.addAttribute("contract_progress",(contract_y_count*100/4));
 		
-		int paid_total_amount = budservice.getPaidProgess(plan_no);
+		int paid_total_amount = dashservice.getPaidProgess(plan_no);
 		System.out.println(paid_total_amount);
 		model.addAttribute("paid_progress",(paid_total_amount*100/sumBudget));
 		return "MyWeddingPlan";
@@ -124,19 +124,19 @@ public class MypageController {
 	    try {
 	    	System.out.println("결제 정보 받음: " + payment);
 	        // DB에 저장
-	    	int plan_no=budservice.getPlan(payment.getUser_email()).getPlan_no();
+	    	int plan_no=dashservice.getPlan(payment.getUser_email()).getPlan_no();
 	    	payment.setPlan_no(plan_no);
 	    	int category=payment.getCategory();
 	    	double real_pay_ratio = (100-payment.getDiscount())/100.0;
 	    	if(category==4) {
-	    		List<ProductVO> all_productInfo = budservice.getProductInfo(payment.getUser_email());
+	    		List<ProductVO> all_productInfo = dashservice.getProductInfo(payment.getUser_email());
 	    		for(ProductVO imsi:all_productInfo) {
 	    			
 	    				payment.setCategory(imsi.getCategory());
 	    				payment.setAmount((int)(imsi.getCost()*real_pay_ratio));
 	    				payment.setItemName(imsi.getProduct_name());
 	    				payment.getCategorytoString();
-	    				int aa_in =budservice.savePayment(payment); 
+	    				int aa_in =dashservice.savePayment(payment); 
 	    		    		if(aa_in>0) {
 	    		    			result.put("success", true);
 	    		    			System.out.println(payment.getPay_category_str()+" 결제 정보 저장완료: " + payment);
@@ -148,7 +148,7 @@ public class MypageController {
 	    	
 	    	}else {
 	    	payment.getCategorytoString();
-	    	int aa =budservice.savePayment(payment); 
+	    	int aa =dashservice.savePayment(payment); 
 	    	if(aa>0) {
 	        result.put("success", true);
 	        System.out.println("결제 정보 저장완료: " + payment);
@@ -173,14 +173,14 @@ public class MypageController {
 	    Map<String, Object> result = new HashMap<>();
 	    try {
 	    		String user_email = "user2@example.com";
-	    		int plan_no=budservice.getPlan(user_email).getPlan_no();
+	    		int plan_no=dashservice.getPlan(user_email).getPlan_no();
 	        String contract_category = (String)param.get("baseName");
 	        boolean checked = (boolean) param.get("checked");
 	        String YorN = checked?"Y":"N";
-	        int updated = budservice.updateContract(contract_category, YorN, plan_no); // DB 저장
+	        int updated = dashservice.updateContract(contract_category, YorN, plan_no); // DB 저장
 	       
 	     // progress 계산
-	        int contract_y_count = budservice.getContractProgess(plan_no);
+	        int contract_y_count = dashservice.getContractProgess(plan_no);
 			System.out.println(contract_y_count);
 			int contract_progress_width = contract_y_count*100/4;
 	        
