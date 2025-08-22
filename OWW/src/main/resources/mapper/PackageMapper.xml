@@ -1,31 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wedding.oww.mapper.PackageMapper">
+<mapper namespace="com.oww.oww1.mapper.PackageMapper">
 
-  <resultMap id="PackageMap" type="com.wedding.oww.vo.PackageVO">
-    <id     property="packageNo" column="PACKAGE_NO"/>
-    <result property="type"      column="TYPE"/>
-    <result property="hall"      column="HALL"/>
-    <result property="studio"    column="STUDIO"/>
-    <result property="dress"     column="DRESS"/>
-    <result property="makeup"    column="MAKEUP"/>
-    <result property="discount"  column="DISCOUNT"/>
+  <!-- VO: com.oww.oww1.VO.PackageVO (스네이크 표기) -->
+  <resultMap id="PackageMap" type="com.oww.oww1.VO.PackageVO">
+    <id     property="package_no" column="PACKAGE_NO"/>
+    <result property="type"       column="TYPE"/>
+    <result property="hall"       column="HALL"/>
+    <result property="studio"     column="STUDIO"/>
+    <result property="dress"      column="DRESS"/>
+    <result property="makeup"     column="MAKEUP"/>
+    <result property="discount"   column="DISCOUNT"/>
   </resultMap>
 
-  <!-- <select id="findById" resultMap="PackageMap">
-    SELECT * FROM PACKAGE WHERE PACKAGE_NO = #{packageNo}
-  </select> -->
-
+  <!-- 타입별(전체 포함) -->
   <select id="findByType" resultMap="PackageMap">
-    SELECT * FROM PACKAGE
-    <if test="type != null">
-      WHERE TYPE = #{type}
-    </if>
-    ORDER BY PACKAGE_NO DESC
-  </select>
-
-  <select id="findAllByType" resultMap="PackageMap">
     SELECT PACKAGE_NO, TYPE, HALL, STUDIO, DRESS, MAKEUP, DISCOUNT
     FROM PACKAGE
     <if test="type != null">
@@ -39,4 +29,5 @@
     FROM PACKAGE
     WHERE PACKAGE_NO = #{packageNo}
   </select>
+
 </mapper>

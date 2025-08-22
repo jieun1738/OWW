@@ -1,40 +1,51 @@
 package com.oww.oww1.service;
 
+import com.oww.oww1.VO.PackageVO;
+import com.oww.oww1.VO.PlanCardDTO;
+import com.oww.oww1.VO.PlanVO;
+import com.oww.oww1.VO.ProductVO;
 import com.oww.oww1.mapper.PackageMapper;
 import com.oww.oww1.mapper.PlanMapper;
 import com.oww.oww1.mapper.ProductMapper;
-import com.oww.oww1.VO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * PlannerService 구현 (원시형 int 기반, 단순 로직)
+ * - VO는 모두 스네이크 필드명을 사용함(product_no 등)
+ * - DIY 구분은 package_no == 9999 로 판단(SELECT에서 NVL로 보정됨)
+ * - 마이페이지 관련 기능은 호출하지 않음
+ */
 @Service
 @RequiredArgsConstructor
 public class PlannerServiceImpl implements PlannerService {
+
+    private static final int DIY_SENTINEL = 9999;
 
     private final ProductMapper productMapper;
     private final PackageMapper packageMapper;
     private final PlanMapper planMapper;
 
-    /* ========== 기본 조회들 ========== */
-
+    // 제품 검색
     @Override
     public List<ProductVO> getProducts(Integer category, String q, String sort) {
         return productMapper.search(category, q, sort);
     }
 
+    // 제품 다건 조회
     @Override
     public List<ProductVO> getProductsByIds(List<Integer> ids) {
-        if (CollectionUtils.isEmpty(ids)) return List.of();
+        if (ids == null || ids.isEmpty()) return List.of();
         return productMapper.findByIds(ids);
     }
 
+    // 패키지 목록/단건
     @Override
     public List<PackageVO> getPackages(Integer type) {
-        return packageMapper.findAllByType(type);
+        return packageMapper.findByType(type);
     }
 
     @Override
@@ -42,90 +53,72 @@ public class PlannerServiceImpl implements PlannerService {
         return packageMapper.findById(packageNo);
     }
 
+    // DIY 확정
     @Override
     public void confirmDIY(String email, int hall, int studio, int dress, int makeup) {
         planMapper.insertDIY(email, hall, studio, dress, makeup);
     }
 
+    // 패키지 확정
     @Override
     public void confirmPackage(String email, int packageNo) {
         planMapper.insertPackage(email, packageNo);
     }
 
-    @Override
-    public List<PlanVO> getCommittedPlans(String email) {
-        return planMapper.findCommittedByUser(email);
-    }
-
+    // 확정 건수
     @Override
     public int getCommittedPlanCount(String email) {
-        Integer c = planMapper.countCommittedByUser(email);
-        return c == null ? 0 : c;
+        Integer cnt = planMapper.countCommittedByUser(email);
+        return cnt == null ? 0 : cnt;
     }
 
-    /* ========== 보강: 합계/프리뷰 계산 ========== */
-
-    @Override
-    public List<PackagePreviewDTO> getPackagePreviews(Integer type) {
-        List<PackageVO> list = getPackages(type);
-        if (list == null) return List.of();
-
-        // 패키지별 구성 제품의 금액 합산 -> 할인 적용
-        return list.stream().map(pkg -> {
-            List<Long> ids = new ArrayList<>();
-            if (pkg.getHall() != null) ids.add(pkg.getHall());
-            if (pkg.getStudio() != null) ids.add(pkg.getStudio());
-            if (pkg.getDress() != null) ids.add(pkg.getDress());
-            if (pkg.getMakeup() != null) ids.add(pkg.getMakeup());
-            int sum = getProductsByIds(ids).stream()
-                    .map(ProductVO::getCost).filter(Objects::nonNull)
-                    .mapToInt(Integer::intValue).sum();
-            int discount = pkg.getDiscount() == null ? 0 : pkg.getDiscount();
-            int discounted = sum - (sum * discount / 100);
-            return PackagePreviewDTO.builder()
-                    .packageNo(pkg.getPackageNo())
-                    .type(pkg.getType())
-                    .discount(discount)
-                    .total(sum)
-                    .discounted(discounted)
-                    .build();
-        }).collect(Collectors.toList());
-    }
-
+    // 카드형 목록(썸네일/합계)
     @Override
     public List<PlanCardDTO> getPlanCards(String email) {
-        List<PlanVO> plans = getCommittedPlans(email);
-        if (plans == null) return List.of();
+        List<PlanVO> plans = planMapper.findCommittedByUser(email);
+        if (plans == null || plans.isEmpty()) return List.of();
 
-        return plans.stream().map(pl -> {
-            List<Long> ids = new ArrayList<>();
-            if (pl.getHall() != null) ids.add(pl.getHall());
-            if (pl.getStudio() != null) ids.add(pl.getStudio());
-            if (pl.getDress() != null) ids.add(pl.getDress());
-            if (pl.getMakeup() != null) ids.add(pl.getMakeup());
+        List<PlanCardDTO> cards = new ArrayList<>();
+
+        for (PlanVO pl : plans) {
+            List<Integer> ids = new ArrayList<>();
+            if (pl.getHall()   > 0) ids.add(pl.getHall());
+            if (pl.getStudio() > 0) ids.add(pl.getStudio());
+            if (pl.getDress()  > 0) ids.add(pl.getDress());
+            if (pl.getMakeup() > 0) ids.add(pl.getMakeup());
 
             List<ProductVO> prods = getProductsByIds(ids);
-            int sum = prods.stream().map(ProductVO::getCost).filter(Objects::nonNull)
-                    .mapToInt(Integer::intValue).sum();
 
-            // 대표 썸네일: 홀 이미지 우선, 없으면 첫 제품
+            int sum = 0;
             String thumb = null;
-            if (pl.getHall() != null) {
-                ProductVO hall = prods.stream()
-                        .filter(p -> p.getProductNo().equals(pl.getHall()))
-                        .findFirst().orElse(null);
-                if (hall != null) thumb = hall.getImg();
+
+            for (ProductVO p : prods) {
+                sum += p.getCost();
+                // 홀(카테고리=0) 이미지를 우선 썸네일로 사용, 없으면 첫 이미지
+                if (thumb == null && p.getCategory() == 0 && p.getImg() != null && !p.getImg().isEmpty()) {
+                    thumb = p.getImg();
+                }
             }
             if (thumb == null && !prods.isEmpty()) {
-                thumb = prods.get(0).getImg();
+                String img0 = prods.get(0).getImg();
+                if (img0 != null && !img0.isEmpty()) thumb = img0;
             }
 
-            return PlanCardDTO.builder()
-                    .planNo(pl.getPlanNo())
-                    .packageBased(pl.getPackageNo() != null)
+            boolean packageBased = (pl.getPackage_no() != DIY_SENTINEL);
+
+            cards.add(PlanCardDTO.builder()
+                    .planNo((long) pl.getPlan_no())
+                    .packageBased(packageBased)
                     .total(sum)
                     .thumbnailImg(thumb)
-                    .build();
-        }).collect(Collectors.toList());
+                    .build());
+        }
+        return cards;
+    }
+    
+    @Override
+    public List<PackageVO> getPackagePreviews(Integer type) {
+        // 불필요한 가공 없이 그대로 반환
+        return packageMapper.findByType(type);
     }
 }

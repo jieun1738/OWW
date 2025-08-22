@@ -1,7 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
-<content> 
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title layout:fragment="title">메인</title>
+</head>
+<body>
+<section layout:fragment="content">
+  <!-- 여기에 페이지 본문만 작성 -->
+  <div class="container">
 <!-- Hero Swiper Section -->
 <section class="swiper hero-swiper">
 	<div class="swiper-wrapper">
@@ -63,5 +70,6 @@
     }
   });
 </script>
-</content>
+</section>
+</body>
 </html>

@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wedding.oww.mapper.PlanMapper">
+<mapper namespace="com.oww.oww1.mapper.PlanMapper">
 
-  <resultMap id="PlanMap" type="com.wedding.oww.vo.PlanVO">
-    <id     property="planNo"    column="PLAN_NO"/>
-    <result property="userEmail" column="USER_EMAIL"/>
-    <result property="packageNo" column="PACKAGE_NO"/>
-    <result property="hall"      column="HALL"/>
-    <result property="studio"    column="STUDIO"/>
-    <result property="dress"     column="DRESS"/>
-    <result property="makeup"    column="MAKEUP"/>
+  <!-- VO: com.oww.oww1.VO.PlanVO (스네이크 표기) -->
+  <resultMap id="PlanMap" type="com.oww.oww1.VO.PlanVO">
+    <id     property="plan_no"    column="PLAN_NO"/>
+    <result property="user_email" column="USER_EMAIL"/>
+    <!-- NVL로 DIY 구분값(9999) 보정 -->
+    <result property="package_no" column="PACKAGE_NO"/>
+    <result property="hall"       column="HALL"/>
+    <result property="studio"     column="STUDIO"/>
+    <result property="dress"      column="DRESS"/>
+    <result property="makeup"     column="MAKEUP"/>
   </resultMap>
 
-  <insert id="insert" parameterType="com.wedding.oww.vo.PlanVO">
-    INSERT INTO PLAN (
-      USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP
-    ) VALUES (
-      #{userEmail}, #{packageNo}, #{hall}, #{studio}, #{dress}, #{makeup}
-    )
+  <!-- VO insert -->
+  <insert id="insert" parameterType="com.oww.oww1.VO.PlanVO">
+    INSERT INTO PLAN (USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP)
+    VALUES (#{user_email}, #{package_no}, #{hall}, #{studio}, #{dress}, #{makeup})
   </insert>
 
+  <!-- 사용자별 목록 (PACKAGE_NO null → 9999로 치환) -->
   <select id="findByUser" resultMap="PlanMap">
-    SELECT * FROM PLAN WHERE USER_EMAIL = #{userEmail} ORDER BY PLAN_NO DESC
+    SELECT PLAN_NO, USER_EMAIL, NVL(PACKAGE_NO, 9999) AS PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP
+    FROM PLAN
+    WHERE USER_EMAIL = #{userEmail}
+    ORDER BY PLAN_NO DESC
   </select>
 
   <select id="findById" resultMap="PlanMap">
-    SELECT * FROM PLAN WHERE PLAN_NO = #{planNo}
+    SELECT PLAN_NO, USER_EMAIL, NVL(PACKAGE_NO, 9999) AS PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP
+    FROM PLAN
+    WHERE PLAN_NO = #{planNo}
   </select>
 
   <delete id="delete">
@@ -36,34 +42,31 @@
   <select id="countByUser" resultType="int">
     SELECT COUNT(*) FROM PLAN WHERE USER_EMAIL = #{userEmail}
   </select>
-  
-  <!-- DIY 확정: 트리거 trg_plan_no 가 plan_no 자동 세팅 -->
+
+  <!-- DIY 확정: PACKAGE_NO는 NULL 저장(조회 시 NVL로 9999 보정) -->
   <insert id="insertDIY">
     INSERT INTO PLAN (USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP)
     VALUES (#{email}, NULL, #{hall}, #{studio}, #{dress}, #{makeup})
   </insert>
 
-  <!-- 패키지 확정: 패키지의 구성품까지 복사 저장 -->
+  <!-- 패키지 확정 -->
   <insert id="insertPackage">
     INSERT INTO PLAN (USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP)
-    SELECT
-      #{email} AS USER_EMAIL,
-      p.PACKAGE_NO,
-      p.HALL, p.STUDIO, p.DRESS, p.MAKEUP
+    SELECT #{email}, p.PACKAGE_NO, p.HALL, p.STUDIO, p.DRESS, p.MAKEUP
     FROM PACKAGE p
     WHERE p.PACKAGE_NO = #{packageNo}
   </insert>
 
+  <!-- 확정 목록(마이페이지 호환용) -->
   <select id="findCommittedByUser" resultMap="PlanMap">
-    SELECT PLAN_NO, USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP
+    SELECT PLAN_NO, USER_EMAIL, NVL(PACKAGE_NO, 9999) AS PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP
     FROM PLAN
     WHERE USER_EMAIL = #{email}
     ORDER BY PLAN_NO DESC
   </select>
 
   <select id="countCommittedByUser" resultType="int">
-    SELECT COUNT(*)
-    FROM PLAN
-    WHERE USER_EMAIL = #{email}
+    SELECT COUNT(*) FROM PLAN WHERE USER_EMAIL = #{email}
   </select>
+
 </mapper>
