@@ -1,50 +1,23 @@
 package com.oww.oww1.VO;
 
+import com.oww.oww1.VO.ProductVO;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class ProductVO {
-	int product_no, category, cost;
-	String product_name, address, description, img;
-	
-	public int getProduct_no() {
-		return product_no;
-	}
-	public void setProduct_no(int product_no) {
-		this.product_no = product_no;
-	}
-	public int getCategory() {
-		return category;
-	}
-	public void setCategory(int category) {
-		this.category = category;
-	}
-	public int getCost() {
-		return cost;
-	}
-	public void setCost(int cost) {
-		this.cost = cost;
-	}
-	public String getProduct_name() {
-		return product_name;
-	}
-	public void setProduct_name(String product_name) {
-		this.product_name = product_name;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getImg() {
-		return img;
-	}
-	public void setImg(String img) {
-		this.img = img;
-	}
-	
+    private int product_no;
+    private String product_name;
+    private int category;   // 0: hall, 1: studio, 2: dress, 3: makeup
+    private int cost;
+    private String address;
+    private String description;
+    private String img;
 }
+
+
