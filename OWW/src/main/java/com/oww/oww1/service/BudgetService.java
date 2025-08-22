@@ -59,4 +59,8 @@ public class BudgetService {
 	   public int savePayment(PaymentDTO payment) {
 		   return mypageMapper.savePayment(payment);
 	   }
+	   
+	   public int updateContract(String contract_category, String YorN, int plan_no) {
+		   return mypageMapper.updateContract(contract_category, YorN, plan_no);
+	   }
 }

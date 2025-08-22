@@ -2,12 +2,12 @@ const payButtons = document.querySelectorAll('.payBtn');
 
 	payButtons.forEach(btn => {
 	    btn.addEventListener('click', () => {
-			const user_email = "user1@example.com";/*토큰의 email값 받아서 넣어주기*/
+			const user_email = "user2@example.com";/*토큰의 email값 받아서 넣어주기*/
 	        const form = btn.closest('form'); // 해당 버튼이 속한 form
 	        const itemName = form.querySelector('input[name="product_name"]').value;
 	        const amount = form.querySelector('input[name="cost"]').value;
 			const category = form.querySelector('input[name="category"]').value;
-
+			const discount = form.querySelector('input[name="discount"]').value;
 	        const IMP = window.IMP;
 	        IMP.init('imp87271311');
 
@@ -40,7 +40,8 @@ const payButtons = document.querySelectorAll('.payBtn');
 			            amount: paymentInfo.paid_amount,
 			            itemName: paymentInfo.item_name,
 						user_email: paymentInfo.buyer_email,
-						category: category
+						category: category,
+						discount: discount
 			        })
 			    })
 			    .then(res => res.json())
