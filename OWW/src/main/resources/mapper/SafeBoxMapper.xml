@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.demo.dao.SafeBoxMapper">
+<mapper namespace="com.oww.oww1.mapper.SafeBoxMapper">
 
 
     <!-- 목표 금액 조회 -->
@@ -39,7 +39,7 @@
     </insert>
 
   <!-- 이번 달 일별 합계 -->
-<select id="selectDailyThisMonth" resultType="com.example.demo.vo.PeriodAmt">
+<select id="selectDailyThisMonth" resultType="com.oww.oww1.VO.PeriodAmt">
     SELECT TO_CHAR(TRUNC(saved_at), 'YYYY-MM-DD') AS period,
            SUM(amount)                            AS amount
       FROM SAFE_SAVING_LOG
@@ -50,7 +50,7 @@
 </select>
 
 <!-- 최근 12개월 월별 합계 -->
-<select id="selectMonthly12" resultType="com.example.demo.vo.PeriodAmt">
+<select id="selectMonthly12" resultType="com.oww.oww1.VO.PeriodAmt">
     SELECT TO_CHAR(TRUNC(saved_at,'MM'), 'YYYY-MM') AS period,
            SUM(amount)                              AS amount
       FROM SAFE_SAVING_LOG
