@@ -24,36 +24,41 @@ public class AdminLoanController {
         this.loanService = loanService;
     }
 
+    /** 목록 조회 */
     @GetMapping
     public String list(@RequestParam(required = false) String q, Model model) {
         List<LoanVO> loans = loanService.findAll(q, 0, 0);
         model.addAttribute("loans", loans);
-        return "admin/loans/list";   // 관리자용 뷰
+        return "admin/loans/list";
     }
 
-    @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        LoanVO loan = loanService.findById(id);
+    /** 상세 조회 */
+    @GetMapping("/{loanNo}")
+    public String detail(@PathVariable Long loanNo, Model model) {
+        LoanVO loan = loanService.findById(loanNo);
         model.addAttribute("loan", loan);
         return "admin/loans/detail";
     }
 
+    /** 등록 */
     @PostMapping
     public String insert(LoanVO vo) {
         loanService.insert(vo);
         return "redirect:/admin/loans";
     }
 
-    @PostMapping("/{id}")
-    public String update(@PathVariable Long id, LoanVO vo) {
-        vo.setLoanNo(id);
+    /** 수정 */
+    @PostMapping("/{loanNo}")
+    public String update(@PathVariable Long loanNo, LoanVO vo) {
+        vo.setLoanNo(loanNo);
         loanService.update(vo);
-        return "redirect:/admin/loans/" + id;
+        return "redirect:/admin/loans/" + loanNo;
     }
 
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
-        loanService.delete(id);
+    /** 삭제 */
+    @PostMapping("/{loanNo}/delete")
+    public String delete(@PathVariable Long loanNo) {
+        loanService.delete(loanNo);
         return "redirect:/admin/loans";
     }
 }

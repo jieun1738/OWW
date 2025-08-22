@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" th:href="@{/css/admin-sidebar.css}">
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+  <style>
+    /* 최소한의 안전 스타일 (없으면 제거해도 됨) */
+    .page{display:flex;min-height:100vh}
+    .content{flex:1;padding:24px}
+    .kpi-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .card{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px}
+    .card .label{color:#6b7280;font-size:12px}
+    .card .value{font-weight:700;font-size:20px}
+    .card .delta{font-size:12px;color:#6b7280}
+    .delta.up{color:#059669}.delta.down{color:#ef4444}
+    .charts{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:18px}
+    .chart-box{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;min-height:360px}
+    .extra-widgets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+    .widget-box{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px}
+    .simple-table{width:100%;border-collapse:collapse}
+    .simple-table th,.simple-table td{border-bottom:1px solid #f1f5f9;padding:8px 6px;text-align:left}
+    .rank-list{margin:0;padding-left:18px}
+    .rank-list li{margin:6px 0}
+  </style>
+</head>
+<body>
+<div class="page">
+  <!-- 사이드바 -->
+  <div th:replace="~{fragments/admin-sidebar :: sidebar}"></div>
+
+  <!-- 본문 -->
+  <main class="content dashboard">
+
+    <!-- KPI 카드 (DB 매핑) -->
+    <section class="kpi-cards">
+      <div class="card">
+        <span class="label">이번달 매출 (plan_progress.pay_* 합계)</span>
+        <span class="value"
+              th:text="${#numbers.formatInteger(kpi?.salesThisMonth ?: 0, 0)}">12,500,000</span>
+        <span class="delta up" th:text="${kpi?.salesMoMDeltaText ?: '+0%'}">+12%</span>
+      </div>
+      <div class="card">
+        <span class="label">신규 회원 (user)</span>
+        <span class="value" th:text="${#numbers.formatInteger(kpi?.newUsers ?: 0, 0)}">25</span>
+        <span class="delta">이달</span>
+      </div>
+      <div class="card">
+        <span class="label">활성 상품 수 (product)</span>
+        <span class="value" th:text="${#numbers.formatInteger(kpi?.activeProducts ?: 0, 0)}">120</span>
+        <span class="delta">전체</span>
+      </div>
+      <div class="card">
+        <span class="label">진행 중 플랜 (plan)</span>
+        <span class="value" th:text="${#numbers.formatInteger(kpi?.openPlans ?: 0, 0)}">38</span>
+        <span class="delta" th:classappend="${kpi?.openPlansDeltaSign == 'down'} ? ' down' : ' up'"
+              th:text="${kpi?.openPlansDeltaText ?: '+0%'}">-3%</span>
+      </div>
+    </section>
+
+    <!-- 그래프 -->
+    <section class="charts">
+      <!-- 좌: 월별 매출 & 플랜 생성 수 -->
+      <div class="chart-box">
+        <h3>월별 매출 · 플랜 생성 추이</h3>
+        <canvas id="opsTrendChart"></canvas>
+      </div>
+
+      <!-- 우: 계약/결제 진행 현황 (plan_progress) -->
+      <div class="chart-box">
+        <h3>계약/결제 진행 현황 (plan_progress)</h3>
+        <canvas id="progressChart"></canvas>
+        <ul class="rank-list" style="margin-top:12px">
+          <li><strong>계약 단계:</strong> hall / stud / dres / make</li>
+          <li><strong>지불 컬럼:</strong> pay_hall / pay_stud / pay_dres / pay_make</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 하단 섹션: 최근 데이터 -->
+    <section class="extra-widgets">
+      <!-- 최근 플랜 -->
+      <div class="widget-box">
+        <h3>최근 플랜</h3>
+        <table class="simple-table">
+          <thead>
+            <tr>
+              <th>플랜번호</th><th>사용자</th><th>패키지</th>
+              <th>hall</th><th>studio</th><th>dress</th><th>makeup</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr th:each="p : ${recentPlans}">
+            <td th:text="${p.planNo}">1001</td>
+            <td th:text="${p.userEmail}">user@example.com</td>
+            <td th:text="${p.packageNo}">12</td>
+            <td th:text="${p.hall}">101</td>
+            <td th:text="${p.studio}">201</td>
+            <td th:text="${p.dress}">301</td>
+            <td th:text="${p.makeup}">401</td>
+          </tr>
+          <!-- 데이터 없을 때 -->
+          <tr th:if="${#lists.isEmpty(recentPlans)}">
+            <td colspan="7" style="color:#6b7280">최근 플랜 데이터가 없습니다.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 인기 상품 -->
+      <div class="widget-box">
+        <h3>인기 상품 (product)</h3>
+        <ul class="rank-list">
+          <li th:each="it : ${topProducts}"
+              th:text="|${it.rank}. ${it.productName} — ${#numbers.formatInteger(it.salesCount,0)}건|">
+            상품 A — 120건
+          </li>
+          <li th:if="${#lists.isEmpty(topProducts)}" style="color:#6b7280">집계 데이터 없음</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- 서버 값 주입 -->
+<script th:inline="javascript">
+  // ===== 서버에서 내려주는 데이터 (없으면 우측의 기본값 사용) =====
+  const months   = /*[[${chart?.months}]]*/ ['1월','2월','3월','4월','5월','6월'];
+  const sales    = /*[[${chart?.sales}]]*/  [12500000,13800000,15500000,14900000,17100000,18900000]; // KRW
+  const planCnts = /*[[${chart?.plans}]]*/  [120,132,140,128,156,171]; // 생성 플랜 수
+
+  // 계약 완료/대기 카운트 (plan_progress.contract_* 기준)
+  const contractDone    = /*[[${chart?.contract?.done}]]*/    [210,190,175,160]; // hall, stud, dres, make
+  const contractPending = /*[[${chart?.contract?.pending}]]*/ [20, 35, 45, 60];
+
+  // ===== 유틸 =====
+  const fmtKRW = (v) => new Intl.NumberFormat('ko-KR',{style:'currency',currency:'KRW',maximumFractionDigits:0}).format(v);
+  const fmtNum = (v) => new Intl.NumberFormat('ko-KR').format(v);
+
+  // ===== 선그래프: 월별 매출 & 플랜 수 =====
+  const opsCtx = document.getElementById('opsTrendChart').getContext('2d');
+  new Chart(opsCtx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: '매출(원)',
+          data: sales,
+          borderColor: '#6366F1',
+          backgroundColor: 'rgba(99,102,241,.15)',
+          fill: true, borderWidth: 3, tension: 0.35, pointRadius: 3, yAxisID: 'y'
+        },
+        {
+          label: '플랜 생성 수',
+          data: planCnts,
+          borderColor: '#06B6D4',
+          backgroundColor: 'rgba(6,182,212,.15)',
+          fill: true, borderWidth: 3, tension: 0.35, pointRadius: 3, yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { usePointStyle: true } },
+        tooltip: {
+          callbacks: {
+            label(ctx) {
+              return ctx.dataset.label.includes('매출') ?
+                `${ctx.dataset.label}: ${fmtKRW(ctx.parsed.y)}` :
+                `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)}건`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display:false } },
+        y:  { title:{display:true,text:'매출(KRW)'}, ticks:{ callback:v=>fmtKRW(v) }, grid:{ color:'rgba(0,0,0,.05)'} },
+        y1: { position:'right', title:{display:true,text:'플랜 수'}, ticks:{ callback:v=>fmtNum(v)+'건' }, grid:{ drawOnChartArea:false } }
+      }
+    }
+  });
+
+  // ===== 수평 막대: 계약/결제 진행 (plan_progress) =====
+  const progressCtx = document.getElementById('progressChart').getContext('2d');
+  new Chart(progressCtx, {
+    type: 'bar',
+    data: {
+      labels: ['hall','stud','dres','make'],
+      datasets: [
+        { label: '계약 완료(건)', data: contractDone, backgroundColor: '#10B981', borderWidth: 0 },
+        { label: '계약 대기(건)', data: contractPending, backgroundColor: '#F59E0B', borderWidth: 0 }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { ticks:{ callback:v=>fmtNum(v) }, grid:{ color:'rgba(0,0,0,.05)'} },
+        y: { grid:{ display:false } }
+      },
+      plugins: {
+        legend: { position:'bottom', labels:{ usePointStyle:true } },
+        tooltip: { callbacks: { label: (ctx)=> `${ctx.dataset.label}: ${fmtNum(ctx.parsed.x)}건` } }
+      }
+    }
+  });
+</script>
+</body>
+</html>

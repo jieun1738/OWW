@@ -6,9 +6,8 @@ import lombok.Data;
 public class PackageVO {
     private Long packageNo;
     private Integer type;
-    private Integer hall;
-    private Integer studio;
-    private Integer dress;
-    private Integer makeup;
-    private Integer discount;
+    private Long hall;
+    private Long studio;
+    private Long dress;
+    private Long makeup;
 }

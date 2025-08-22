@@ -18,11 +18,11 @@ import com.example.demo.vo.ProductVO;
 
 @Controller
 @RequestMapping("/admin/packages")
-public class AdminPackageController {
+public class AdminProductController {
 
     private final PackageService packageService;
 
-    public AdminPackageController(PackageService packageService) {
+    public AdminProductController(PackageService packageService) {
         this.packageService = packageService;
     }
 
@@ -70,7 +70,7 @@ public class AdminPackageController {
         return "redirect:/admin/packages";
     }
 
-    // 드롭다운 (AJAX) — product.category: varchar(20)
+    // 드롭다운 (AJAX)
     @GetMapping("/products")
     @ResponseBody
     public List<ProductVO> products(@RequestParam String category) {

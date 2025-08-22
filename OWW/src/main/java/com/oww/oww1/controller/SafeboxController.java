@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SafeboxController {
 
-    // 루트로 들어오면 금고 화면으로 리다이렉트
+  
     @GetMapping("/")
     public String home() {
         return "redirect:/mypage";
@@ -25,7 +25,7 @@ public class SafeboxController {
     public String hello(){ return "hello"; }
 
 
-    // 화면 바인딩용 간단 DTO
+
     public static class GoalView {
         public long targetAmount;
         public long savedAmount;

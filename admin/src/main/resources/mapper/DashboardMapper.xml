@@ -1,0 +1,102 @@
+<!-- src/main/resources/mapper/DashboardMapper.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.DashboardMapper">
+
+  <!-- KPI: 이번달 매출 -->
+  <select id="salesBetween" resultType="long">
+    SELECT NVL(SUM(NVL(pp.pay_hall,0)+NVL(pp.pay_stud,0)+NVL(pp.pay_dres,0)+NVL(pp.pay_make,0)),0)
+      FROM plan_progress pp
+      JOIN plan p ON p.plan_no = pp.plan_no
+     WHERE p.created_at >= #{start} AND p.created_at < #{end}
+  </select>
+
+  <!-- KPI: 신규 회원 수 -->
+  <select id="newUsersBetween" resultType="int">
+    SELECT COUNT(*) FROM "user"
+     WHERE created_at >= #{start} AND created_at < #{end}
+  </select>
+
+  <!-- KPI: 활성 상품 수 -->
+  <select id="activeProducts" resultType="int">
+    SELECT COUNT(*) FROM product
+  </select>
+
+  <!-- KPI: 진행 중 플랜(계약 미완료) -->
+  <select id="openPlans" resultType="int">
+    SELECT COUNT(*)
+      FROM plan_progress
+     WHERE NVL(contract_hall,0)+NVL(contract_stud,0)+NVL(contract_dres,0)+NVL(contract_make,0) < 4
+  </select>
+
+  <!-- 월별 매출 -->
+  <select id="monthlySales" resultType="com.example.demo.vo.MonthlySalesVO">
+    SELECT TO_CHAR(TRUNC(p.created_at,'MM'),'YYYY-MM') AS ym,
+           NVL(SUM(NVL(pp.pay_hall,0)+NVL(pp.pay_stud,0)+NVL(pp.pay_dres,0)+NVL(pp.pay_make,0)),0) AS amount
+      FROM plan_progress pp
+      JOIN plan p ON p.plan_no = pp.plan_no
+     WHERE p.created_at >= #{start} AND p.created_at < #{end}
+     GROUP BY TRUNC(p.created_at,'MM')
+     ORDER BY TRUNC(p.created_at,'MM')
+  </select>
+
+  <!-- 월별 플랜 생성 수 -->
+  <select id="monthlyPlans" resultType="com.example.demo.vo.MonthlyPlansVO">
+    SELECT TO_CHAR(TRUNC(p.created_at,'MM'),'YYYY-MM') AS ym,
+           COUNT(*) AS cnt
+      FROM plan p
+     WHERE p.created_at >= #{start} AND p.created_at < #{end}
+     GROUP BY TRUNC(p.created_at,'MM')
+     ORDER BY TRUNC(p.created_at,'MM')
+  </select>
+
+  <!-- 계약 집계 -->
+  <select id="contractAgg" resultType="com.example.demo.vo.ContractAggVO">
+    SELECT
+      SUM(CASE WHEN NVL(contract_hall,0)=1 THEN 1 ELSE 0 END) AS doneHall,
+      SUM(CASE WHEN NVL(contract_hall,0)=0 THEN 1 ELSE 0 END) AS pendingHall,
+      SUM(CASE WHEN NVL(contract_stud,0)=1 THEN 1 ELSE 0 END) AS doneStud,
+      SUM(CASE WHEN NVL(contract_stud,0)=0 THEN 1 ELSE 0 END) AS pendingStud,
+      SUM(CASE WHEN NVL(contract_dres,0)=1 THEN 1 ELSE 0 END) AS doneDres,
+      SUM(CASE WHEN NVL(contract_dres,0)=0 THEN 1 ELSE 0 END) AS pendingDres,
+      SUM(CASE WHEN NVL(contract_make,0)=1 THEN 1 ELSE 0 END) AS doneMake,
+      SUM(CASE WHEN NVL(contract_make,0)=0 THEN 1 ELSE 0 END) AS pendingMake
+    FROM plan_progress
+  </select>
+
+  <!-- 최근 플랜 -->
+  <select id="recentPlans" resultType="com.example.demo.vo.PlanSummaryVO">
+    SELECT p.plan_no    AS planNo,
+           p.user_email AS userEmail,
+           p.package_no AS packageNo,
+           p.hall, p.studio, p.dress, p.makeup
+      FROM plan p
+     ORDER BY p.plan_no DESC
+     FETCH FIRST #{limit} ROWS ONLY
+  </select>
+
+  <!-- 인기 상품 (사용 횟수 상위) -->
+  <select id="topProducts" resultType="com.example.demo.vo.ProductRankVO">
+    SELECT rn AS rank, product_no AS productNo, product_name AS productName, salesCount
+      FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(cnt) DESC) AS rn,
+               pr.product_no, pr.product_name, SUM(cnt) AS salesCount
+          FROM (
+                 SELECT hall   AS product_no, COUNT(*) cnt FROM plan WHERE hall   IS NOT NULL GROUP BY hall
+                 UNION ALL
+                 SELECT studio AS product_no, COUNT(*) cnt FROM plan WHERE studio IS NOT NULL GROUP BY studio
+                 UNION ALL
+                 SELECT dress  AS product_no, COUNT(*) cnt FROM plan WHERE dress  IS NOT NULL GROUP BY dress
+                 UNION ALL
+                 SELECT makeup AS product_no, COUNT(*) cnt FROM plan WHERE makeup IS NOT NULL GROUP BY makeup
+               ) x
+          JOIN product pr ON pr.product_no = x.product_no
+         GROUP BY pr.product_no, pr.product_name
+      )
+     WHERE rn <= #{limit}
+     ORDER BY rn
+  </select>
+
+</mapper>

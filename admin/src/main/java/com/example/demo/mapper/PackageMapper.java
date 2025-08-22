@@ -31,6 +31,6 @@ public interface PackageMapper {
 
     void delete(@Param("packageNo") Long packageNo);
 
-    // category 는 varchar(20)
+  
     List<ProductVO> findProductsByCategory(@Param("category") String category);
 }
