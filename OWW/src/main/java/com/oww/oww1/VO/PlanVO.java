@@ -1,17 +1,15 @@
+// src/main/java/com/oww/oww1/vo/PlanVO.java
 package com.oww.oww1.VO;
 
-import lombok.*;
+import lombok.Data;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Data
 public class PlanVO {
-    private int plan_no;
-    private String user_email;
-    private int package_no;  // null이면 DIY
-    private int hall;
-    private int studio;
-    private int dress;
-    private int makeup;
+	private int plan_no;
+	private String user_email; // 외래키 ()
+	private Integer package_no; // 패키지 확정 시 번호, DIY면 9999
+	private int hall;
+	private int studio;
+	private int dress;
+	private int makeup;
 }
-
-

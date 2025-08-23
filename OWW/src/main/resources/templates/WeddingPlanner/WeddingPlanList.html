@@ -1,58 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">WeddingPlanList</title>
-  <link rel="stylesheet" th:href="@{/css/WeddingPlanList.css}">
+  <title layout:fragment="title">웨딩플래너 | 플랜 목록</title>
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wpplanlist">
+  <div class="page" id="wp-planlist">
+
+    <!-- 좌측 사이드바 -->
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingPlanList', progress=${progressPercent})}"></div>
 
-    <main class="content">
-      <header class="page-header">
-        <div>
-          <h1 class="title section-title"><i class='bx bx-collection'></i>플랜 보관함</h1>
-          <p class="desc">최종 확정된 플랜 목록입니다.</p>
-        </div>
-        <div class="quick-actions">
-          <a class="btn" th:href="@{/planner/diy}"><i class='bx bx-wrench'></i> DIY로 돌아가기</a>
-          <a class="btn brand" th:href="@{/planner/compare/plan}"><i class='bx bx-git-compare'></i> 비교하기</a>
-        </div>
-      </header>
+    <!-- 우측 본문 -->
+    <main class="main">
+      <h1 class="section-title">최종 확정된 플랜</h1>
 
-      <section class="grid">
-        <article class="card" th:each="pc : ${planCards}">
-          <div class="thumb"
-               th:style="|background-image:url(${#strings.containsIgnoreCase(pc.thumbnailImg,'http') ? pc.thumbnailImg : @{/img/{img}(img=${pc.thumbnailImg})}});|"></div>
+      <div th:if="${#lists.isEmpty(plans)}" style="border:1px dashed var(--line);border-radius:12px;padding:14px;background:var(--muted)">
+        아직 확정된 플랜이 없습니다.
+      </div>
 
-          <div class="content">
-            <h3 class="title">
-              <span class="icon-box brand --sm"><i class='bx bx-file'></i></span>
-              <span th:text="'플랜 #' + ${pc.planNo}">플랜</span>
-            </h3>
-            <div class="meta-row">
-              <span><i class='bx bx-purchase-tag'></i> <span th:text="${pc.packageBased ? '패키지 기반' : 'DIY 기반'}">유형</span></span>
-            </div>
+      <table th:if="${!#lists.isEmpty(plans)}" style="width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+        <thead style="background:var(--muted)">
+          <tr>
+            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Plan No</th>
+            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Package No</th>
+            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Hall</th>
+            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Studio</th>
+            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Dress</th>
+            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Makeup</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="pl : ${plans}">
+            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.plan_no}">1</td>
+            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.package_no}">9999</td>
+            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.hall}">0</td>
+            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.studio}">0</td>
+            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.dress}">0</td>
+            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.makeup}">0</td>
+          </tr>
+        </tbody>
+      </table>
 
-            <div class="price-row">
-              <div class="label"><i class='bx bx-calculator'></i> 총 금액</div>
-              <div class="value" th:text="${#numbers.formatInteger(pc.total,3,'COMMA') + '원'}">0원</div>
-            </div>
-
-            <div class="actions">
-              <form th:action="@{/planner/compare/plan/toggle}" method="post">
-                <input type="hidden" name="planNo" th:value="${pc.planNo}">
-                <button class="btn" type="submit"><i class='bx bx-toggle-left'></i> 비교 선택/해제</button>
-              </form>
-            </div>
-          </div>
-        </article>
-
-        <div class="empty" th:if="${planCards == null or #lists.isEmpty(planCards)}"><i class='bx bx-info-circle'></i> 아직 확정된 플랜이 없습니다.</div>
-      </section>
+      <!-- 마이페이지로 이동하는 링크(선택) -->
+      <div style="margin-top:12px">
+        <a href="/mypage" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">마이페이지로 이동</a>
+      </div>
     </main>
   </div>
 </section>

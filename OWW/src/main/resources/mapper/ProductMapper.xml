@@ -1,85 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<!--
-  파일 목적: PRODUCT 테이블 조회용 매퍼
-  주의 사항:
-    - VO는 스네이크 표기 필드, 원시형 int 사용
-    - 마이페이지 소스는 수정하지 않으며, 본 매퍼만 교체
-    - 불필요 복잡 로직 제거(수강생이 이해 가능한 수준)
--->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oww.oww1.mapper.ProductMapper">
 
-  <!-- VO 매핑: com.oww.oww1.VO.ProductVO -->
-  <resultMap id="ProductMap" type="com.oww.oww1.VO.ProductVO">
-    <id     column="PRODUCT_NO"   property="product_no"/>
-    <result column="PRODUCT_NAME" property="product_name"/>
-    <result column="CATEGORY"     property="category"/>
-    <result column="COST"         property="cost"/>
-    <result column="ADDRESS"      property="address"/>
-    <result column="DESCRIPTION"  property="description"/>
-    <result column="IMG"          property="img"/>
-  </resultMap>
-
-  <!-- 전체 목록 -->
-  <select id="findAll" resultMap="ProductMap">
-    SELECT PRODUCT_NO, PRODUCT_NAME, CATEGORY, COST, ADDRESS, DESCRIPTION, IMG
-    FROM PRODUCT
-    ORDER BY PRODUCT_NO DESC
+  <!-- 카테고리별 상품 목록 -->
+  <select id="findByCategory" resultType="com.oww.oww1.VO.ProductVO">
+    SELECT
+      product_no,
+      product_name,
+      category,
+      cost,
+      address,
+      description,
+      img
+    FROM product
+    WHERE category = #{category}
+    ORDER BY product_no
   </select>
 
-  <!-- 단건 조회(단일 파라미터는 _parameter 사용 시 가장 안전) -->
-  <select id="findById" parameterType="int" resultMap="ProductMap">
-    SELECT PRODUCT_NO, PRODUCT_NAME, CATEGORY, COST, ADDRESS, DESCRIPTION, IMG
-    FROM PRODUCT
-    WHERE PRODUCT_NO = #{_parameter}
-  </select>
-
-  <!-- 카테고리별 조회(단일 파라미터 안전 표기) -->
-  <select id="findByCategory" parameterType="int" resultMap="ProductMap">
-    SELECT PRODUCT_NO, PRODUCT_NAME, CATEGORY, COST, ADDRESS, DESCRIPTION, IMG
-    FROM PRODUCT
-    WHERE CATEGORY = #{_parameter}
-    ORDER BY PRODUCT_NO DESC
-  </select>
-
-  <!-- 다건 조회(IN): @Param 미사용 단일 List 파라미터일 때 기본 컬렉션명은 list -->
-  <select id="findByIds" resultMap="ProductMap">
-    SELECT PRODUCT_NO, PRODUCT_NAME, CATEGORY, COST, ADDRESS, DESCRIPTION, IMG
-    FROM PRODUCT
-    WHERE PRODUCT_NO IN
-    <foreach collection="list" item="id" open="(" separator="," close=")">
-      #{id}
-    </foreach>
-    ORDER BY PRODUCT_NO DESC
-  </select>
-
-  <!-- 검색: category, q, sort 를 @Param 으로 받는 경우만 사용.
-       불확실하면 이 쿼리는 잠시 사용하지 마십시오(주석 처리 권장).
-       test 조건의 논리연산자는 'and' 사용. -->
-  <select id="search" resultMap="ProductMap">
-    SELECT PRODUCT_NO, PRODUCT_NAME, CATEGORY, COST, ADDRESS, DESCRIPTION, IMG
-    FROM PRODUCT
-    <where>
-      <if test="category != null">
-        CATEGORY = #{category}
-      </if>
-      <if test="q != null and q != ''">
-        <if test="category != null"> AND </if>
-        (
-          LOWER(PRODUCT_NAME) LIKE '%' || LOWER(#{q}) || '%'
-          OR LOWER(ADDRESS)   LIKE '%' || LOWER(#{q}) || '%'
-          OR LOWER(DESCRIPTION) LIKE '%' || LOWER(#{q}) || '%'
-        )
-      </if>
-    </where>
-    <choose>
-      <when test="sort == 'cost_asc'">  ORDER BY COST ASC, PRODUCT_NO DESC </when>
-      <when test="sort == 'cost_desc'"> ORDER BY COST DESC, PRODUCT_NO DESC </when>
-      <otherwise> ORDER BY PRODUCT_NO DESC </otherwise>
-    </choose>
+  <!-- 단건 조회 -->
+  <select id="findByNo" resultType="com.oww.oww1.VO.ProductVO">
+    SELECT product_no, product_name, category, cost, address, description, img
+    FROM product
+    WHERE product_no = #{productNo}
   </select>
 
 </mapper>

@@ -1,275 +1,117 @@
 package com.oww.oww1.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.oww.oww1.VO.DraftPlanDTO;
 import com.oww.oww1.VO.PackageVO;
-import com.oww.oww1.VO.PlanVO;
-import com.oww.oww1.VO.ProductVO;
-import com.oww.oww1.service.DraftPlanService;
-import com.oww.oww1.service.PlanCompareService;
 import com.oww.oww1.service.PlannerService;
-import com.oww.oww1.service.ProductCompareService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 웨딩플래너 컨트롤러 (가장 기본적인 링크/폼 흐름)
+ * - 마이페이지 코드는 절대 수정하지 않음
+ * - 스키마(product/package/plan) 및 요구사항을 그대로 준수
+ */
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/planner")
+@RequiredArgsConstructor
 public class WeddingPlannerController {
 
     private final PlannerService plannerService;
-    private final DraftPlanService draftPlanService;
-    private final ProductCompareService productCompareService;
-    private final PlanCompareService planCompareService;
 
-    private String userEmail(HttpServletRequest req) {
-        Object v = req.getAttribute("userEmail");
-        return v == null ? null : v.toString();
-    }
-
-    /** 공통 사이드바 통계 값 주입 */
-    @ModelAttribute
-    public void sidebarCommon(HttpServletRequest req, HttpSession session, Model model) {
-        try {
-            int draftCount = draftPlanService.listVault(session).size();
-            int productCompareCount = productCompareService.size(session);
-            int planCompareCount = planCompareService.size(session);
-
-            model.addAttribute("draftCount", draftCount);
-            model.addAttribute("productCompareCount", productCompareCount);
-            model.addAttribute("planCompareCount", planCompareCount);
-
-            // progressPercent를 개별 페이지에서 안 넘겨도 0으로 방어
-            if (!model.containsAttribute("progressPercent")) {
-                model.addAttribute("progressPercent", 0);
-            }
-        } catch (Exception ignore) {
-            // 세션 미존재 등 예외는 무시 (초기 로딩 방어)
-        }
-    }
-
-    /* ------- Info / Intro / Category ------- */
-
+    /** 진입/요약 */
     @GetMapping("/info")
-    public String info(HttpServletRequest req, HttpSession session, Model model) {
-        String email = userEmail(req);
-        int sessionDraftCount = draftPlanService.listVault(session).size();
-        int committedPlanCount = StringUtils.hasText(email) ? plannerService.getCommittedPlanCount(email) : 0;
-        List<PackageVO> recommended = plannerService.getPackages(null).stream().limit(3).toList();
-
-        model.addAttribute("sessionDraftCount", sessionDraftCount);
-        model.addAttribute("committedPlanCount", committedPlanCount);
-        model.addAttribute("recommendedPackages", recommended);
+    public String info(Model model){
         model.addAttribute("progressPercent", 0);
         return "WeddingPlanner/WeddingPlannerInfo";
     }
 
+    /** 소개 */
     @GetMapping("/intro")
-    public String intro(Model model) {
+    public String intro(Model model){
         model.addAttribute("progressPercent", 0);
         return "WeddingPlanner/WeddingPlannerIntro";
     }
 
+    /** 패키지 목록 (원가/할인가 강조 표시) */
     @GetMapping("/category")
-    public String category(@RequestParam(required = false) Integer type, Model model) {
-        model.addAttribute("pkgPreviews", plannerService.getPackagePreviews(type));
+    public String category(Model model){
+        model.addAttribute("packages", plannerService.listPackages());
         model.addAttribute("progressPercent", 0);
         return "WeddingPlanner/WeddingCategory";
     }
 
-    /* --------------- DIY ------------------- */
-
+    /** DIY: 카테고리별 상품 목록 (0: hall, 1: studio, 2: dress, 3: makeup) */
     @GetMapping("/diy")
-    public String diy(
-            @RequestParam(required = false, defaultValue = "false") boolean all,
-            @RequestParam(required = false) Integer cat,
-            @RequestParam(required = false) String q,
-            @RequestParam(required = false) String sort,
-            HttpServletRequest req, HttpSession session, Model model
-    ) {
-        Integer category = all ? null : (cat == null ? 1 : cat); // 기본 스튜디오
-        List<ProductVO> products = plannerService.getProducts(category, q, sort);
-
-        model.addAttribute("products", products);
-        model.addAttribute("all", all);
-        model.addAttribute("cat", category);
-        model.addAttribute("q", q);
-        model.addAttribute("sort", sort);
-
-        model.addAttribute("selectedPlan", draftPlanService.current(session, userEmail(req)));
-        model.addAttribute("selectedItems", draftPlanService.selectedItems(session));
-        model.addAttribute("selectedTotal", draftPlanService.selectedTotal(session));
-        model.addAttribute("isBudgetOk", draftPlanService.isBudgetOk(session));
+    public String diy(@RequestParam(defaultValue = "0") int cat, Model model){
+        model.addAttribute("cat", cat);
+        model.addAttribute("products", plannerService.findProductsByCategory(cat));
         model.addAttribute("progressPercent", 0);
         return "WeddingPlanner/WeddingDIY";
     }
 
-    // Draft 조작
-    @PostMapping("/draft/new")
-    public String draftNew(HttpServletRequest req, HttpSession session) {
-        draftPlanService.newDraft(session, userEmail(req));
-        return "redirect:/planner/diy";
-    }
+    /**
+     * 확인 화면
+     * - 패키지: packageNo만 전달
+     * - DIY   : hall/studio/dress/makeup 4개 번호 전달
+     */
+    @PostMapping("/confirm")
+    public String confirm(
+            @RequestParam(required = false) Integer packageNo,
+            @RequestParam(required = false) Integer hall,
+            @RequestParam(required = false) Integer studio,
+            @RequestParam(required = false) Integer dress,
+            @RequestParam(required = false) Integer makeup,
+            Model model){
 
-    @PostMapping("/draft/reset")
-    public String draftReset(HttpSession session) {
-        draftPlanService.reset(session);
-        return "redirect:/planner/diy";
-    }
+        boolean isPackage = (packageNo != null);
+        int total = 0, discountPercent = 0, finalTotal = 0;
 
-    @PostMapping("/draft/item")
-    public String draftAddItem(@RequestParam int productNo, HttpServletRequest req, HttpSession session) {
-        draftPlanService.addItem(session, userEmail(req), productNo);
-        return "redirect:/planner/diy";
-    }
-
-    @PostMapping("/draft/item/delete")
-    public String draftDeleteItem(@RequestParam int category, HttpSession session) {
-        draftPlanService.removeItem(session, category);
-        return "redirect:/planner/diy";
-    }
-
-    @PostMapping("/draft/save")
-    public String draftSave(HttpSession session) {
-        draftPlanService.saveToVault(session);
-        return "redirect:/planner/diy";
-    }
-
-    @PostMapping("/draft/load")
-    public String draftLoad(HttpSession session) {
-        draftPlanService.loadFromVault(session);
-        return "redirect:/planner/diy";
-    }
-
-    /* --------------- 비교(제품) ------------------- */
-
-    @PostMapping("/compare/product/add")
-    public String compareProductAdd(@RequestParam long productNo, HttpSession session) {
-        productCompareService.add(session, productNo);
-        return "redirect:/planner/diy";
-    }
-
-    @PostMapping("/compare/product/remove")
-    public String compareProductRemove(@RequestParam long productNo, HttpSession session) {
-        productCompareService.remove(session, productNo);
-        return "redirect:/planner/compare/product";
-    }
-
-    @PostMapping("/compare/product/reset")
-    public String compareProductReset(HttpSession session) {
-        productCompareService.reset(session);
-        return "redirect:/planner/compare/product";
-    }
-
-    @GetMapping("/compare/product")
-    public String compareProductView(HttpSession session, Model model) {
-        model.addAttribute("products", productCompareService.list(session));
-        model.addAttribute("progressPercent", 0);
-        return "WeddingPlanner/WeddingProductCompare";
-    }
-
-    /* --------------- 비교(플랜) ------------------- */
-
-    @PostMapping("/compare/plan/toggle")
-    public String comparePlanToggle(@RequestParam long planNo, HttpSession session) {
-        planCompareService.toggle(session, planNo);
-        return "redirect:/planner/plan/list";
-    }
-
-    @PostMapping("/compare/plan/reset")
-    public String comparePlanReset(HttpSession session) {
-        planCompareService.reset(session);
-        return "redirect:/planner/compare/plan";
-    }
-
-    @GetMapping("/compare/plan")
-    public String comparePlanView(HttpSession session, Model model) {
-        List<PlanVO> plans = planCompareService.list(session);
-        model.addAttribute("plans", plans);
-        model.addAttribute("progressPercent", 0);
-        return "WeddingPlanner/WeddingPlanCompare";
-    }
-
-    /* --------------- 확정 화면/확정 ------------------- */
-
-    @GetMapping("/confirm")
-    public String confirmView(
-            @RequestParam(required = false) int packageNo,
-            HttpServletRequest req, HttpSession session, Model model
-    ) {
-        boolean isPackage = (packageNo != 0);
-        List<Integer> ids = new ArrayList<>();
-        int discountPercent = 0;
-
-        if (isPackage) {
-            PackageVO pkg = plannerService.getPackage(packageNo);
-            if (pkg == null) return "redirect:/planner/category";
-            ids.add(pkg.getHall()); ids.add(pkg.getStudio()); ids.add(pkg.getDress()); ids.add(pkg.getMakeup());
-            discountPercent = (pkg.getDiscount() == 0 ? 0 : pkg.getDiscount());
-            model.addAttribute("packageNo", packageNo);
-        } else {
-            String email = userEmail(req);
-            DraftPlanDTO d = draftPlanService.current(session, email);
-            if (d.getHall() != 0) ids.add(d.getHall());
-            if (d.getStudio() != 0) ids.add(d.getStudio());
-            if (d.getDress() != 0) ids.add(d.getDress());
-            if (d.getMakeup() != 0) ids.add(d.getMakeup());
+        if (isPackage){
+            PackageVO p = plannerService.getPackage(packageNo);
+            total = p.getTotal_price();
+            discountPercent = p.getDiscount();
+            finalTotal = p.getFinal_price();
+            model.addAttribute("pkg", p);
         }
 
-        List<ProductVO> items = plannerService.getProductsByIds(ids);
-        int total = items.stream().map(ProductVO::getCost).filter(v -> v != null).mapToInt(Integer::intValue).sum();
-        int finalTotal = total - (total * discountPercent / 100);
-        boolean canConfirm = !items.isEmpty();
-
         model.addAttribute("isPackage", isPackage);
-        model.addAttribute("items", items);
+        model.addAttribute("packageNo", packageNo);
+        model.addAttribute("hall", hall);
+        model.addAttribute("studio", studio);
+        model.addAttribute("dress", dress);
+        model.addAttribute("makeup", makeup);
+
         model.addAttribute("total", total);
         model.addAttribute("discountPercent", discountPercent);
         model.addAttribute("finalTotal", finalTotal);
-        model.addAttribute("canConfirm", canConfirm);
         model.addAttribute("progressPercent", 0);
         return "WeddingPlanner/WeddingConfirm";
     }
 
-    @PostMapping("/confirm")
-    public String confirmDIY(HttpServletRequest req, HttpSession session) {
-        String email = userEmail(req);
-        DraftPlanDTO d = draftPlanService.current(session, email);
-        if (email == null || d == null) return "redirect:/planner/diy";
-        plannerService.confirmDIY(email, d.getHall(), d.getStudio(), d.getDress(), d.getMakeup());
-        draftPlanService.newDraft(session, email);
-        return "redirect:/planner/plan/list";
+    /** 최종 확정 → plan INSERT (DIY는 package_no=9999 규칙) */
+    @PostMapping("/plan/confirm")
+    public String planConfirm(
+            @RequestParam String userEmail,
+            @RequestParam(required = false) Integer packageNo,
+            @RequestParam int hall,
+            @RequestParam int studio,
+            @RequestParam int dress,
+            @RequestParam int makeup){
+
+        plannerService.confirmPlan(userEmail, packageNo, hall, studio, dress, makeup);
+        return "redirect:/planner/plan/list?userEmail=" + userEmail;
     }
 
-    @PostMapping("/package/confirm")
-    public String confirmPackage(@RequestParam int packageNo, HttpServletRequest req, HttpSession session) {
-        String email = userEmail(req);
-        if (email == null) return "redirect:/planner/info";
-        plannerService.confirmPackage(email, packageNo);
-        draftPlanService.newDraft(session, email);
-        return "redirect:/planner/plan/list";
-    }
-
-    /* --------------- 확정 목록 ------------------- */
-
+    /** 확정 플랜 목록 */
     @GetMapping("/plan/list")
-    public String planList(HttpServletRequest req, HttpSession session, Model model) {
-        String email = userEmail(req);
-        if (email == null) return "redirect:/planner/info";
-        model.addAttribute("planCards", plannerService.getPlanCards(email)); // ★ 카드용
+    public String planList(@RequestParam String userEmail, Model model){
+        model.addAttribute("plans", plannerService.getPlansByUser(userEmail));
         model.addAttribute("progressPercent", 0);
         return "WeddingPlanner/WeddingPlanList";
     }

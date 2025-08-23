@@ -1,116 +1,71 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">WeddingConfirm</title>
-  <link rel="stylesheet" th:href="@{/css/WeddingConfirm.css}">
+  <title layout:fragment="title">웨딩플래너 | 선택 확인</title>
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wpconfirm">
+  <div class="page" id="wp-confirm">
+
+    <!-- 좌측 사이드바 -->
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingConfirm', progress=${progressPercent})}"></div>
 
-    <main class="content">
-      <header class="page-header">
-        <div>
-          <h1 class="title section-title">
-            <i class='bx bx-badge-check'></i>
-            <span th:text="${isPackage ? '패키지 최종 확인' : 'DIY 최종 확인'}">최종 확인</span>
-          </h1>
-          <p class="desc" th:if="${isPackage}">선택하신 패키지 구성을 확인하고 확정하세요.</p>
-          <p class="desc" th:if="${!isPackage}">DIY로 선택한 항목을 확인하고 확정하세요.</p>
-        </div>
-      </header>
+    <!-- 우측 본문 -->
+    <main class="main">
+      <h1 class="section-title">선택 확인</h1>
 
-      <!-- 품목 카드 -->
-      <section class="grid">
-        <article class="card" th:each="p : ${items}">
-          <div class="thumb" th:style="|background-image:url(${#strings.containsIgnoreCase(p.img,'http') ? p.img : @{/img/{img}(img=${p.img})}})|"></div>
-          <div class="content">
-            <h3 class="title"><span class="icon-box brand --sm"><i class='bx bx-image'></i></span>
-              <span th:text="${p.productName}">상품명</span>
-            </h3>
-            <div class="meta-row">
-              <span><i class='bx bx-won'></i> <span th:text="${#numbers.formatInteger(p.cost,3,'COMMA') + '원'}">0원</span></span>
-              <span>•</span>
-              <span><i class='bx bx-map'></i> <span th:text="${p.address}">주소</span></span>
-            </div>
-            <p class="muted" th:text="${p.description}">설명</p>
-          </div>
-        </article>
+      <!-- 패키지 분기 -->
+      <section th:if="${isPackage}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card);margin-bottom:18px">
+        <h3 style="margin-top:0">패키지 번호: <span th:text="${pkg.package_no}">1</span></h3>
+        <ul style="margin-left:16px;color:var(--sub)">
+          <li>홀: <span th:text="${pkg.hall_name}">Hall</span></li>
+          <li>스튜디오: <span th:text="${pkg.studio_name}">Studio</span></li>
+          <li>드레스: <span th:text="${pkg.dress_name}">Dress</span></li>
+          <li>메이크업: <span th:text="${pkg.makeup_name}">Makeup</span></li>
+        </ul>
+        <p style="margin:10px 0">
+          총액 <span style="text-decoration:line-through"
+                  th:text="${#numbers.formatInteger(total,3,'COMMA')}">0</span>
+          →
+          최종가 <strong th:text="${#numbers.formatInteger(finalTotal,3,'COMMA')}">0</strong>
+          (<span th:text="${discountPercent}">0</span>%)
+        </p>
 
-        <div class="empty" th:if="${items == null or #lists.isEmpty(items)}">
-          <i class='bx bx-info-circle'></i> 선택된 항목이 없습니다. 먼저 항목을 선택해 주세요.
-        </div>
+        <!-- 최종 확정(Plan INSERT) -->
+        <form method="post" th:action="@{/planner/plan/confirm}" style="display:flex;flex-wrap:wrap;gap:8px">
+          <input type="hidden" name="userEmail" value="user1@example.com"><!-- 데모용 -->
+          <input type="hidden" name="packageNo" th:value="${pkg.package_no}">
+          <input type="hidden" name="hall"   th:value="${pkg.hall}">
+          <input type="hidden" name="studio" th:value="${pkg.studio}">
+          <input type="hidden" name="dress"  th:value="${pkg.dress}">
+          <input type="hidden" name="makeup" th:value="${pkg.makeup}">
+          <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">최종 확정</button>
+        </form>
       </section>
 
-      <!-- 요약/합계 -->
-      <section class="summary" th:if="${items != null and !#lists.isEmpty(items)}">
-        <div class="row">
-          <div class="label"><i class='bx bx-calculator'></i> 합계</div>
-          <div class="value" th:text="${#numbers.formatInteger(total,3,'COMMA') + '원'}">0원</div>
-        </div>
-        <div class="row" th:if="${discountPercent != null && discountPercent > 0}">
-          <div class="label"><i class='bx bx-discount'></i> 할인</div>
-          <div class="value" th:text="${discountPercent + '%'}">0%</div>
-        </div>
-        <div class="row total">
-          <div class="label"><i class='bx bx-wallet'></i> 최종 결제 금액</div>
-          <div class="value strong" th:text="${#numbers.formatInteger(finalTotal,3,'COMMA') + '원'}">0원</div>
-        </div>
+      <!-- DIY 분기 -->
+      <section th:if="${!isPackage}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card)">
+        <h3 style="margin-top:0">DIY 선택</h3>
+        <ul style="margin-left:16px;color:var(--sub)">
+          <li>hall: <span th:text="${hall}">0</span></li>
+          <li>studio: <span th:text="${studio}">0</span></li>
+          <li>dress: <span th:text="${dress}">0</span></li>
+          <li>makeup: <span th:text="${makeup}">0</span></li>
+        </ul>
 
-        <!-- 상세 합계표 -->
-        <div class="table-wrap">
-          <table class="lines">
-            <thead>
-            <tr>
-              <th>항목</th>
-              <th>금액</th>
-              <th>비고</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="p : ${items}">
-              <td th:text="${p.productName}">항목</td>
-              <td th:text="${#numbers.formatInteger(p.cost,3,'COMMA') + '원'}">0원</td>
-              <td th:text="${p.category == 0 ? '웨딩홀' : (p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))}">카테고리</td>
-            </tr>
-            <tr class="sub">
-              <td>소계</td>
-              <td th:text="${#numbers.formatInteger(total,3,'COMMA') + '원'}">0원</td>
-              <td>-</td>
-            </tr>
-            <tr class="sub" th:if="${discountPercent != null && discountPercent > 0}">
-              <td>할인 (<span th:text="${discountPercent}">0</span>%)</td>
-              <td th:text="${'- ' + #numbers.formatInteger(total * discountPercent / 100,3,'COMMA') + '원'}">-0원</td>
-              <td>패키지 할인</td>
-            </tr>
-            <tr class="grand">
-              <td>최종 결제 금액</td>
-              <td th:text="${#numbers.formatInteger(finalTotal,3,'COMMA') + '원'}">0원</td>
-              <td></td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="actions">
-          <a class="btn" th:href="@{/planner/diy}"><i class='bx bx-chevron-left'></i> 돌아가기</a>
-
-          <form th:if="${isPackage}" th:action="@{/planner/package/confirm}" method="post">
-            <input type="hidden" name="packageNo" th:value="${packageNo}">
-            <button class="btn brand" type="submit" th:disabled="${!canConfirm}">
-              <i class='bx bx-badge-check'></i> 패키지 확정
-            </button>
-          </form>
-
-          <form th:if="${!isPackage}" th:action="@{/planner/confirm}" method="post">
-            <button class="btn brand" type="submit" th:disabled="${!canConfirm}">
-              <i class='bx bx-badge-check'></i> DIY 확정
-            </button>
-          </form>
-        </div>
+        <!-- 최종 확정(Plan INSERT) : DIY는 package_no=9999 -->
+        <form method="post" th:action="@{/planner/plan/confirm}" style="display:flex;flex-wrap:wrap;gap:8px">
+          <input type="hidden" name="userEmail" value="user1@example.com"><!-- 데모용 -->
+          <input type="hidden" name="hall"   th:value="${hall}">
+          <input type="hidden" name="studio" th:value="${studio}">
+          <input type="hidden" name="dress"  th:value="${dress}">
+          <input type="hidden" name="makeup" th:value="${makeup}">
+          <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">최종 확정</button>
+        </form>
+        <p class="hint" style="margin-top:8px;color:var(--sub)">* DIY는 할인 없음. 저장 시 plan.package_no는 9999로 기록됩니다.</p>
       </section>
     </main>
   </div>
