@@ -52,35 +52,6 @@
 	color: var(--brand, #7c3aed);
 }
 
-/* 버튼 기본 */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 18px;
-  border-radius: var(--r);
-  border: 1px solid #eaa59c;
-  background: #FF6F61;
-  color: #fff;     
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: var(--shadow);
-}
-
-/* hover 효과 */
-.btn:hover {
-  transform: scale(1.05); /* 약간 확대 */
-  box-shadow: 0 12px 24px rgba(17, 24, 39, 0.12);
-}
-
-/* primary 전용 hover */
-.btn.primary:hover {
-  background:  #d94c43; /* brand보다 조금 진한 보라 */
-  border-color: #d94c43;
-}
-
-
 /* 버튼 내부 아이콘 간격 */
 .btn i.bx, .btn-m i.bx, .btn-s i.bx {
 	margin-right: 6px;
