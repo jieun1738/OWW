@@ -1,68 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
   <meta charset="UTF-8">
-  <title>대출</title>
-  <link rel="stylesheet" th:href="@{/css/design.css}">
-   <link rel="stylesheet" th:href="@{/css/icons.css}">
-  <link rel="stylesheet" th:href="@{/css/MainSideBar.css}">
+  <title layout:fragment="title">대출상품 조회 | OWW</title>
+	<link rel="stylesheet" th:href="@{/css/Loanmain.css}">
 </head>
 <body>
-  <!-- ===== Header ===== -->
-  <header class="header">
-    <div class="header-inner">
-    </div>
-  </header>
 
-  <!-- ===== App Layout (3-Column) ===== -->
-  <div class="app">
-
-    <!-- Left Navigation -->
-<aside class="leftnav">
-  <div class="ln-title">메뉴</div>
-
-  <!-- 검색폼 -->
-  
-
-  <div class="ln-list">
-    <a href="/" class="ln-item">
-      <span>메인</span>
-      <span class="ln-dot"></span>
-    </a>
-    <a href="/loancomparison" class="ln-item">
-      <span>상품 비교</span>
-      <span class="ln-dot"></span>
-    </a>
-  </div>
-
-</aside>
+<section layout:fragment="content">
+	
+	<div class="page">
+		<!-- ✅ 사이드바: 기존 프래그먼트 그대로 사용 (중복 선언 금지) -->
+		<div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}"></div>
+ 
 
 
+<div class="cards">
     <!-- Main Content -->
-    <main class="main">
-<form action="/searchloan" method="get" style="margin-bottom: 16px; display: flex; justify-content: center;">
-  <div class="searchbar">
-    <input type="text" name="search" placeholder="대출 상품명 검색" />
-    <input type="hidden" name="lastUrl" value="LoanMain">
-    <button type="submit" class="btn primary">검색</button>
-  </div>
-</form>
+    <main class="content">
+		<!-- 헤더 -->
+		       <header class="page-header">
+		         <div>
+		           <h1 class="title">대출 상품 소개</h1>
+		           <p class="desc">OWW 대출 서비스</p>
+		         </div>
+				 <form action="/searchloan" method="get">
+				 	<div class="searchbar">
+				 		<input type="text" name="search" placeholder="대출 상품명 검색" />
+				 		<input type="hidden" name="lastUrl" value="LoanMain">
+				 		<button type="submit" class="btn">검색</button>
+				 	 </div>
+				  </form>
+		       </header>
+			   
 
-      <div class="grid">
+			  
+
+     
         <!-- 상품 카드 반복 -->
         
-       <div class="cards">
        
-  <div class="card" th:each="product : ${products}">
-    <h3 th:text="${product}">상품명</h3>
+       
+  <div class="card" th:each="product : ${products}" style="margin: 10px 0;">
+	<img src="/img/sample.jpg" alt="상품 이미지" class="product-img">
+    <h2 th:text="${product}">상품명</h2>
+	<h3 th:text="'이자율'"></h3>
+	<h4>간략설명.......</h4>
+	<div class="btn-wrap">
     <form th:action="@{/loandetail}" method="get">
       <input type="hidden" name="loanName" th:value="${product}">
-      <button type="submit" class="btn">자세히 보기</button>
+      <button type="submit" class="btn-detail">자세히 보기</button>
     </form>
+	</div>
   </div>
 </div>
-      </div>
+ 
     </main>
   </div>
+  </div>
+</section>
 </body>
 </html>
