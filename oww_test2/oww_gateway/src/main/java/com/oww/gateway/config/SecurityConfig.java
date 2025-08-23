@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(exchanges -> exchanges
                         // ✅ 정적 리소스 허용
-                        .pathMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll()
+                        .pathMatchers("/", "/index.html", "/css/**", "/js/**", "/img/**").permitAll()
                         
                         // ✅ 인증 관련 경로 허용
                         .pathMatchers("/auth/**", "/login/**", "/oauth2/**").permitAll()

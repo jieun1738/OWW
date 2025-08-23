@@ -10,21 +10,21 @@
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="hibernate.dialec"/>
+			<item value="@GetMapping(&quot;/history-data&quot;)"/>
+			<item value="은행선택"/>
+			<item value="logo"/>
+			<item value="String username = authentication.getName();"/>
+			<item value="getEmail"/>
+			<item value="TokenValidationResult"/>
+			<item value="extractEmail"/>
+			<item value="extra"/>
+			<item value="getAccountByEmail"/>
+			<item value="&quot;/banking/main&quot;"/>
+			<item value="@GetMapping(value = &quot;/api/account&quot;"/>
 			<item value="safebox"/>
 			<item value="main"/>
 			<item value="findaccountbyuserno"/>
-			<item value="username"/>
-			<item value="user name"/>
-			<item value="user ame"/>
-			<item value="user"/>
-			<item value="String userEmail = (String) userInfo.get(&quot;userEmail&quot;);"/>
-			<item value="authentication"/>
-			<item value="@GetMapping(value = &quot;/api/account&quot;, produces = &quot;application/json&quot;)"/>
-			<item value="&quot;/api/account&quot;"/>
-			<item value="=== /api/account 요청 수신 ===&#x0A;Authentication: 윤영식`"/>
-			<item value="=== /api/account 요청 수신 ===&#x0A;Authentication: 윤영식"/>
-			<item value="eureka.instance.prefer-ip-address=true"/>
-			<item value=".authorizeHttpRequests(auth -&gt; auth"/>
 		</list>
 		<list key="replacehistory">
 		</list>

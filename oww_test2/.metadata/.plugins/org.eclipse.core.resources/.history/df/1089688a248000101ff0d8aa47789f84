@@ -1,0 +1,351 @@
+package oww.banking.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import oww.banking.service.AccountService;
+import oww.banking.service.SafeboxService;
+import oww.banking.vo.AccountVO;
+import oww.banking.vo.SafeboxVO;
+
+@Controller
+public class BankingController {
+
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private SafeboxService safeboxService;
+
+	/**
+	 * 계좌 정보 API (Authentication 객체 기반)
+	 */
+	@GetMapping(value = "/api/account", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getAccountInfoApi(Authentication authentication) {
+	    Map<String, Object> response = new HashMap<>();
+
+	    System.out.println("=== /api/account 요청 수신 ===");
+	    System.out.println("Authentication: " + (authentication != null ? authentication.getName() : "null"));
+
+	    try {
+	        if (authentication == null || !authentication.isAuthenticated()) {
+	            response.put("success", false);
+	            response.put("message", "인증이 필요합니다.");
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	        }
+
+	        String username = authentication.getName(); // JWT에서 추출된 사용자명
+
+	        response.put("success", true);
+	        response.put("userName", username);
+	        response.put("userEmail", username); // 일단 username을 email로 사용
+
+	        // 계좌 정보 조회
+	        AccountVO account = accountService.getAccountByEmail(username);
+	        if (account != null) {
+	            response.put("hasAccount", true);
+	            response.put("accountNumber", account.getAccountNumber());
+	            response.put("balance", account.getBalance());
+	        } else {
+	            response.put("hasAccount", false);
+	        }
+
+	        // 세이프박스 정보 조회
+	        try {
+	            SafeboxVO safebox = safeboxService.getSafeboxByEmail(username);
+	            if (safebox != null) {
+	                response.put("hasSafebox", true);
+	                response.put("safeboxNumber", "SB-" + safebox.getSafeboxId());
+	                response.put("safeboxBalance", safebox.getBalance());
+	            } else {
+	                response.put("hasSafebox", false);
+	                response.put("safeboxBalance", 0);
+	            }
+	        } catch (Exception e) {
+	            System.out.println("세이프박스 정보 조회 오류: " + e.getMessage());
+	            response.put("hasSafebox", false);
+	            response.put("safeboxBalance", 0);
+	        }
+
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        System.out.println("계좌 정보 조회 중 오류: " + e.getMessage());
+	        e.printStackTrace();
+
+	        response.put("success", false);
+	        response.put("message", "서버 오류가 발생했습니다.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+	}
+
+	/**
+	 * 계좌 생성 페이지 (Authentication 객체 기반)
+	 */
+	@GetMapping("/banking/createAccount")
+	public String createAccount(Model model, Authentication authentication) {
+		System.out.println("계좌 생성 페이지 호출됨");
+
+		if (authentication == null || !authentication.isAuthenticated()) {
+			System.out.println("인증 실패 - 메인으로 리다이렉트");
+			return "redirect:/main";
+		}
+
+		try {
+			String username = authentication.getName();
+			System.out.println("인증 성공: " + username);
+			
+			model.addAttribute("isAuthenticated", true);
+			model.addAttribute("userName", username);
+			model.addAttribute("userEmail", username);
+
+			// 이미 계좌가 있는지 확인
+			if (accountService.isAccountExists(username)) {
+				model.addAttribute("errorMessage", "이미 계좌가 존재합니다.");
+				return "redirect:/main";
+			}
+
+			return "banking_createAccount";
+			
+		} catch (Exception e) {
+			System.out.println("계좌 생성 페이지 오류: " + e.getMessage());
+			return "redirect:/main";
+		}
+	}
+
+	/**
+	 * 이메일 인증번호 발송 (Authentication 객체 기반)
+	 */
+	@PostMapping("/banking/account/send-verification")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> sendEmailVerification(
+			@RequestParam("email") String email,
+			Authentication authentication) {
+
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			if (authentication == null || !authentication.isAuthenticated()) {
+				response.put("success", false);
+				response.put("message", "인증이 필요합니다.");
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+			}
+
+			// 이메일 유효성 검사
+			if (email == null || !email.contains("@")) {
+				response.put("success", false);
+				response.put("message", "유효한 이메일 주소를 입력하세요.");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			// 이미 계좌가 존재하는지 확인
+			if (accountService.isAccountExists(email)) {
+				response.put("success", false);
+				response.put("message", "이미 계좌가 존재하는 이메일입니다.");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			// 인증번호 발송
+			String result = accountService.sendEmailVerification(email);
+
+			response.put("success", true);
+			response.put("message", result);
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			System.out.println("인증번호 발송 오류: " + e.getMessage());
+			e.printStackTrace();
+
+			response.put("success", false);
+			response.put("message", "인증번호 발송 중 오류가 발생했습니다.");
+			return ResponseEntity.internalServerError().body(response);
+		}
+	}
+
+	/**
+	 * 이메일 인증번호 확인 (Authentication 객체 기반)
+	 */
+	@PostMapping("/banking/account/verify-email")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> verifyEmailCode(
+			@RequestParam("email") String email,
+			@RequestParam("code") String code, 
+			Authentication authentication) {
+
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			if (authentication == null || !authentication.isAuthenticated()) {
+				response.put("success", false);
+				response.put("message", "인증이 필요합니다.");
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+			}
+
+			// 이메일 인증번호 확인
+			boolean isValid = accountService.verifyEmailCode(email, code);
+
+			if (isValid) {
+				response.put("success", true);
+				response.put("message", "인증번호가 확인되었습니다.");
+			} else {
+				response.put("success", false);
+				response.put("message", "인증번호가 올바르지 않습니다.");
+			}
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			System.out.println("인증번호 확인 오류: " + e.getMessage());
+			e.printStackTrace();
+
+			response.put("success", false);
+			response.put("message", "인증번호 확인 중 오류가 발생했습니다.");
+			return ResponseEntity.internalServerError().body(response);
+		}
+	}
+
+	/**
+	 * 계좌 생성 (Authentication 객체 기반)
+	 */
+	@PostMapping("/banking/account/create")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> createAccount(
+			@RequestParam("name") String name,
+			@RequestParam("email") String email, 
+			@RequestParam("password") String password,
+			@RequestParam("emailCode") String emailCode, 
+			Authentication authentication) {
+
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			if (authentication == null || !authentication.isAuthenticated()) {
+				response.put("success", false);
+				response.put("message", "인증이 필요합니다.");
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+			}
+
+			// 계좌 생성 서비스 호출
+			String result = accountService.createAccount(name, email, password, emailCode);
+
+			if (result.contains("성공적으로")) {
+				response.put("success", true);
+				response.put("message", result);
+			} else {
+				response.put("success", false);
+				response.put("message", result);
+			}
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			System.out.println("계좌 생성 오류: " + e.getMessage());
+			e.printStackTrace();
+
+			response.put("success", false);
+			response.put("message", "계좌 생성 중 오류가 발생했습니다.");
+			return ResponseEntity.internalServerError().body(response);
+		}
+	}
+	
+	/**
+	 * 계좌 생성 성공 페이지 (Authentication 객체 기반)
+	 */
+	@GetMapping("/banking/account/success")
+	public String accountSuccess(Model model, Authentication authentication) {
+	    
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        return "redirect:/banking/main";
+	    }
+	    
+	    try {
+	        String username = authentication.getName();
+	        
+	        System.out.println("Success 페이지 - username: " + username);
+	        
+	        // username으로 계좌 조회 (이메일 기반)
+	        AccountVO newAccount = accountService.getAccountByEmail(username);
+	        
+	        System.out.println("조회된 계좌: " + (newAccount != null ? newAccount.getAccountNumber() : "null"));
+	        
+	        model.addAttribute("userName", username);
+	        model.addAttribute("newAccount", newAccount);
+	        
+	        return "account_success";
+	        
+	    } catch (Exception e) {
+	        System.out.println("Success 페이지 오류: " + e.getMessage());
+	        return "redirect:/banking/main";
+	    }
+	}
+	
+	/**
+	 * Banking 메인 페이지 (Authentication 객체 기반)
+	 */
+	@GetMapping("/banking/main")
+	public String bankingMain(Model model, Authentication authentication) {
+	    System.out.println("Banking Main 호출됨");
+
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        return "redirect:/"; // 인증되지 않은 경우 메인으로
+	    }
+	    
+	    try {
+	        String username = authentication.getName();
+	        System.out.println("토큰 기반 인증 성공: " + username);
+	        
+	        model.addAttribute("userName", username);
+
+	        // 계좌 정보 조회
+	        AccountVO account = accountService.getAccountByEmail(username);
+	        if (account != null) {
+	            model.addAttribute("hasAccount", true);
+	            model.addAttribute("accountNumber", account.getAccountNumber());
+	            model.addAttribute("balance", account.getBalance());
+
+	            // 실제 이메일 주소로 세이프박스 조회
+	            String actualEmail = account.getUserEmail();
+	            SafeboxVO safebox = safeboxService.getSafeboxByEmail(actualEmail);
+	            if (safebox != null) {
+	                model.addAttribute("hasSafebox", true);
+	                model.addAttribute("safeboxNumber", "SB-" + safebox.getSafeboxId());
+	                model.addAttribute("safeboxBalance", safebox.getBalance());
+	            } else {
+	                model.addAttribute("hasSafebox", false);
+	                model.addAttribute("safeboxBalance", 0);
+	            }
+	        } else {
+	            model.addAttribute("hasAccount", false);
+	            model.addAttribute("hasSafebox", false);
+	            model.addAttribute("safeboxBalance", 0);
+	        }
+
+	        return "banking_main";
+	        
+	    } catch (Exception e) {
+	        System.out.println("Banking Main 오류: " + e.getMessage());
+	        e.printStackTrace();
+	        return "redirect:/";
+	    }
+	}
+
+	/**
+	 * 헬스체크 엔드포인트 (인증 불필요)
+	 */
+	@GetMapping("/health")
+	@ResponseBody
+	public ResponseEntity<String> health() {
+		return ResponseEntity.ok("Banking Service is running on port 8203 - Authentication Based");
+	}
+}

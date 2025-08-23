@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>세이프박스 입출금 및 정기저금통</title>
+<link rel="stylesheet" href="/css/page.css" />
+<link rel="stylesheet" href="/css/design.css" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<style>
+body {
+    background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.card {
+    background: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    padding: 32px 40px;
+    box-shadow: 0 8px 25px rgba(200,162,200,0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(200,162,200,0.4);
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #6b4c6b;
+    margin-bottom: 20px;
+}
+
+.balance-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #8b5a8c;
+}
+
+#balance, #savedAmount {
+    font-weight: 600;
+    color: #6b4c6b;
+}
+
+.slider-container {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#slider {
+    width: 100%;
+}
+
+.slider-label {
+    font-weight: 600;
+    color: #6b4c6b;
+    text-align: right;
+}
+
+.step-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.step-buttons button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.step-buttons button:hover {
+    background: linear-gradient(135deg, #a569a5 0%, #8b5a8c 100%);
+    transform: translateY(-2px);
+}
+
+.submit-btn {
+    padding: 14px 28px;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(165,105,165,0.3);
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #a569a5 0%, #8b5a8c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139,90,140,0.4);
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group input[type="number"],
+.form-group input[type="date"] {
+    padding: 10px 14px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+}
+
+.goal-item {
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.8);
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(200,162,200,0.2);
+}
+
+.goal-item h4 {
+    font-weight: 700;
+    color: #6b4c6b;
+    margin-bottom: 5px;
+}
+
+.goal-item p {
+    color: #8b5a8c;
+    margin: 2px 0;
+}
+
+.goal-item button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.goal-item button:hover {
+    background: linear-gradient(135deg, #a569a5 0%, #8b5a8c 100%);
+}
+@media (max-width: 768px) {
+    .balance-info {
+        flex-direction: column;
+        text-align: right;
+    }
+    .step-buttons {
+        justify-content: center;
+    }
+    .goal-item {
+        text-align: center;
+    }
+}
+</style>
+</head>
+<body class="site-layout">
+
+<!-- header fragment 포함 -->
+<div th:replace="~{header :: siteHeader('banking')}"></div>
+
+<!-- nav fragment 포함 -->
+<nav th:replace="~{nav :: siteNav('banking')}"></nav>
+
+<div class="container">
+    <!-- 💰 세이프박스 카드 -->
+    <div class="card">
+        <div class="section-title">💰 세이프박스 입출금</div>
+
+        <div class="balance-info">
+            <div>내 잔액</div>
+            <div id="balance" th:text="'₩' + ${#numbers.formatInteger(balance ?: 0, 3, 'COMMA')}">₩1,200,000</div>
+        </div>
+        <div class="balance-info">
+            <div>세이프박스</div>
+            <div id="savedAmount" th:text="'₩' + ${#numbers.formatInteger(safeboxBalance ?: 0, 3, 'COMMA')}">₩300,000</div>
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label" id="currentAmount">₩300,000</div>
+            <input type="range" id="slider" th:min="0" th:max="${totalAssets ?: 1200000}" step="10000" th:value="${safeboxBalance ?: 300000}" />
+            <div class="step-buttons">
+                <button onclick="adjust(-10000)">-1만</button>
+                <button onclick="adjust(10000)">+1만</button>
+            </div>
+        </div>
+
+        <button class="submit-btn" onclick="submitAmount()">금액 설정하기</button>
+        <div class="note">세이프박스 해제 예정일: 2025.08.10<br /> 출금은 해제일 이후에 가능합니다.</div>
+    </div>
+
+    <!-- 🎯 정기저금통 카드 -->
+    <div class="card">
+        <div class="section-title">🎯 정기저금통 설정</div>
+        <form id="autoSaveForm">
+            <div class="form-group">
+                <label>목표 금액</label>
+                <input type="number" id="goalAmount" name="goalAmount" placeholder="예: 500000" required />
+            </div>
+            <div class="form-group">
+                <label>시작일</label>
+                <input type="date" id="startDate" name="startDate" required />
+            </div>
+            <div class="form-group">
+                <label>종료일 (목표 달성일)</label>
+                <input type="date" id="endDate" name="endDate" required />
+            </div>
+            <div class="form-group">
+                <label>자동 저축 주기</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="cycle" value="daily" checked /> 매일</label>
+                    <label><input type="radio" name="cycle" value="monthly" /> 매월</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>자동 저축 금액</label>
+                <input type="number" id="autoAmount" placeholder="자동 계산됨" readonly />
+            </div>
+            <button class="submit-btn" type="submit">정기저금통 설정하기</button>
+        </form>
+    </div>
+
+    <!-- 저축 목표 리스트 -->
+    <div class="card" th:if="${goals != null and !goals.isEmpty()}">
+        <div class="section-title">📋 내 저축 목표</div>
+        <div th:each="goal : ${goals}" class="goal-item">
+            <h4 th:text="${goal.title}">저축 목표</h4>
+            <p>목표 금액: <span th:text="'₩' + ${#numbers.formatInteger(goal.targetAmount, 3, 'COMMA')}">₩500,000</span></p>
+            <p>기간: <span th:text="${goal.startDate}">2025-01-01</span> ~ <span th:text="${goal.endDate}">2025-12-31</span></p>
+            <p>저축 주기: <span th:text="${goal.paymentType == 'daily' ? '매일' : '매월'}">매일</span></p>
+            <button onclick="viewGoalDetail(/*[[${goal.goalId}]]*/ 1)">상세보기</button>
+        </div>
+    </div>
+</div>
+
+<!-- footer fragment 포함 -->
+<div th:replace="~{footer :: siteFooter}"></div>
+
+<script src="/js/auth-buttons.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/safebox.js"></script> <!-- 기존 JS 그대로 사용 -->
+
+</body>
+</html>

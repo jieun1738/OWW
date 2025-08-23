@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" href="/css/page.css" />
+<title>Own Wedding Wallet</title>
+<style>
+/* 핑크/보라 그라데이션 테마 적용 */
+body {
+	background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%);
+	min-height: 100vh;
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+		sans-serif;
+}
+
+header {
+	background: rgba(255, 255, 255, 0.9);
+	backdrop-filter: blur(10px);
+	padding: 20px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo {
+	text-align: center;
+	color: #6b4c6b;
+	font-size: 28px;
+	font-weight: 700;
+	margin: 0;
+}
+
+nav {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+	padding: 15px 0;
+	display: flex;
+	justify-content: center;
+	gap: 40px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-item {
+	position: relative;
+}
+
+.nav-link {
+	color: #6b4c6b;
+	text-decoration: none;
+	font-weight: 600;
+	padding: 10px 20px;
+	border-radius: 15px;
+	transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+	background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%);
+	color: white;
+}
+
+.dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	border-radius: 15px;
+	padding: 10px;
+	display: none;
+	box-shadow: 0 8px 25px rgba(200, 162, 200, 0.3);
+	min-width: 150px;
+}
+
+.nav-item:hover .dropdown {
+	display: block;
+}
+
+.dropdown a {
+	display: block;
+	color: #6b4c6b;
+	text-decoration: none;
+	padding: 8px 15px;
+	border-radius: 10px;
+	transition: all 0.3s ease;
+}
+
+.dropdown a:hover {
+	background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%);
+	color: white;
+}
+
+.service-cards {
+	display: flex;
+	justify-content: center;
+	padding: 40px 20px;
+}
+
+.service-card {
+	background: rgba(255, 255, 255, 0.9);
+	backdrop-filter: blur(10px);
+	border-radius: 20px;
+	padding: 40px 50px;
+	box-shadow: 0 8px 25px rgba(200, 162, 200, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	text-align: center;
+	max-width: 500px;
+	width: 100%;
+}
+
+.service-card-center h3 {
+	color: #6b4c6b;
+	font-size: 28px;
+	font-weight: 700;
+	display: inline;
+	margin: 0;
+}
+
+.service-card-center {
+	color: #000;
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.service-card-center h2 {
+	color: #8b5a8c;
+	font-size: 22px;
+	font-weight: 600;
+	margin: 15px 0;
+}
+
+.service-card-center h1 {
+	color: #6b4c6b;
+	font-size: 36px;
+	font-weight: 700;
+	margin: 20px 0;
+}
+
+.service-card-center h1 span {
+	color: #6b4c6b;
+}
+
+.transfer-btn {
+	padding: 14px 28px;
+	border-radius: 25px;
+	background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%);
+	color: white;
+	font-weight: 600;
+	border: none;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 15px rgba(165, 105, 165, 0.3);
+	font-size: 16px;
+}
+
+.transfer-btn:hover {
+	background: linear-gradient(135deg, #a569a5 0%, #8b5a8c 100%);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(139, 90, 140, 0.4);
+}
+
+footer {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+	text-align: center;
+	padding: 20px;
+	color: #6b4c6b;
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+	margin-top: auto;
+}
+
+/* 반응형 */
+@media ( max-width : 768px) {
+	nav {
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+	}
+	.service-card {
+		margin: 20px;
+		padding: 30px 25px;
+	}
+	.service-card-center h3 {
+		font-size: 24px;
+	}
+	.service-card-center h2 {
+		font-size: 18px;
+	}
+	.service-card-center h1 {
+		font-size: 28px;
+	}
+}
+</style>
+</head>
+<body class="site-layout">
+
+	<!-- header fragment 포함 -->
+	<div th:replace="~{header :: siteHeader('banking')}"></div>
+
+	<!-- nav fragment 포함 -->
+	<nav th:replace="~{nav :: siteNav('banking')}"></nav>
+
+	<section class="service-cards">
+		<article class="service-card">
+			<div class="service-card-center">
+				<h3 th:text="${userName ?: '고객'}">고객</h3>
+				님
+				<h2>
+					계좌번호 : <span th:text="${account?.accountNumber ?: '계좌 없음'}">000-0000-00000</span>
+				</h2>
+				<br>
+				<h1>
+					<span
+						th:text="${#numbers.formatInteger(account?.balance ?: 0, 3, 'COMMA')}">0</span>원
+				</h1>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<button class="transfer-btn" type="button"
+					onclick="location.href='/banking/transfer_2'">이체하기</button>
+				<br>
+			</div>
+		</article>
+	</section>
+
+	<!-- footer fragment 포함 -->
+	<div th:replace="~{footer :: siteFooter}"></div>
+	<script src="/js/auth-buttons.js"></script>
+</body>
+</html>

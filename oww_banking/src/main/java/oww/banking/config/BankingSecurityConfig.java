@@ -56,7 +56,7 @@ public class BankingSecurityConfig implements WebMvcConfigurer {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/health", "/actuator/**").permitAll()
-                    .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                    .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
                     .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
@@ -192,7 +192,7 @@ public class BankingSecurityConfig implements WebMvcConfigurer {
             // 모든 헤더 로깅 (디버깅용)
             logAllHeaders(request);
 
-            if (requestURI.startsWith("/css/") || requestURI.startsWith("/js/") || requestURI.startsWith("/images/")) {
+            if (requestURI.startsWith("/css/") || requestURI.startsWith("/js/") || requestURI.startsWith("/img/") || requestURI.equals("/favicon.ico")) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -204,13 +204,14 @@ public class BankingSecurityConfig implements WebMvcConfigurer {
                 return;
             }
 
-            String userNO = request.getHeader("X-User-No");
-            String username = request.getHeader("X-Username");
-            String userRole = request.getHeader("X-User-Role");
+            String userNO = request.getHeader("x-user-no");
+            String username = request.getHeader("x-username");
+            String userRole = request.getHeader("x-user-role");
+            String userEmail = request.getHeader("x-user-email"); 
             String authHeader = request.getHeader("Authorization");
 
-            log.info("🔍 Gateway 헤더: User-No={}, Username={}, Role={}, Auth={} ",
-                    userNO, username, userRole, authHeader != null ? "있음" : "없음");
+            log.info("🔍 Gateway 헤더: User-No={}, Username={}, Role={}, Email={}, Auth={} ",
+                    userNO, username, userRole, userEmail, authHeader != null ? "있음" : "없음");
 
             if (username != null && userRole != null &&
                 authHeader != null && authHeader.startsWith("Bearer ")) {

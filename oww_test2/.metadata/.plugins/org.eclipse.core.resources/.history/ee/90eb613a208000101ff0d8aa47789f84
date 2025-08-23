@@ -1,0 +1,318 @@
+package oww.banking.controller;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import oww.banking.service.AccountService;
+import oww.banking.service.TransferService;
+import oww.banking.vo.AccountVO;
+import oww.banking.vo.TransferHistoryVO;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+@Controller
+@RequestMapping("/banking")
+public class TransferController {
+
+   @Autowired
+   private AccountService accountService;
+   
+   @Autowired
+   private TransferService transferService;
+
+   /**
+    * 이체 1단계 - 내 계좌 정보 표시
+    */
+   @GetMapping("/transfer_1")
+   public String transferStep1(Model model, Authentication authentication, HttpServletRequest request) {
+       if (authentication == null || !authentication.isAuthenticated()) {
+           return "redirect:/";
+       }
+
+       try {
+           String userEmail = request.getHeader("x-user-email");
+           String username = authentication.getName();
+           
+           AccountVO account = accountService.getAccountByEmail(userEmail);
+           
+           if (account == null) {
+               model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
+               return "redirect:/banking/main";
+           }
+
+           model.addAttribute("account", account);
+           model.addAttribute("userName", username);
+           
+           return "transfer/banking_transfer_1";
+           
+       } catch (Exception e) {
+           model.addAttribute("errorMessage", "계좌 정보 조회 중 오류가 발생했습니다.");
+           return "redirect:/banking/main";
+       }
+   }
+
+   /**
+    * 이체 2단계 - 받는 계좌 입력 및 이체 금액 입력
+    */
+   @GetMapping("/transfer_2")
+   public String transferStep2(Model model, Authentication authentication, HttpServletRequest request) {
+       if (authentication == null || !authentication.isAuthenticated()) {
+           return "redirect:/";
+       }
+
+       try {
+           String userEmail = request.getHeader("x-user-email");
+           String username = authentication.getName();
+           
+           AccountVO account = accountService.getAccountByEmail(userEmail);
+           
+           if (account == null) {
+               model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
+               return "redirect:/banking/main";
+           }
+
+           model.addAttribute("account", account);
+           model.addAttribute("userName", username);
+           
+           return "transfer/banking_transfer_2";
+           
+       } catch (Exception e) {
+           model.addAttribute("errorMessage", "페이지 로드 중 오류가 발생했습니다.");
+           return "redirect:/banking/main";
+       }
+   }
+
+   /**
+    * 계좌번호 유효성 검사 및 계좌 정보 조회
+    */
+   @PostMapping("/check-account")
+   @ResponseBody
+   public ResponseEntity<Map<String, Object>> checkAccount(@RequestParam("accountNumber") String accountNumber) {
+       Map<String, Object> response = new HashMap<>();
+       
+       try {
+           Object accountInfo = transferService.getAccountInfoByNumber(accountNumber);
+           
+           if (accountInfo != null) {
+               response.put("success", true);
+               response.put("accountInfo", accountInfo);
+           } else {
+               response.put("success", false);
+               response.put("message", "존재하지 않는 계좌번호입니다.");
+           }
+           
+           return ResponseEntity.ok(response);
+           
+       } catch (Exception e) {
+           response.put("success", false);
+           response.put("message", "계좌 조회 중 오류가 발생했습니다.");
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+       }
+   }
+
+   /**
+    * 이체 처리
+    */
+   @PostMapping("/transfer")
+   public String processTransfer(
+           @RequestParam("toAccountNumber") String toAccountNumber,
+           @RequestParam("amount") String amountStr,
+           @RequestParam("memo") String memo,
+           @RequestParam("password") String password,
+           Authentication authentication,
+           HttpServletRequest request,
+           RedirectAttributes redirectAttributes) {
+       
+       try {
+           if (authentication == null || !authentication.isAuthenticated()) {
+               redirectAttributes.addFlashAttribute("errorMessage", "인증이 필요합니다.");
+               return "redirect:/banking/transfer_2";
+           }
+
+           String userEmail = request.getHeader("x-user-email");
+           AccountVO fromAccount = accountService.getAccountByEmail(userEmail);
+           
+           if (fromAccount == null) {
+               redirectAttributes.addFlashAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
+               return "redirect:/banking/transfer_2";
+           }
+
+           // 이체 처리
+           String result = transferService.processTransfer(
+               fromAccount.getAccountId(), 
+               toAccountNumber, 
+               amount, 
+               memo, 
+               password
+           );
+
+           if (result.contains("성공적으로")) {
+               // 받는 계좌 정보 조회
+               Object accountInfoObj = transferService.getAccountInfoByNumber(toAccountNumber);
+               String recipientName = "알 수 없음";
+               
+               if (accountInfoObj != null) {
+                   if (accountInfoObj instanceof Map) {
+                       @SuppressWarnings("unchecked")
+                       Map<String, Object> accountInfo = (Map<String, Object>) accountInfoObj;
+                       recipientName = (String) accountInfo.get("USER_NAME");
+                   }
+               }
+               
+               // 계좌번호 포맷팅
+               String formattedAccountNumber = formatAccountNumber(toAccountNumber);
+               
+               redirectAttributes.addAttribute("recipientName", recipientName);
+               redirectAttributes.addAttribute("toAccountNumber", formattedAccountNumber);
+               redirectAttributes.addAttribute("amount", amount.intValue());
+               if (memo != null && !memo.trim().isEmpty()) {
+                   redirectAttributes.addAttribute("memo", memo);
+               }
+               
+               return "redirect:/banking/transfer_3";
+               
+           } else {
+               redirectAttributes.addFlashAttribute("errorMessage", result);
+               return "redirect:/banking/transfer_2";
+           }
+
+       } catch (Exception e) {
+           redirectAttributes.addFlashAttribute("errorMessage", "이체 처리 중 오류가 발생했습니다: " + e.getMessage());
+           return "redirect:/banking/transfer_2";
+       }
+   }
+   
+   /**
+    * 계좌번호 포맷팅 헬퍼 메소드
+    */
+   private String formatAccountNumber(String accountNumber) {
+       if (accountNumber != null && accountNumber.length() >= 12) {
+           String cleanNumber = accountNumber.replaceAll("[^0-9]", "");
+           if (cleanNumber.length() == 14) {
+               return cleanNumber.substring(0, 4) + "-" + 
+                      cleanNumber.substring(4, 8) + "-" + 
+                      cleanNumber.substring(8);
+           }
+       }
+       return accountNumber;
+   }
+
+   /**
+    * 이체 3단계 - 이체 완료 페이지
+    */
+   @GetMapping("/transfer_3")
+   public String transferStep3(
+       @RequestParam(required = false) String recipientName,
+       @RequestParam(required = false) String toAccountNumber,
+       @RequestParam(required = false) Integer amount,
+       @RequestParam(required = false) String memo,
+       Model model, Authentication authentication) {
+       
+       if (authentication == null || !authentication.isAuthenticated()) {
+           return "redirect:/";
+       }
+       
+       model.addAttribute("recipientName", recipientName);
+       model.addAttribute("toAccountNumber", toAccountNumber);
+       model.addAttribute("amount", amount);
+       model.addAttribute("memo", memo);
+       
+       return "transfer/banking_transfer_3";
+   }
+
+   /**
+    * 거래내역 조회
+    */
+   @GetMapping("/history")
+   public String transferHistory(Model model, Authentication authentication, HttpServletRequest request) {
+       if (authentication == null || !authentication.isAuthenticated()) {
+           return "redirect:/";
+       }
+
+       try {
+           String userEmail = request.getHeader("x-user-email");
+           AccountVO account = accountService.getAccountByEmail(userEmail);
+           
+           if (account == null) {
+               model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
+               return "redirect:/banking/main";
+           }
+
+           List<TransferHistoryVO> history = transferService.getTransferHistory(account.getAccountId());
+           
+           model.addAttribute("account", account);
+           model.addAttribute("history", history);
+           
+           return "transfer/transfer_history";
+           
+       } catch (Exception e) {
+           model.addAttribute("errorMessage", "거래내역 조회 중 오류가 발생했습니다.");
+           return "redirect:/banking/main";
+       }
+   }
+
+   /**
+    * AJAX 거래내역 조회
+    */
+   @GetMapping("/history-data")
+   @ResponseBody
+   public ResponseEntity<Map<String, Object>> getTransferHistoryData(
+           @RequestParam(required = false) String startDate,
+           @RequestParam(required = false) String endDate,
+           Authentication authentication, 
+           HttpServletRequest request) {
+       Map<String, Object> response = new HashMap<>();
+
+       try {
+           if (authentication == null || !authentication.isAuthenticated()) {
+               response.put("success", false);
+               response.put("message", "인증이 필요합니다.");
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+           }
+
+           String userEmail = request.getHeader("x-user-email");
+           AccountVO account = accountService.getAccountByEmail(userEmail);
+
+           if (account == null) {
+               response.put("success", false);
+               response.put("message", "계좌 정보를 찾을 수 없습니다.");
+               return ResponseEntity.badRequest().body(response);
+           }
+
+           List<TransferHistoryVO> history;
+           
+           if (startDate != null && endDate != null) {
+               history = transferService.getTransferHistoryByDateRange(
+                   account.getAccountId(), startDate, endDate);
+           } else {
+               history = transferService.getTransferHistory(account.getAccountId());
+           }
+
+           response.put("success", true);
+           response.put("history", history);
+           response.put("account", account);
+
+           return ResponseEntity.ok(response);
+
+       } catch (Exception e) {
+           response.put("success", false);
+           response.put("message", "거래내역 조회 중 오류가 발생했습니다.");
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+       }
+   }
+}
