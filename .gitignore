@@ -16,3 +16,4 @@ oww_banking/.settings/org.eclipse.core.resources.prefs
 oww_banking/.settings/org.eclipse.wst.common.project.facet.core.xml
 *.classpath
 *.project
+target/
