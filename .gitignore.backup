@@ -14,6 +14,6 @@ oww_banking/.settings/org.eclipse.core.resources.prefs
 *.name
 *.jsdtscope
 oww_banking/.settings/org.eclipse.wst.common.project.facet.core.xml
-.classpath
-.project
+*.classpath
+*.project
 target/
