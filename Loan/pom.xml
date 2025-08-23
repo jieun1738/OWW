@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sboot.sijak</groupId>
-	<artifactId>0721_token_code2</artifactId>
+	<artifactId>Loan</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>0721_token_code2</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
+			
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -90,6 +90,12 @@
          <artifactId>ojdbc8</artifactId>
          <scope>runtime</scope>
      </dependency>
+     <!--  Spring Boot 2/3 공통  -->
+<dependency>
+<groupId>nz.net.ultraq.thymeleaf</groupId>
+<artifactId>thymeleaf-layout-dialect</artifactId>
+<!--  또는 호환 최신  -->
+</dependency>
 		<dependency>
 		
     <groupId>io.jsonwebtoken</groupId>

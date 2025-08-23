@@ -1,0 +1,122 @@
+:root {
+	--line: #e5e7eb;
+	--ink: #111827;
+	--sub: #6b7280;
+	--brand: #7c3aed;
+	--card: #fff;
+	--muted: #f9fafb;
+	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
+	--r: 16px;
+}
+
+#wppcompare.page {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+
+#wppcompare .content {
+	padding: 8px 16px 32px;
+	min-width: 0;
+}
+
+#wppcompare .title {
+	margin: 0 0 6px;
+	font-size: 28px;
+	font-weight: 800;
+	letter-spacing: -.3px;
+}
+
+#wppcompare .desc {
+	margin: 0 0 14px;
+	color: var(--sub);
+}
+
+#wppcompare .btn {
+	appearance: none;
+	border: 1px solid var(--line);
+	background: var(--card);
+	color: var(--ink);
+	border-radius: 12px;
+	padding: 10px 14px;
+	font-weight: 700;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+#wppcompare .btn.brand {
+	background: var(--brand);
+	color: #fff;
+	border-color: transparent;
+}
+
+#wppcompare .btn-s {
+	border: 1px solid var(--line);
+	background: #fff;
+	padding: 6px 10px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#wppcompare .table-wrap {
+	overflow: auto;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: linear-gradient(180deg, var(--muted), transparent);
+	box-shadow: var(--shadow);
+}
+
+#wppcompare table.cmp {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+#wppcompare th, #wppcompare td {
+	border-bottom: 1px solid var(--line);
+	padding: 12px;
+	vertical-align: top;
+	background: #fff;
+}
+
+#wppcompare thead th {
+	position: sticky;
+	top: 0;
+	background: #f8fafc;
+	z-index: 1;
+}
+
+#wppcompare thead th:first-child {
+	min-width: 160px;
+}
+
+#wppcompare .th-prod {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+}
+
+#wppcompare .thumb {
+	width: 120px;
+	height: 80px;
+	border-radius: 10px;
+	background: #e5e7eb;
+	background-size: cover;
+	background-position: center;
+}
+
+#wppcompare .name {
+	font-weight: 800;
+}
+
+#wppcompare .empty {
+	padding: 28px;
+	border: 1px dashed var(--line);
+	border-radius: 12px;
+	color: var(--sub);
+	background: #fff;
+}
