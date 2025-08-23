@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" href="/css/page.css" />
+<title>Own Wedding Wallet</title>
+<style>
+/* 키패드 스타일 */
+.keypad {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.keypad-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 350px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.keypad-display {
+    width: 100%;
+    padding: 15px;
+    font-size: 24px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    letter-spacing: 10px;
+    font-weight: bold;
+    background-color: #f9f9f9;
+}
+
+.keypad-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.keypad-btn {
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.keypad-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.keypad-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.keypad-btn.special {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.keypad-btn.special:hover {
+    background-color: #ff5252;
+}
+
+.keypad-control-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.keypad-control-buttons button {
+    flex: 1;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.keypad-confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.keypad-confirm:hover {
+    background-color: #45a049;
+}
+
+.keypad-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.keypad-cancel:hover {
+    background-color: #da190b;
+}
+</style>
+</head>
+<body>
+
+	<header>
+		<h1 class="logo">Own Wedding Wallet</h1>
+	</header>
+
+	<nav>
+		<div class="nav-item">
+			<a href="/banking/main" class="nav-link">뱅킹서비스</a>
+			<div class="dropdown">
+				<a href="/banking/createAccount">계좌생성</a> 
+				<a href="/banking/transfer_1">이체</a> 
+				<a href="/banking/safebox">세이프박스</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#wedding" class="nav-link">웨딩플래너</a>
+			<div class="dropdown">
+				<a href="#">추천테마</a> <a href="#">DIY</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#loan" class="nav-link">대출</a>
+			<div class="dropdown">
+				<a href="#">대출상품</a> <a href="#">대출상환</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#mypage" class="nav-link">마이페이지</a>
+		</div>
+	</nav>
+
+	<section class="service-cards">
+		<article class="service-card">
+			<div class="service-card-center">
+				<p class="transfer-name" th:text="${userName ?: '고객'}">홍길동</p> 님
+				<p class="transfer-account">계좌번호: <span th:text="${account?.accountNumber ?: '계좌 없음'}">123-4567-8901</span></p>
+				<p class="transfer-balance">잔액: <span th:text="${#numbers.formatInteger(account?.balance ?: 0, 3, 'COMMA')}">0</span>원</p>
+
+				<br><br><br><br><br>
+				
+				<div class="button-row">
+					<div class="account-box">
+						<p id="accountDisplay" class="account-display" style="display: none;"></p>
+						<button id="openModalBtn" class="underline-btn">계좌번호 입력</button>
+					</div>
+
+					<div id="accountModal" class="modal">
+						<div class="modal-content">
+							<span class="close">&times;</span>
+							<h3>계좌번호를 입력하세요</h3>
+							<input type="text" id="accountInputModal" placeholder="예: 12345678901234" />
+							<button id="confirmAccountBtn">확인</button>
+						</div>
+					</div>
+				</div>
+				<br>
+
+				<input type="text" id="transferAmount" placeholder="이체할 금액을 입력하세요" maxlength="12" oninput="formatAmount(this)" />
+				<br>
+				<input type="password" id="accountPassword" placeholder="계좌 비밀번호" readonly onclick="showKeypad()" />
+				<br>
+				<input type="text" id="transferMemo" placeholder="메모 (선택사항)" maxlength="100" />
+				<br>
+				<button class="transfer-btn" type="button" id="transferBtn" disabled>이체하기</button>
+				<br>
+			</div>
+		</article>
+
+		<!-- 이체 확인 모달 -->
+		<div id="confirmTransferModal" class="modal">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<h3>이체 정보를 확인해주세요</h3>
+				<p id="confirmAccount"></p>
+				<p id="confirmRecipient"></p>
+				<p id="confirmAmount"></p>
+				<p id="confirmMemo"></p>
+				<br>
+				<button id="finalTransferBtn">확인</button>
+				<button id="cancelTransferBtn">취소</button>
+			</div>
+		</div>
+
+		<!-- 키패드 -->
+		<div id="keypad" class="keypad">
+			<div class="keypad-content">
+				<h3>계좌 비밀번호 입력</h3>
+				<input type="password" id="keypadDisplay" class="keypad-display" readonly maxlength="4" />
+				<div class="keypad-buttons">
+					<button class="keypad-btn" onclick="inputNumber('1')">1</button>
+					<button class="keypad-btn" onclick="inputNumber('2')">2</button>
+					<button class="keypad-btn" onclick="inputNumber('3')">3</button>
+					<button class="keypad-btn" onclick="inputNumber('4')">4</button>
+					<button class="keypad-btn" onclick="inputNumber('5')">5</button>
+					<button class="keypad-btn" onclick="inputNumber('6')">6</button>
+					<button class="keypad-btn" onclick="inputNumber('7')">7</button>
+					<button class="keypad-btn" onclick="inputNumber('8')">8</button>
+					<button class="keypad-btn" onclick="inputNumber('9')">9</button>
+					<button class="keypad-btn special" onclick="clearInput()">←</button>
+					<button class="keypad-btn" onclick="inputNumber('0')">0</button>
+					<button class="keypad-btn special" onclick="clearAll()">C</button>
+				</div>
+				<div class="keypad-control-buttons">
+					<button class="keypad-cancel" onclick="hideKeypad()">취소</button>
+					<button class="keypad-confirm" onclick="confirmKeypad()">확인</button>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer>&copy; 2025 Wedding Planner Co. All rights reserved.</footer>
+	<script src="/js/auth-buttons.js"></script>
+
+	<script>
+		// 요소들 선택
+		const modal = document.getElementById('accountModal');
+		const openModalBtn = document.getElementById('openModalBtn');
+		const closeModalBtn = document.querySelector('#accountModal .close');
+		const confirmBtn = document.getElementById('confirmAccountBtn');
+		const accountInput = document.getElementById('accountInputModal');
+		const accountDisplay = document.getElementById('accountDisplay');
+		const transferAmountInput = document.getElementById('transferAmount');
+		const transferBtn = document.getElementById('transferBtn');
+		const accountPasswordInput = document.getElementById('accountPassword');
+		const transferMemoInput = document.getElementById('transferMemo');
+		const keypad = document.getElementById('keypad');
+		const keypadDisplay = document.getElementById('keypadDisplay');
+
+		let selectedAccountInfo = null;
+
+		// 키패드 관련 함수들
+		function showKeypad() {
+			keypad.style.display = 'flex';
+			keypadDisplay.value = '';
+		}
+
+		function hideKeypad() {
+			keypad.style.display = 'none';
+		}
+
+		function inputNumber(num) {
+			if (keypadDisplay.value.length < 4) {
+				keypadDisplay.value += num;
+			}
+		}
+
+		function clearInput() {
+			keypadDisplay.value = keypadDisplay.value.slice(0, -1);
+		}
+
+		function clearAll() {
+			keypadDisplay.value = '';
+		}
+
+		function confirmKeypad() {
+			if (keypadDisplay.value.length === 4) {
+				accountPasswordInput.value = keypadDisplay.value;
+				hideKeypad();
+				checkTransferButton();
+			} else {
+				alert('4자리 비밀번호를 입력해주세요.');
+			}
+		}
+
+		// 계좌번호 입력 모달 열기
+		openModalBtn.onclick = () => {
+			modal.style.display = 'flex';
+			accountInput.value = '';
+			accountInput.focus();
+		};
+
+		// 계좌번호 입력 모달 닫기
+		closeModalBtn.onclick = () => {
+			modal.style.display = 'none';
+		};
+
+		// 계좌번호 확인 버튼 클릭
+		confirmBtn.onclick = async () => {
+			const accountNumber = accountInput.value.trim().replace(/[^0-9]/g, '');
+			if (accountNumber.length === 0) {
+				alert("계좌번호를 입력해주세요.");
+				return;
+			}
+
+			try {
+				const response = await fetch('/banking/check-account', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: `accountNumber=${accountNumber}`
+				});
+
+				const result = await response.json();
+				
+				if (result.success) {
+					selectedAccountInfo = result.accountInfo;
+					const formatted = accountNumber.replace(/^(\d{3})(\d{4})(\d{5})$/, '$1-$2-$3');
+					
+					openModalBtn.style.display = 'none';
+					accountDisplay.textContent = `${formatted} (${selectedAccountInfo.user_name})`;
+					accountDisplay.style.display = 'inline';
+					
+					modal.style.display = 'none';
+					checkTransferButton();
+				} else {
+					alert(result.message || '계좌 조회에 실패했습니다.');
+				}
+			} catch (error) {
+				alert('계좌 조회 중 오류가 발생했습니다.');
+				console.error('Error:', error);
+			}
+		};
+
+		// 계좌번호 표시 클릭 시 다시 입력
+		accountDisplay.onclick = () => {
+			accountDisplay.style.display = 'none';
+			openModalBtn.style.display = 'inline';
+			selectedAccountInfo = null;
+			modal.style.display = 'flex';
+			accountInput.value = '';
+			accountInput.focus();
+			checkTransferButton();
+		};
+
+		// 이체 금액 포맷팅
+		function formatAmount(input) {
+			let value = input.value.replace(/[^0-9]/g, '');
+			value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			input.value = value;
+			checkTransferButton();
+		}
+
+		// 이체 버튼 활성화 체크
+		function checkTransferButton() {
+			const amount = parseInt(transferAmountInput.value.replace(/,/g, ''), 10);
+			const hasAccount = selectedAccountInfo !== null;
+			const hasPassword = accountPasswordInput.value.trim().length > 0;
+			
+			transferBtn.disabled = !hasAccount || isNaN(amount) || amount <= 0 || !hasPassword;
+		}
+
+		// 이체 확인 모달 관련
+		const confirmTransferModal = document.getElementById('confirmTransferModal');
+		const closeConfirmModalBtn = confirmTransferModal.querySelector('.close');
+		const confirmAccount = document.getElementById('confirmAccount');
+		const confirmRecipient = document.getElementById('confirmRecipient');
+		const confirmAmount = document.getElementById('confirmAmount');
+		const confirmMemo = document.getElementById('confirmMemo');
+		const finalTransferBtn = document.getElementById('finalTransferBtn');
+		const cancelTransferBtn = document.getElementById('cancelTransferBtn');
+
+		// 이체하기 버튼 클릭
+		transferBtn.onclick = () => {
+			const accountNum = accountDisplay.textContent || "입력된 계좌 없음";
+			const amount = transferAmountInput.value || "0";
+			const memo = transferMemoInput.value || "메모 없음";
+
+			confirmAccount.textContent = `계좌번호: ${accountNum}`;
+			confirmRecipient.textContent = `받는 분: ${selectedAccountInfo?.user_name || '알 수 없음'}`;
+			confirmAmount.textContent = `이체 금액: ${amount} 원`;
+			confirmMemo.textContent = `메모: ${memo}`;
+
+			confirmTransferModal.style.display = 'flex';
+		};
+
+		// 이체 확인 모달 닫기
+		closeConfirmModalBtn.onclick = () => {
+			confirmTransferModal.style.display = 'none';
+		};
+		cancelTransferBtn.onclick = () => {
+			confirmTransferModal.style.display = 'none';
+		};
+
+		// 최종 이체 처리
+		finalTransferBtn.onclick = async () => {
+			const accountNumber = accountInput.value.trim().replace(/[^0-9]/g, '');
+			const amount = transferAmountInput.value.replace(/,/g, '');
+			const memo = transferMemoInput.value || '';
+			const password = accountPasswordInput.value;
+
+			try {
+				const response = await fetch('/banking/transfer', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: `toAccountNumber=${accountNumber}&amount=${amount}&memo=${encodeURIComponent(memo)}&password=${password}`
+				});
+
+				const result = await response.json();
+				
+				if (result.success) {
+					alert(result.message);
+					confirmTransferModal.style.display = 'none';
+					window.location.href = '/banking/transfer_3';
+				} else {
+					alert(result.message || '이체에 실패했습니다.');
+				}
+			} catch (error) {
+				alert('이체 처리 중 오류가 발생했습니다.');
+				console.error('Error:', error);
+			}
+		};
+
+		// 모달 외부 클릭 시 닫기
+		window.addEventListener('click', e => {
+			if (e.target === modal) modal.style.display = 'none';
+			if (e.target === confirmTransferModal) confirmTransferModal.style.display = 'none';
+			if (e.target === keypad) hideKeypad();
+		});
+	</script>
+</body>
+</html>
