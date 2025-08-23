@@ -1,29 +1,17 @@
-// src/main/java/com/oww/oww1/mapper/ProductMapper.java
 package com.oww.oww1.mapper;
-
-import com.oww.oww1.VO.ProductVO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * PRODUCT 테이블 매퍼
- * - 컨트롤러/서비스에서 사용하는 메서드명과 정확히 일치
- * - 숫자형은 원시형 int/long 사용
- */
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.oww.oww1.VO.ProductVO;
+
+/** PRODUCT 조회 전용 매퍼 */
 @Mapper
 public interface ProductMapper {
+    // 0: hall, 1: studio, 2: dress, 3: makeup
+    List<ProductVO> findByCategory(@Param("category") int category);
 
-    List<ProductVO> findAll();
-
-    ProductVO findById(long productNo);
-
-    List<ProductVO> findByCategory(int category);
-
-    List<ProductVO> findByIds(@Param("ids") List<Integer> ids);
-
-    List<ProductVO> search(@Param("category") Integer category,
-                           @Param("q") String q,
-                           @Param("sort") String sort);
+    ProductVO findByNo(@Param("productNo") int productNo);
 }

@@ -1,80 +1,61 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">WeddingCategory</title>
-  <link rel="stylesheet" th:href="@{/css/WeddingCategory.css}">
+  <title layout:fragment="title">웨딩플래너 | 테마별 패키지</title>
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wpcategory">
+  <div class="page" id="wp-category">
+
+    <!-- 좌측 사이드바 (디자인/구조 유지: 프래그먼트 사용) -->
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingCategory', progress=${progressPercent})}"></div>
 
-    <main class="content">
-      <header class="page-header">
-        <div>
-          <h1 class="title section-title"><i class='bx bx-category'></i>테마별 패키지</h1>
-          <p class="desc">관리자가 구성한 패키지를 선택하면 할인혜택과 함께 바로 확정할 수 있습니다.</p>
-        </div>
-      </header>
+    <!-- 우측 본문 -->
+    <main class="main">
+      <h1 class="section-title">테마별 패키지</h1>
+      <p class="section-desc">관리자가 구성한 패키지를 선택해 확인 후 최종 확정할 수 있습니다.</p>
 
-      <div class="toolbar">
-        <div class="chipbox">
-          <a class="chip" th:href="@{/planner/category}"><i class='bx bx-grid-alt'></i> 전체</a>
-          <a class="chip" th:href="@{/planner/category(type=0)}"><i class='bx bx-dollar-circle'></i> 가성비</a>
-          <a class="chip" th:href="@{/planner/category(type=1)}"><i class='bx bx-diamond'></i> 프리미엄</a>
-          <a class="chip" th:href="@{/planner/category(type=2)}"><i class='bx bx-building-house'></i> 호텔</a>
-          <a class="chip" th:href="@{/planner/category(type=3)}"><i class='bx bx-church'></i> 채플</a>
-          <a class="chip" th:href="@{/planner/category(type=4)}"><i class='bx bx-leaf'></i> 가든</a>
-        </div>
-      </div>
-
-      <section class="grid">
-        <article class="card" th:each="pv : ${pkgPreviews}">
-          <div class="content">
-            <h3 class="title">
-              <span class="icon-box brand --sm"><i class='bx bx-package'></i></span>
-              <span th:text="'패키지 #' + ${pv.packageNo}">패키지</span>
-            </h3>
-            <div class="meta-row">
-              <span><i class='bx bx-purchase-tag-alt'></i> <span th:text="'TYPE ' + ${pv.type}">TYPE</span></span>
-              <span>•</span>
-              <span><i class='bx bx-discount'></i> <span th:text="'할인: ' + ${pv.discount} + '%'">할인: 0%</span></span>
-            </div>
-
-            <!-- 가격 요약 -->
-            <div class="price-box">
-              <div class="row">
-                <div class="label"><i class='bx bx-calculator'></i> 정가 합계</div>
-                <div class="value" th:text="${#numbers.formatInteger(pv.total,3,'COMMA') + '원'}">0원</div>
-              </div>
-              <div class="row" th:if="${pv.discount > 0}">
-                <div class="label"><i class='bx bx-purchase-tag'></i> 할인율</div>
-                <div class="value" th:text="${pv.discount + '%'}">0%</div>
-              </div>
-              <div class="row total">
-                <div class="label"><i class='bx bx-wallet'></i> 할인가</div>
-                <div class="value strong" th:text="${#numbers.formatInteger(pv.discounted,3,'COMMA') + '원'}">0원</div>
-              </div>
-            </div>
+      <!-- 패키지 카드 그리드 -->
+      <div class="grid cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <article class="card" th:each="p : ${packages}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card)">
+          <div class="card-media" style="aspect-ratio:16/9;overflow:hidden;border-radius:12px;margin-bottom:12px">
+            <img th:src="${p.hall_img}" alt="패키지 대표 이미지" style="width:100%;height:100%;object-fit:cover">
           </div>
 
-          <div class="row-actions">
-            <a class="btn-m" th:href="@{/planner/confirm(packageNo=${pv.packageNo})}">
-              <i class='bx bx-search-alt-2'></i> 미리보기
-            </a>
-            <form th:action="@{/planner/package/confirm}" method="post" class="w-100">
-              <input type="hidden" name="packageNo" th:value="${pv.packageNo}">
-              <button class="btn-m contained" type="submit"><i class='bx bx-badge-check'></i> 이 패키지 확정</button>
-            </form>
-          </div>
+          <header class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 class="card-title">패키지 번호 <span th:text="${p.package_no}">1</span></h3>
+            <span class="pill" style="border:1px solid var(--line);padding:2px 8px;border-radius:999px">type: <span th:text="${p.type}">0</span></span>
+          </header>
+
+          <!-- 가격(원가/할인가) 표시 : 쿠팡 스타일 -->
+          <p class="price" style="margin:6px 0 10px">
+            <span style="text-decoration:line-through;opacity:.7"
+                  th:text="${#numbers.formatInteger(p.total_price,3,'COMMA')}">0</span>
+            →
+            <strong style="font-size:1.1rem"
+                    th:text="${#numbers.formatInteger(p.final_price,3,'COMMA')}">0</strong>
+            <small style="margin-left:6px;color:var(--brand)" th:text="${p.discount + '%'}">0%</small>
+          </p>
+
+          <!-- 간단 설명(조인된 대표 항목명) -->
+          <ul style="font-size:.95rem;color:var(--sub);margin:0 0 10px 16px;line-height:1.4">
+            <li>홀: <span th:text="${p.hall_name}">Hall</span></li>
+            <li>스튜디오: <span th:text="${p.studio_name}">Studio</span></li>
+            <li>드레스: <span th:text="${p.dress_name}">Dress</span></li>
+            <li>메이크업: <span th:text="${p.makeup_name}">Makeup</span></li>
+          </ul>
+
+          <!-- 확인 화면으로 전송 -->
+          <form method="post" th:action="@{/planner/confirm}" style="margin-top:auto;display:flex;gap:8px">
+            <input type="hidden" name="packageNo" th:value="${p.package_no}">
+            <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">이 패키지 확인하기</button>
+            <a th:href="@{/planner/diy}" class="btn" style="padding:10px 14px;border-radius:10px;border:1px dashed var(--line)">DIY로 선택</a>
+          </form>
         </article>
-
-        <div class="empty" th:if="${pkgPreviews == null or #lists.isEmpty(pkgPreviews)}">
-          <i class='bx bx-info-circle'></i> 표시할 패키지가 없습니다.
-        </div>
-      </section>
+      </div>
     </main>
   </div>
 </section>

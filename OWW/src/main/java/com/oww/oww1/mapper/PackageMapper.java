@@ -7,11 +7,10 @@ import org.apache.ibatis.annotations.Param;
 
 import com.oww.oww1.VO.PackageVO;
 
+/** PACKAGE + 조인(표시용 파생필드 포함) 매퍼 */
 @Mapper
 public interface PackageMapper {
-    PackageVO findById(@Param("packageNo") int packageNo);
+    List<PackageVO> listPackagesWithParts();
 
-    List<PackageVO> findByType(@Param("type") Integer type); // null이면 전체
-    
-    List<PackageVO> findAllByType(@Param("type") Integer type);
+    PackageVO findPackageWithParts(@Param("packageNo") int packageNo);
 }

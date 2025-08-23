@@ -1,33 +1,73 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oww.oww1.mapper.PackageMapper">
 
-  <!-- VO: com.oww.oww1.VO.PackageVO (스네이크 표기) -->
-  <resultMap id="PackageMap" type="com.oww.oww1.VO.PackageVO">
-    <id     property="package_no" column="PACKAGE_NO"/>
-    <result property="type"       column="TYPE"/>
-    <result property="hall"       column="HALL"/>
-    <result property="studio"     column="STUDIO"/>
-    <result property="dress"      column="DRESS"/>
-    <result property="makeup"     column="MAKEUP"/>
-    <result property="discount"   column="DISCOUNT"/>
-  </resultMap>
+  <!-- 패키지 목록(조인) : 파생표시필드 포함 / 가격 강조(원가/할인가) -->
+  <select id="listPackagesWithParts" resultType="com.oww.oww1.VO.PackageVO">
+    SELECT
+      p.package_no,
+      p.type,
+      p.hall,
+      p.studio,
+      p.dress,
+      p.makeup,
+      NVL(p.discount,0) AS discount,
 
-  <!-- 타입별(전체 포함) -->
-  <select id="findByType" resultMap="PackageMap">
-    SELECT PACKAGE_NO, TYPE, HALL, STUDIO, DRESS, MAKEUP, DISCOUNT
-    FROM PACKAGE
-    <if test="type != null">
-      WHERE TYPE = #{type}
-    </if>
-    ORDER BY PACKAGE_NO DESC
+      h.product_name AS hall_name,
+      h.cost         AS hall_cost,
+      h.img          AS hall_img,
+
+      s.product_name AS studio_name,
+      s.cost         AS studio_cost,
+
+      d.product_name AS dress_name,
+      d.cost         AS dress_cost,
+
+      m.product_name AS makeup_name,
+      m.cost         AS makeup_cost,
+
+      (h.cost + s.cost + d.cost + m.cost) AS total_price,
+      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS final_price
+    FROM package p
+    JOIN product h ON p.hall   = h.product_no
+    JOIN product s ON p.studio = s.product_no
+    JOIN product d ON p.dress  = d.product_no
+    JOIN product m ON p.makeup = m.product_no
+    ORDER BY p.package_no
   </select>
 
-  <select id="findById" resultMap="PackageMap">
-    SELECT PACKAGE_NO, TYPE, HALL, STUDIO, DRESS, MAKEUP, DISCOUNT
-    FROM PACKAGE
-    WHERE PACKAGE_NO = #{packageNo}
+  <!-- 패키지 상세(조인) -->
+  <select id="findPackageWithParts" resultType="com.oww.oww1.VO.PackageVO">
+    SELECT
+      p.package_no,
+      p.type,
+      p.hall,
+      p.studio,
+      p.dress,
+      p.makeup,
+      NVL(p.discount,0) AS discount,
+
+      h.product_name AS hall_name,
+      h.cost         AS hall_cost,
+      h.img          AS hall_img,
+
+      s.product_name AS studio_name,
+      s.cost         AS studio_cost,
+
+      d.product_name AS dress_name,
+      d.cost         AS dress_cost,
+
+      m.product_name AS makeup_name,
+      m.cost         AS makeup_cost,
+
+      (h.cost + s.cost + d.cost + m.cost) AS total_price,
+      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS final_price
+    FROM package p
+    JOIN product h ON p.hall   = h.product_no
+    JOIN product s ON p.studio = s.product_no
+    JOIN product d ON p.dress  = d.product_no
+    JOIN product m ON p.makeup = m.product_no
+    WHERE p.package_no = #{packageNo}
   </select>
 
 </mapper>
