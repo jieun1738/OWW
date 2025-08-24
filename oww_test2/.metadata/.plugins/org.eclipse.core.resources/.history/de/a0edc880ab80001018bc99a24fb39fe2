@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!-- 파라미터: active -->
+	<nav class="site-nav" aria-label="주요 메뉴" th:fragment="siteNav(active)">
+
+		<div class="site-nav__center">
+
+			<div class="site-nav__item">
+				<a th:href="@{/banking}" class="site-nav__link"
+					th:classappend="${active}=='banking' ? ' is-active'">뱅킹서비스</a>
+				<div class="site-nav__dropdown">
+					<a href="/banking/createAccount">계좌생성</a> <a href="/banking/transfer_1">이체</a> <a href="/banking/safebox">세이프박스</a>
+					<div class="site-nav__dropdownFooter">
+						<img th:src="@{/img/wings-diamond.svg}" alt="menu badge" />
+					</div>
+				</div>
+			</div>
+
+			<div class="site-nav__item">
+				<a th:href="@{/planner/info}" class="site-nav__link"
+					th:classappend="${active}=='WeddingPlanner' ? ' is-active'"><i
+					class='bx bx-home-heart'></i> 웨딩플래너</a>
+				<div class="site-nav__dropdown">
+					<a th:href="@{/planner/intro}"><i class='bx bx-book-open'></i>
+						웨딩플래너 소개</a> <a th:href="@{/planner/category}"><i
+						class='bx bx-category'></i> 테마별 패키지</a> <a th:href="@{/planner/diy}"><i
+						class='bx bx-wrench'></i> 사용자 DIY</a> <a
+						th:href="@{/planner/plan/list}"><i class='bx bx-collection'></i>
+						플랜 보관함</a> <a th:href="@{/planner/compare/product}"><i
+						class='bx bx-git-compare'></i> 상품 비교</a> <a
+						th:href="@{/planner/compare/plan}"><i class='bx bx-slider-alt'></i>
+						플랜 비교</a>
+					<div class="site-nav__dropdownFooter">
+						<img th:src="@{/img/wings-diamond.svg}" alt="menu badge" />
+					</div>
+				</div>
+			</div>
+
+			<div class="site-nav__item">
+				<a th:href="@{/diy}" class="site-nav__link"
+					th:classappend="${active}=='diy' ? ' is-active'">DIY</a>
+				<div class="site-nav__dropdown">
+					<a href="#">DIY 소개</a> <a href="#">예식편집</a>
+					<div class="site-nav__dropdownFooter">
+						<img th:src="@{/img/wings-diamond.svg}" alt="menu badge" />
+					</div>
+				</div>
+			</div>
+
+			<div class="site-nav__item">
+				<a th:href="@{/diy}" class="site-nav__link"
+					th:classappend="${active}=='diy' ? ' is-active'">DIY</a>
+				<div class="site-nav__dropdown">
+					<a href="#">DIY 소개</a> <a href="#">예식편집</a>
+					<div class="site-nav__dropdownFooter">
+						<img th:src="@{/img/wings-diamond.svg}" alt="menu badge" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="user-profile">
+
+			<label for="profileToggle" class="profile-label"> <img
+				src="/img/profile.png" class="profile-img" /> <span
+				class="username"> <a
+					th:href="${@environment.getProperty('app.gateway-base-url')} + ${@environment.getProperty('app.login-path')}"
+					class="btn btn-sm"> <i class='bx bx-log-in-circle'></i> 로그인
+				</a>
+
+			</span> <span class="arrow">▼</span>
+			</label>
+
+
+			<!-- 3. 드롭다운: 토글되면 보이게 -->
+			<div class="usernav-item">
+				<a href="/budget" class="dropdown2">마이페이지</a> <a href="/budget"
+					class="dropdown2">내 보유예산</a> <a href="/mypage" class="dropdown2">개인정보
+					수정</a> <a href="/logout" class="dropdown2">로그아웃</a>
+			</div>
+		</div>
+	</nav>
+</body>
+</html>

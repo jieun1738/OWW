@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Own Wedding Wallet</title>
+<link rel="stylesheet" href="/css/page.css" />
+<link rel="stylesheet" href="/css/design.css" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+/* 기존 스타일 + safebox_history 스타일 통합 */
+body { display: block !important; justify-content: initial !important; align-items: initial !important; background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%); min-height: 100vh; font-family: Arial, sans-serif; color: #6b4c6b; }
+.site-layout { background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%); }
+.container { max-width: 1200px; margin: 50px auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+.card { background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 32px 40px; box-shadow: 0 8px 25px rgba(200, 162, 200, 0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; max-width: 700px; margin: 0 auto; box-sizing: border-box; }
+.section-title { font-size: 24px; font-weight: 700; color: #8b5a8c; margin-bottom: 25px; text-align: center; }
+
+/* balance info */
+.balance-info { display: flex; justify-content: space-between; align-items: center; font-size: 16px; color: #a569a5; padding: 10px 0; border-bottom: 1px solid rgba(200, 162, 200, 0.3); }
+.balance-info:last-of-type { border-bottom: none; margin-bottom: 20px; }
+#balance, #savedAmount { font-size: 20px; font-weight: 600; color: #6b4c6b; }
+
+/* slider */
+.slider-container { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 30px 0; }
+.slider-label { font-size: 24px; font-weight: 700; color: #6b4c6b; }
+#slider { -webkit-appearance: none; width: 100%; height: 10px; background: #e1bee7; border-radius: 5px; outline: none; transition: opacity .2s; }
+#slider::-webkit-slider-thumb { -webkit-appearance: none; width: 25px; height: 25px; background: #a569a5; border: 2px solid white; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+#slider::-moz-range-thumb { width: 25px; height: 25px; background: #a569a5; border: 2px solid white; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.step-buttons { display: flex; gap: 10px; }
+.step-buttons button { background: rgba(255, 255, 255, 0.7); border: 1px solid #c8a2c8; color: #8b5a8c; padding: 8px 15px; border-radius: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+.step-buttons button:hover { background: #e1bee7; color: #6b4c6b; border-color: #a569a5; }
+
+/* submit btn */
+.submit-btn { width: 100%; padding: 14px 28px; border-radius: 25px; background: linear-gradient(135deg, #c8a2c8 0%, #a569a5 100%); color: white; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(165, 105, 165, 0.3); text-align: center; font-size: 16px; margin-top: 15px; }
+.submit-btn:hover { background: linear-gradient(135deg, #a569a5 0%, #8b5a8c 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 90, 140, 0.4); }
+
+/* safebox history table */
+.history-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2); background: rgba(255,255,255,0.9); margin-top:20px; }
+.history-table th { background: rgba(255,255,255,0.9); padding: 15px; text-align: center; font-size: 14px; font-weight: 700; color: #8b5a8c; border-bottom: 1px solid rgba(200,162,200,0.3); }
+.history-table td { padding: 12px; text-align: center; font-size: 14px; border-bottom: 1px solid rgba(200,162,200,0.1); }
+.history-table tbody tr { background: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s ease; }
+.history-table tbody tr:hover { background: rgba(225,190,231,0.3); transform: translateY(-1px); }
+
+/* no data & loading */
+.no-data, .loading { text-align:center; padding:40px 20px; color:#a569a5; font-size:16px; font-weight:500; background: rgba(255,255,255,0.7); border-radius: 15px; border: 1px solid rgba(200,162,200,0.2); }
+
+/* memo search + sort */
+.sort-options { display: flex; align-items:center; gap:15px; margin-top:-10px; margin-bottom:10px; }
+.sort-options label { font-size:13px; color:#6b4c6b; font-weight:500; cursor:pointer; }
+.sort-options input { margin-right:5px; accent-color:#8b5a8c; }
+
+@media(max-width:768px){.container{margin:20px auto;padding:15px;}.card{padding:24px 20px;}.history-table td, .history-table th{font-size:12px;}}
+</style>
+</head>
+<body class="site-layout">
+
+<!-- header/nav fragment 포함 -->
+<div th:replace="~{header :: siteHeader('banking')}"></div>
+<nav th:replace="~{nav :: siteNav('banking')}"></nav>
+
+<div class="container">
+
+    <!-- 기존 세이프박스 + 정기저금통 card -->
+
+    <!-- safebox_history card -->
+    <div class="card">
+        <div class="section-title">📋 세이프박스 거래 내역</div>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <input type="text" id="memoKeyword" placeholder="메모 검색" style="flex:1; max-width:200px;" oninput="filterAndSort()">
+            <div class="sort-options">
+                <label><input type="radio" name="sortOption" value="desc" checked onchange="filterAndSort()"> 최신순</label>
+                <label><input type="radio" name="sortOption" value="asc" onchange="filterAndSort()"> 오래된순</label>
+            </div>
+        </div>
+        <div id="loadingDiv" class="loading" style="display:none;">데이터를 불러오는 중...</div>
+        <table class="history-table" id="historyTable">
+            <thead>
+                <tr>
+                    <th>거래일자</th>
+                    <th>거래구분</th>
+                    <th>금액</th>
+                    <th>메모</th>
+                </tr>
+            </thead>
+           <tbody id="historyTableBody">
+  <tr th:each="h : ${history}">
+    <td th:text="${#dates.format(h.paymentDate,'yyyy-MM-dd')}"></td>
+    <td>입금</td> <!-- 출금/입금 여부는 h.paymentType에 따라 표시 가능 -->
+    <td th:text="${#numbers.formatInteger(h.amount, 3, 'COMMA')}"></td>
+    <td th:text="${h.memo ?: '-'}"></td>
+  </tr>
+</tbody>
+
+        </table>
+        <div id="noDataDiv" class="no-data" style="display:none;">조회된 거래 내역이 없습니다.</div>
+    </div>
+
+</div>
+
+</body>
+</html>

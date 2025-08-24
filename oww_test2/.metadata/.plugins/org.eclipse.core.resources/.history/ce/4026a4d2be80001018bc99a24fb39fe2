@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세이프박스 거래 내역</title>
+<link rel="stylesheet" href="/css/page.css" />
+<link rel="stylesheet" href="/css/design.css" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<style>
+body {
+	background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%);
+	min-height: 100vh;
+	font-family: Arial, sans-serif;
+	color: #6b4c6b;
+	margin: 0;
+	padding: 0;
+}
+
+/* 세이프박스 거래 내역 색상 */
+.transfer-out { color: #dc3545 !important; font-weight: 600; }
+.transfer-in { color: #0d6efd !important; font-weight: 600; }
+
+/* 모달 내 거래 금액 색상 */
+.amount-red { font-size: 20px; font-weight: 700; color: #dc3545 !important; }
+.amount-large { font-size: 20px; font-weight: 700; color: #0d6efd !important; }
+
+/* 카드 스타일 */
+.container { max-width: 1200px; margin: 50px auto; padding: 20px; }
+.main-panel { background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px 40px; box-shadow: 0 8px 25px rgba(200,162,200,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+.account-info { background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 1px solid rgba(200,162,200,0.2); box-shadow: 0 4px 15px rgba(200,162,200,0.2); }
+.account-number { font-size: 22px; font-weight: 600; color: #8b5a8c; margin-bottom: 8px; }
+.balance { font-size: 28px; font-weight: 700; color: #6b4c6b; }
+
+/* 검색 영역 */
+.search-section { background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px solid rgba(200,162,200,0.2); box-shadow: 0 4px 15px rgba(200,162,200,0.2); }
+.search-row { display: flex; align-items: center; margin-bottom: 15px; gap: 15px; flex-wrap: wrap; }
+.search-row:last-child { margin-bottom: 0; }
+.search-label { min-width: 100px; font-weight: 600; color: #8b5a8c; font-size: 14px; }
+.date-input { padding: 10px 15px; border: 1px solid #e1bee7; border-radius: 10px; background: rgba(255,255,255,0.8); color: #6b4c6b; font-size: 14px; }
+.date-input:focus { outline: none; border-color: #c8a2c8; box-shadow: 0 0 8px rgba(200,162,200,0.5); }
+.search-btn { padding: 10px 20px; border-radius: 20px; background: linear-gradient(135deg,#c8a2c8 0%,#a569a5 100%); color:white; font-weight:600; border:none; cursor:pointer; transition:all 0.3s ease; box-shadow:0 4px 15px rgba(165,105,165,0.3); }
+.search-btn:hover { background: linear-gradient(135deg,#a569a5 0%,#8b5a8c 100%); transform:translateY(-2px); box-shadow:0 6px 20px rgba(139,90,140,0.4); }
+
+/* 테이블 */
+.history-table { width:100%; border-collapse: separate; border-spacing:0; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(200,162,200,0.2); background: rgba(255,255,255,0.9); }
+.history-table th { background: rgba(255,255,255,0.9); padding: 18px 15px; text-align:center; font-size:14px; font-weight:700; color:#8b5a8c; border-bottom:1px solid rgba(200,162,200,0.3); }
+.history-table td { padding:15px; text-align:center; font-size:14px; border-bottom:1px solid rgba(200,162,200,0.1); }
+.history-table tbody tr { background: rgba(255,255,255,0.7); cursor:pointer; transition: all 0.2s ease; }
+.history-table tbody tr:hover { background: rgba(225,190,231,0.3); transform:translateY(-1px); }
+.no-data, .loading { text-align:center; padding:40px 20px; color:#a569a5; font-size:16px; font-weight:500; background: rgba(255,255,255,0.7); border-radius:15px; border:1px solid rgba(200,162,200,0.2); }
+
+/* 모달 */
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color: rgba(107,76,107,0.5); backdrop-filter: blur(5px); }
+.modal-content { background: rgba(255,255,255,0.9); margin:5% auto; padding:0; border:1px solid rgba(200,162,200,0.3); border-radius:20px; width:600px; max-width:90%; box-shadow:0 15px 35px rgba(200,162,200,0.4); backdrop-filter: blur(10px); animation: modalFadeIn 0.3s ease; }
+@keyframes modalFadeIn { from {opacity:0; transform:translateY(-30px) scale(0.95);} to {opacity:1; transform:translateY(0) scale(1);} }
+.modal-header { background: rgba(255,255,255,0.9); padding:25px 30px; border-bottom:1px solid rgba(200,162,200,0.3); border-radius: 20px 20px 0 0; display:flex; justify-content:space-between; align-items:center; }
+.modal-title { font-weight:700; font-size:20px; color:#8b5a8c; }
+.close { color:#a569a5; font-size:28px; font-weight:bold; cursor:pointer; line-height:1; transition: color 0.2s ease; }
+.close:hover { color:#8b5a8c; }
+.modal-body { padding:30px; }
+.detail-row { display:flex; margin-bottom:20px; align-items:flex-start; padding:12px 0; border-bottom:1px solid rgba(200,162,200,0.1); }
+.detail-row:last-child { border-bottom:none; }
+.detail-label { min-width:150px; font-weight:600; color:#8b5a8c; font-size:14px; }
+.detail-value { flex:1; color:#6b4c6b; font-size:14px; line-height:1.4; }
+.modal-footer { padding:20px 30px; border-top:1px solid rgba(200,162,200,0.2); text-align:right; border-radius:0 0 20px 20px; }
+.btn-close { padding:12px 25px; border-radius:20px; background:linear-gradient(135deg,#c8a2c8 0%,#a569a5 100%); color:white; font-weight:600; border:none; cursor:pointer; transition:all 0.3s ease; box-shadow:0 4px 15px rgba(165,105,165,0.3); }
+.btn-close:hover { background:linear-gradient(135deg,#a569a5 0%,#8b5a8c 100%); transform:translateY(-1px); box-shadow:0 6px 20px rgba(139,90,140,0.4); }
+
+/* 반응형 */
+@media (max-width:768px) {
+	.container { margin:20px auto; padding:15px; }
+	.main-panel { padding:24px 20px; }
+	.search-row { flex-direction:column; align-items:stretch; gap:10px; }
+	.search-label { min-width:auto; text-align:left; }
+	.date-input { width:100%; }
+	.modal-content { width:95%; margin:10% auto; }
+	.modal-header, .modal-body, .modal-footer { padding:20px; }
+	.detail-row { flex-direction:column; gap:5px; }
+	.detail-label { min-width:auto; }
+}
+</style>
+</head>
+<body class="site-layout">
+
+	<div th:replace="~{header :: siteHeader('banking')}"></div>
+	<nav th:replace="~{nav :: siteNav('banking')}"></nav>
+
+	<div class="container">
+		<div class="main-panel">
+			<div class="account-info">
+				<div class="account-number" th:text="${safebox?.safeboxId ?: '세이프박스 없음'}">SEF-1001</div>
+				<div class="balance" th:text="'₩' + ${#numbers.formatInteger(safebox?.balance ?: 0,3,'COMMA')}">₩1,000,000</div>
+			</div>
+
+			<div class="search-section">
+				<div class="search-row">
+					<span class="search-label">조회기간</span>
+					<input type="date" class="date-input" id="startDate" value="2025-07-01">
+					<span style="color:#8b5a8c;font-weight:600;">~</span>
+					<input type="date" class="date-input" id="endDate" value="2025-08-22">
+					<button class="search-btn" onclick="loadSafeboxHistory()">조회</button>
+				</div>
+				<div class="search-row">
+					<span class="search-label">메모검색</span>
+					<input type="text" class="date-input" id="memoKeyword" placeholder="메모 내용 입력 (실시간 검색)" style="flex:1; max-width:250px;" oninput="filterByMemo()">
+					<button class="search-btn" onclick="clearMemoFilter()">초기화</button>
+				</div>
+			</div>
+
+			<div id="loadingDiv" class="loading" style="display:none;">데이터를 불러오는 중...</div>
+			<table class="history-table" id="historyTable">
+				<thead>
+					<tr>
+						<th>거래일자</th>
+						<th>목표명</th>
+						<th>거래구분</th>
+						<th>거래금액</th>
+						<th>메모</th>
+					</tr>
+				</thead>
+				<tbody id="historyTableBody"></tbody>
+			</table>
+			<div id="noDataDiv" class="no-data" style="display:none;">조회된 거래 내역이 없습니다.</div>
+		</div>
+	</div>
+
+	<!-- 모달 -->
+	<div id="detailModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="modal-title">세이프박스 거래 상세</span>
+				<span class="close" onclick="closeModal()">&times;</span>
+			</div>
+			<div class="modal-body">
+				<div class="detail-row"><span class="detail-label">거래 번호</span><span class="detail-value" id="detail-id">-</span></div>
+				<div class="detail-row"><span class="detail-label">거래 구분</span><span class="detail-value" id="detail-type">-</span></div>
+				<div class="detail-row"><span class="detail-label">거래 일자</span><span class="detail-value" id="detail-date">-</span></div>
+				<div class="detail-row"><span class="detail-label">목표명</span><span class="detail-value" id="detail-goal">-</span></div>
+				<div class="detail-row"><span class="detail-label">거래 금액</span><span class="detail-value" id="detail-amount">-</span></div>
+				<div class="detail-row"><span class="detail-label">메모</span><span class="detail-value" id="detail-memo">-</span></div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-close" onclick="closeModal()">닫기</button>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{footer :: siteFooter}"></div>
+	<script>
+	let currentHistoryData = [];
+	let originalHistoryData = [];
+
+	function showDetail(index){
+		const data = currentHistoryData[index];
+		if(data){ updateDetailModal(data); openModal(); }
+	}
+
+	function updateDetailModal(data){
+		const typeMap = { 'SAFE_DEPOSIT':'세이프박스 입금', 'SAFE_WITHDRAW':'세이프박스 출금' };
+		const date = new Date(data.paymentDate);
+		const formattedDate = `${date.getFullYear()}년 ${String(date.getMonth()+1).padStart(2,'0')}월 ${String(date.getDate()).padStart(2,'0')}일`;
+		const formattedAmount = '₩'+data.amount.toLocaleString();
+		const amountClass = data.type==='SAFE_DEPOSIT'?'amount-large':'amount-red';
+
+		document.getElementById('detail-id').textContent = data.paymentId;
+		document.getElementById('detail-type').textContent = typeMap[data.type] || data.type;
+		document.getElementById('detail-date').textContent = formattedDate;
+		document.getElementById('detail-goal').textContent = data.goalTitle || '-';
+		const amountElement = document.getElementById('detail-amount');
+		amountElement.textContent = formattedAmount;
+		amountElement.className = `detail-value ${amountClass}`;
+		document.getElementById('detail-memo').textContent = data.memo || '-';
+	}
+
+	function openModal(){ document.getElementById('detailModal').style.display='block'; document.body.style.overflow='hidden'; }
+	function closeModal(){ document.getElementById('detailModal').style.display='none'; document.body.style.overflow='auto'; }
+	window.onclick = function(e){ if(e.target==document.getElementById('detailModal')) closeModal(); }
+	document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+	function filterByMemo(){
+		const keyword = document.getElementById('memoKeyword').value.trim().toLowerCase();
+		if(!keyword){ currentHistoryData=[...originalHistoryData]; updateHistoryTable(currentHistoryData); document.getElementById('historyTable').style.display='table'; document.getElementById('noDataDiv').style.display='none'; return; }
+		const filtered = originalHistoryData.filter(d=>d.memo && d.memo.toLowerCase().includes(keyword));
+		currentHistoryData = filtered;
+		if(filtered.length>0){ updateHistoryTable(filtered); document.getElementById('historyTable').style.display='table'; document.getElementById('noDataDiv').style.display='none'; }
+		else{ document.getElementById('historyTable').style.display='none'; document.getElementById('noDataDiv').innerHTML=`'${keyword}' 검색 결과가 없습니다.`; document.getElementById('noDataDiv').style.display='block'; }
+	}
+
+	function clearMemoFilter(){ document.getElementById('memoKeyword').value=''; currentHistoryData=[...originalHistoryData]; updateHistoryTable(currentHistoryData); document.getElementById('historyTable').style.display='table'; document.getElementById('noDataDiv').style.display='none'; }
+
+	function loadSafeboxHistory(){
+		const loadingDiv = document.getElementById('loadingDiv');
+		const historyTable = document.getElementById('historyTable');
+		const noDataDiv = document.getElementById('noDataDiv');
+
+		const startDate = document.getElementById('startDate').value;
+		const endDate = document.getElementById('endDate').value;
+		if(!startDate||!endDate){ alert('조회 기간을 선택해주세요.'); return; }
+		if(startDate>endDate){ alert('시작일이 종료일보다 클 수 없습니다.'); return; }
+
+		loadingDiv.style.display='block'; historyTable.style.display='none'; noDataDiv.style.display='none';
+		fetch(`/banking/safebox/history?startDate=${startDate}&endDate=${endDate}`)
+			.then(res=>res.json())
+			.then(data=>{
+				loadingDiv.style.display='none';
+				if(data.success && data.history && data.history.length>0){
+					originalHistoryData = data.history;
+					updateHistoryTable(data.history);
+					historyTable.style.display='table';
+				}else{ noDataDiv.style.display='block'; }
+			})
+			.catch(err=>{ loadingDiv.style.display='none'; noDataDiv.style.display='block'; console.error(err); });
+	}
+
+	function updateHistoryTable(history){
+		const tbody = document.getElementById('historyTableBody');
+		currentHistoryData = history;
+		tbody.innerHTML = '';
+		history.forEach((item,index)=>{
+			const row = document.createElement('tr');
+			row.onclick = ()=>showDetail(index);
+			const date = new Date(item.paymentDate);
+			const formattedDate = `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`;
+			const typeText = { 'SAFE_DEPOSIT':'입금','SAFE_WITHDRAW':'출금' };
+			const typeClass = item.type==='SAFE_DEPOSIT'?'transfer-in':'transfer-out';
+			row.innerHTML = `
+				<td>${formattedDate}</td>
+				<td>${item.goalTitle||'-'}</td>
+				<td class="${typeClass}">${typeText[item.type]||item.type}</td>
+				<td class="${typeClass}">₩${item.amount.toLocaleString()}</td>
+				<td>${item.memo||'-'}</td>
+			`;
+			tbody.appendChild(row);
+		});
+	}
+</script>
+</body>
+</html>

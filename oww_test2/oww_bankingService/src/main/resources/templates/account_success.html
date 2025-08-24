@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>계좌 개설 완료</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap"
+	rel="stylesheet" />
+<link rel="stylesheet" href="/css/account_css.css" />
+<link rel="stylesheet" href="/css/page.css" />
+<style>
+body {
+	display: block !important;
+	justify-content: initial !important;
+	align-items: initial !important;
+}
+
+.container {
+	width: 600px !important;
+	margin: 50px auto !important;
+}
+
+.success-content {
+	text-align: center;
+	padding: 40px 20px;
+}
+
+.success-icon {
+	font-size: 60px;
+	margin-bottom: 20px;
+}
+
+.success-title {
+	font-size: 28px;
+	font-weight: bold;
+	color: #2c3e50;
+	margin-bottom: 15px;
+}
+
+.success-message {
+	font-size: 18px;
+	color: #34495e;
+	margin-bottom: 30px;
+	line-height: 1.6;
+}
+
+.account-info {
+	background: #f8f9fa;
+	border-radius: 10px;
+	padding: 25px;
+	margin: 30px 0;
+	border: 2px solid #ff69b4;
+}
+
+.account-number {
+	font-size: 24px;
+	font-weight: bold;
+	color: #2c3e50;
+	margin: 10px 0;
+	letter-spacing: 2px;
+	font-family: 'Courier New', monospace;
+}
+
+.account-label {
+	font-size: 14px;
+	color: #7f8c8d;
+	margin-bottom: 5px;
+}
+
+.main-button {
+	width: 100%;
+	padding: 15px;
+	background-color: #ff69b4;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	font-size: 18px;
+	font-weight: bold;
+	cursor: pointer;
+	margin-top: 20px;
+}
+
+.main-button:hover {
+	background-color: #ff1493;
+}
+
+.info-box {
+	background: #fff0f5;
+	padding: 15px;
+	border-radius: 8px;
+	margin: 20px 0;
+	font-size: 14px;
+	color: #8b4a6b;
+	border-left: 4px solid #ff69b4;
+}
+</style>
+</head>
+<body>
+
+	<header>
+		<h1 class="logo">Own Wedding Wallet</h1>
+	</header>
+
+	<nav>
+		<div class="nav-item">
+			<a href="/banking/main" class="nav-link">뱅킹서비스</a>
+			<div class="dropdown">
+				<a href="/banking/createAccount">계좌생성</a> <a
+					href="/banking/transfer_1">이체</a> <a href="/banking/safebox">세이프박스</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#wedding" class="nav-link">웨딩플래너</a>
+			<div class="dropdown">
+				<a href="#">추천테마</a> <a href="#">DIY</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#loan" class="nav-link">대출</a>
+			<div class="dropdown">
+				<a href="#">대출상품</a> <a href="#">대출상환</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#mypage" class="nav-link">마이페이지</a>
+		</div>
+	</nav>
+
+	<section class="container" role="main" aria-label="계좌 개설 완료">
+		<article class="section">
+			<div class="success-content">
+
+				<h2 class="success-title">축하합니다!</h2>
+
+				<div class="success-message">
+					<strong th:text="${userName ?: '고객'}">고객</strong>님의<br> 계좌가
+					성공적으로 개설되었습니다!
+				</div>
+
+				<div class="account-info">
+					<div class="account-label">새로 개설된 계좌번호</div>
+					<div class="account-number"
+						th:text="${newAccount?.accountNumber ?: '계좌번호를 불러올 수 없습니다'}">
+						110-000000-001</div>
+					<div style="font-size: 14px; color: #7f8c8d; margin-top: 15px;">
+						초기 잔액: <span style="color: #e74c3c; font-weight: bold;">0원</span>
+					</div>
+				</div>
+
+				<div class="info-box">
+					<strong> 안내사항</strong><br> • 계좌번호와 비밀번호는 안전하게 보관해주세요<br>
+					• 이체 및 입출금은 뱅킹 메인에서 이용 가능합니다<br> • 문의사항은 고객센터로 연락해주세요
+				</div>
+
+				<button class="main-button" onclick="location.href='/banking/main'">
+					 뱅킹 메인으로 가기</button>
+			</div>
+		</article>
+	</section>
+
+	<footer> &copy; 2025 Wedding Planner Co. All rights reserved.</footer>
+
+	<script src="/js/auth-buttons.js"></script>
+
+</body>
+</html>

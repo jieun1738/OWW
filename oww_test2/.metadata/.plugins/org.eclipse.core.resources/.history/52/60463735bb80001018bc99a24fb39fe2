@@ -1,0 +1,146 @@
+package oww.banking.service;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import oww.banking.mapper.TransferMapper;
+import oww.banking.vo.TransferVO;
+import oww.banking.vo.TransferHistoryVO;
+
+@Service
+public class TransferService {
+
+	@Autowired
+	private TransferMapper transferMapper;
+
+	/**
+	 * 이체 처리
+	 */
+	@Transactional
+	public String processTransfer(int fromAccountId, String toAccountNumber, BigDecimal amount, String memo,
+			String password) {
+		try {
+			// 1. 계좌 비밀번호 확인
+			if (!transferMapper.checkAccountPassword(fromAccountId, password)) {
+				return "계좌 비밀번호가 일치하지 않습니다.";
+			}
+
+			// 2. 받는 계좌 존재 확인
+			Integer toAccountId = transferMapper.findAccountIdByNumber(toAccountNumber);
+			if (toAccountId == null) {
+				return "받는 계좌번호가 존재하지 않습니다.";
+			}
+
+			// 3. 자기 자신에게 이체 방지
+			if (fromAccountId == toAccountId) {
+				return "본인 계좌로는 이체할 수 없습니다.";
+			}
+
+			// 4. 잔액 확인
+			BigDecimal fromBalance = transferMapper.getBalanceByAccountId(fromAccountId);
+			if (fromBalance.compareTo(amount) < 0) {
+				return "잔액이 부족합니다.";
+			}
+
+			// 5. 이체 금액 유효성 검사
+			if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+				return "이체 금액은 0원보다 커야 합니다.";
+			}
+
+			// 6. 잔액 업데이트
+			BigDecimal newFromBalance = fromBalance.subtract(amount);
+			BigDecimal toBalance = transferMapper.getBalanceByAccountId(toAccountId);
+			BigDecimal newToBalance = toBalance.add(amount);
+
+			transferMapper.updateBalance(fromAccountId, newFromBalance);
+			transferMapper.updateBalance(toAccountId, newToBalance);
+
+			// 7. 이체 내역 저장
+			TransferVO transfer = new TransferVO();
+			transfer.setFromAccountId(fromAccountId);
+			transfer.setToAccountId(toAccountId);
+			transfer.setAmount(amount);
+			transfer.setMemo(memo);
+			transferMapper.insertTransfer(transfer);
+
+			// 8. 거래내역 저장 (보내는 계좌)
+			TransferHistoryVO fromHistory = new TransferHistoryVO();
+			fromHistory.setAccountId(fromAccountId);
+			fromHistory.setTxType("TRANSFER_OUT");
+			fromHistory.setAmount(amount);
+			fromHistory.setMemo(memo);
+			transferMapper.insertTransferHistory(fromHistory);
+
+			// 9. 거래내역 저장 (받는 계좌)
+			TransferHistoryVO toHistory = new TransferHistoryVO();
+			toHistory.setAccountId(toAccountId);
+			toHistory.setTxType("TRANSFER_IN");
+			toHistory.setAmount(amount);
+			toHistory.setMemo(memo);
+			transferMapper.insertTransferHistory(toHistory);
+
+			return "이체가 성공적으로 완료되었습니다.";
+
+		} catch (Exception e) {
+			throw new RuntimeException("이체 처리 중 오류가 발생했습니다: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * 계좌번호로 계좌 정보 조회
+	 */
+	public Object getAccountInfoByNumber(String accountNumber) {
+		return transferMapper.getAccountInfoByNumber(accountNumber);
+	}
+
+	/**
+	 * 계좌별 거래내역 조회
+	 */
+	public List<TransferHistoryVO> getTransferHistory(int accountId) {
+		return transferMapper.getTransferHistoryByAccountId(accountId);
+	}
+
+	/**
+	 * 계좌 ID로 잔액 조회
+	 */
+	public BigDecimal getBalance(int accountId) {
+		return transferMapper.getBalanceByAccountId(accountId);
+	}
+
+	public List<TransferHistoryVO> getTransferHistoryByDateRange(Integer accountId, String startDate, String endDate) {
+		return transferMapper.getTransferHistoryByDateRange(accountId, startDate, endDate);
+	}
+	
+	
+	
+	/**
+	 * 계좌번호로 세이프박스 정보 조회
+	 */
+	public Object getSafeBoxInfoByNumber(String safeboxtNumber) {
+		return transferMapper.getSafeBoxInfoByNumber(safeboxNumber);
+	}
+
+	/**
+	 * 세이프박스별 거래내역 조회
+	 */
+	public List<TransferHistoryVO> getSafeBoxTransferHistory(int SafeboxtId) {
+		return transferMapper.getTransferHistoryBySafeboxId(SafeboxId);
+	}
+
+	/**
+	 * 계좌 ID로 잔액 조회
+	 */
+	public BigDecimal getBalance(int accountId) {
+		return transferMapper.getBalanceByAccountId(accountId);
+	}
+
+	public List<TransferHistoryVO> getTransferHistoryByDateRange(Integer accountId, String startDate, String endDate) {
+		return transferMapper.getTransferHistoryByDateRange(accountId, startDate, endDate);
+	}
+	
+	
+}

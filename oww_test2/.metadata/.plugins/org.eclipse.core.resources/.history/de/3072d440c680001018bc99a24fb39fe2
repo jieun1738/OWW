@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Own Wedding Wallet - 세이프박스 거래 내역</title>
+<link rel="stylesheet" href="/css/page.css" />
+<link rel="stylesheet" href="/css/design.css" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+body { display: block !important; background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%); min-height: 100vh; font-family: Arial, sans-serif; color: #6b4c6b; }
+.container { max-width: 1200px; margin: 50px auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+.card { background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 32px 40px; box-shadow: 0 8px 25px rgba(200, 162, 200, 0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; max-width: 700px; }
+.section-title { font-size: 24px; font-weight: 700; color: #8b5a8c; margin-bottom: 25px; text-align: center; }
+
+.history-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2); background: rgba(255,255,255,0.9); margin-top:20px; }
+.history-table th { background: rgba(255,255,255,0.9); padding: 15px; text-align: center; font-size: 14px; font-weight: 700; color: #8b5a8c; border-bottom: 1px solid rgba(200,162,200,0.3); }
+.history-table td { padding: 12px; text-align: center; font-size: 14px; border-bottom: 1px solid rgba(200,162,200,0.1); }
+.history-table tbody tr { background: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s ease; }
+.history-table tbody tr:hover { background: rgba(225,190,231,0.3); transform: translateY(-1px); }
+
+.no-data, .loading { text-align:center; padding:40px 20px; color:#a569a5; font-size:16px; font-weight:500; background: rgba(255,255,255,0.7); border-radius: 15px; border: 1px solid rgba(200,162,200,0.2); }
+
+.sort-options { display: flex; align-items:center; gap:15px; margin-top:-10px; margin-bottom:10px; }
+.sort-options label { font-size:13px; color:#6b4c6b; font-weight:500; cursor:pointer; }
+.sort-options input { margin-right:5px; accent-color:#8b5a8c; }
+
+@media(max-width:768px){.container{margin:20px auto;padding:15px;}.card{padding:24px 20px;}.history-table td, .history-table th{font-size:12px;}}
+</style>
+</head>
+<body class="site-layout">
+
+<div th:replace="~{header :: siteHeader('banking')}"></div>
+<nav th:replace="~{nav :: siteNav('banking')}"></nav>
+
+<div class="container">
+
+    <div class="card">
+        <div class="section-title">📋 세이프박스 거래 내역</div>
+        
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <input type="text" id="keyword" placeholder="Goal ID 검색" style="flex:1; max-width:200px;" oninput="filterAndSort()">
+            <div class="sort-options">
+                <label><input type="radio" name="sortOption" value="desc" checked onchange="filterAndSort()"> 최신순</label>
+                <label><input type="radio" name="sortOption" value="asc" onchange="filterAndSort()"> 오래된순</label>
+            </div>
+        </div>
+
+        <div id="loadingDiv" class="loading" style="display:none;">데이터를 불러오는 중...</div>
+        <table>
+    <thead>
+        <tr>
+            <th>날짜</th>
+            <th>Goal ID</th>
+            <th>금액</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="h : ${history}">
+            <td th:text="${h.paymentDate}"></td>
+            <td th:text="${h.goalId}"></td>
+            <td th:text="${h.amount}"></td>
+        </tr>
+    </tbody>
+</table>
+
+        <div id="noDataDiv" class="no-data" style="display:none;">조회된 거래 내역이 없습니다.</div>
+    </div>
+
+</div>
+
+<script>
+let originalData = [];
+let filteredData = [];
+
+function loadHistory() {
+    $("#loadingDiv").show();
+    $("#historyTable").hide();
+    $("#noDataDiv").hide();
+    
+    setTimeout(() => {
+        // Thymeleaf에서 실제 데이터를 가져오거나, 테스트용 더미
+        originalData = Array.from(document.querySelectorAll('#historyTableBody tr')).map(tr=>{
+            return {
+                date: tr.cells[0].innerText,
+                goalId: tr.cells[1].innerText,
+                amount: parseInt(tr.cells[2].innerText.replace(/,/g,''))
+            };
+        });
+        filteredData = [...originalData];
+        $("#loadingDiv").hide();
+        filterAndSort();
+    }, 100);
+}
+
+function filterAndSort() {
+    const keyword = $("#keyword").val();
+    const sort = $("input[name='sortOption']:checked").val();
+    filteredData = originalData.filter(d=>d.goalId.includes(keyword));
+    filteredData.sort((a,b)=>{
+        return sort==='desc' ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date);
+    });
+    updateTable();
+}
+
+function updateTable() {
+    const tbody = $("#historyTableBody");
+    tbody.empty();
+    if(filteredData.length===0){
+        $("#historyTable").hide();
+        $("#noDataDiv").show();
+        return;
+    }
+    $("#historyTable").show();
+    $("#noDataDiv").hide();
+    filteredData.forEach(d=>{
+        tbody.append(`<tr>
+            <td>${d.date}</td>
+            <td>${d.goalId}</td>
+            <td>${d.amount.toLocaleString()}</td>
+        </tr>`);
+    });
+}
+
+$(document).ready(loadHistory);
+</script>
+
+</body>
+</html>
