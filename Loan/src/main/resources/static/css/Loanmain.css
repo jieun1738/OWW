@@ -26,7 +26,7 @@
 /* 헤더 */
 .page-header{
   display:flex; align-items:flex-end; justify-content:space-between;
-  gap:16px; margin-bottom:18px;
+  gap:16px; margin-bottom:20px;
 }
  .title{ margin:0; font-size:28px; font-weight:800; letter-spacing:-.3px; }
  .desc{ margin:.25rem 0 0; color:var(--sub); }
@@ -44,7 +44,7 @@
 	  width: 100%;
 	  flex-wrap: wrap;
 	  background-color: rgba(255, 240, 240, 0.3);
-	  padding: 60px 10px;
+	  padding: 30px 10px;
 	  border-radius: 8px;
 	  flex-direction: column;
 	  align-items: left;     
@@ -70,6 +70,7 @@
   border-radius: 8px;
   object-fit: cover;
 }
+
 
 .card h2 {
 	color: #FF6F61;
@@ -173,7 +174,43 @@ grid-row: 1; grid-column: 2;
 	margin: 0;
 	text-align: left;
   }
-
+.card-detail {
+	display: flex;
+	flex-direction: column;
+	width: 70%;
+	margin: 10px;
+	border: 1px solid var(--line);	
+	border-radius:16px; background:var(--card);
+	box-shadow:var(--shadow);
+	padding: 40px;
+}
+.card-detail form {
+    margin: 0 auto;
+    display: flex; /* 자식 요소들을 세로로 정렬 */
+    flex-direction: column;
+	align-items: center;
+    gap: 5px;
+}
+.input-row {
+    display: flex; /* 이 줄을 추가하여 label과 input을 가로로 정렬 */
+    gap: 10px;
+    align-items: center; /* 세로 중앙 정렬 (선택 사항) */
+}
+.card-detail .btn-gaip{
+	background-color:var(--brand); 
+	width:150px;
+	 color: white;   
+	 align-items:center;           
+	 padding: 10px 10px;       
+	 border: none;             
+	 border-radius: 5px;       
+	 cursor: pointer;          
+	 font-size: 15px;
+	
+}
+.card-detail h1 {
+	text-align: center;
+}
 /* 반응형 */
 @media (max-width: 1080px){
   #wpintro .grid{ grid-template-columns: repeat(2, minmax(200px,1fr)); }
