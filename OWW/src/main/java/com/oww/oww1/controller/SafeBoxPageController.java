@@ -29,7 +29,7 @@ public class SafeBoxPageController {
 
     @GetMapping({"", "/"})
     public String mypageRoot() {
-        return "redirect:/mypage/safe_box";
+		return "redirect:/mypage";/* /safe_box */
     }
 
     @GetMapping({"/safe_box", "/safe_box/", "/safe-box", "/safe-box/"})
