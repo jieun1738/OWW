@@ -17,10 +17,14 @@
     <div class="ln-progress">
       <div class="ln-title-row">
         <div class="ln-title"><i class='bx bx-target-lock'></i> 대출 상환율</div>
-        <div class="ln-pct" th:text="${progress != null ? progress + '%' : '0%'}">0%</div>
+<div class="ln-pct"
+     th:text="${(userloan?.LoanCurrentAmount ?: 0) * 100 / (userloan?.LoanAmount ?: 1) + '%'}">0%</div>
+
       </div>
       <div class="ln-bar">
-        <div class="ln-fill" th:style="${'width:' + (progress != null ? progress : 0) + '%'}"></div>
+
+<div class="ln-fill"
+     th:style="${'width:' + ((userloan?.LoanCurrentAmount ?: 0) * 100 / (userloan?.LoanAmount ?: 1)) + '%'}"></div>
       </div>
     </div>
 

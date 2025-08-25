@@ -10,7 +10,7 @@ public interface UserLoanMapper {
 	
 	UserLoanVO getUserLoan(String UserEmail);
 	
-	int repaymentLoan(String UserEmail,  int LoanCurrentAmount);
+	int repaymentLoan(String UserEmail, int LoanCurrentAmount,int PaidAmount);
 	
 	int endRepayment(String UserEmail);
 	
@@ -23,4 +23,6 @@ public interface UserLoanMapper {
 	void updatePeriod(String UserEmail);
 
 	void resetpaidmonthlyamount();
+
+	int getpaidmonthlyamount(String UserEmail);
 }

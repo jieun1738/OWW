@@ -40,50 +40,58 @@
             <label for="paidamount">납부할 금액 입력</label><br>
             <input type="text" name="paidamount" id="paidamount"  
                    th:value="${monthlyinstallment - userloan.paidmonthlyamount}">
-            <button type="submit">상환하기</button>
+           <button type="submit"
+        th:disabled="${(monthlyinstallment - userloan.paidmonthlyamount) <= 0}">
+    상환하기
+</button>
         </form>
     </div>
 </div>
 
 <script th:inline="javascript">
-document.getElementById('repayment').addEventListener('submit', function(event){
-	const paidamountinput = document.getElementById("paidamount");
-	const paidamount = paidamountinput.value.trim();
-	
-    const monthlyinstallment = /*[[${monthlyinstallment}]]*/ 0;
-    const paidThisMonth = /*[[${userloan.paidmonthlyamount}]]*/ 0;	
-	const currentaccount =  /*[[${loandetails.LoanLimit}]]*/ 0; // 계좌 받아오는 게 미구현 상태임
-	
-	if (paidamount == ''){
-		alert('상환 금액을 입력하세요.');
-	    event.preventDefault();
-	    return;
-	} 
-	if (!/^\d+(\.\d+)?$/.test(paidamount)) {  
-	    alert('숫자만 입력 가능합니다.');
-	    event.preventDefault();
-	    return;
-	}
-	
-	const paidamountNum = Number(paidamount);
+const form = document.getElementById('repayment');
+if (form) {
+    form.addEventListener('submit', function(event){
+        const paidamountStr = document.getElementById("paidamount").value.trim();
 
-	if (paidamountNum <= 0) {
-	    alert('상환 금액은 0보다 커야 합니다.');	
-	    event.preventDefault();
-	    return;
-	}
+        if (paidamountStr === '') {
+            alert('상환 금액을 입력하세요.');
+            event.preventDefault();
+            return;
+        }
 
-	if (paidamountNum > currentaccount) {
-	    alert('상환 금액은 계좌 잔액 ' + currentaccount + '원을 초과할 수 없습니다.');
-	    event.preventDefault();
-	    return;
-	}
-	if (paidamountNum > (monthlyinstallment - paidThisMonth)) {
-	    alert('상환 금액이 이번달 납입해야 할 남은 금액을 초과할 수 없습니다.');
-	    event.preventDefault();
-	    return;
-	}
-});
+        if (!/^\d+(\.\d+)?$/.test(paidamountStr)) {
+            alert('숫자만 입력 가능합니다.');
+            event.preventDefault();
+            return;
+        }
+
+        const paidamountNum = Number(paidamountStr);
+
+        if (isNaN(paidamountNum) || paidamountNum <= 0) {
+            alert('상환 금액은 0보다 커야 합니다.');
+            event.preventDefault();
+            return;
+        }
+
+        // 서버 전송 전 추가 체크 가능
+/*
+        if (paidamountNum > currentaccount) {
+            alert('상환 금액은 계좌 잔액 ' + currentaccount + '원을 초과할 수 없습니다.');
+            event.preventDefault();
+            return;
+        }
+
+        if (paidamountNum > (monthlyinstallment - paidThisMonth)) {
+            alert('상환 금액이 이번달 납입해야 할 남은 금액을 초과할 수 없습니다.');
+            event.preventDefault();
+            return;
+        }
+        */
+    });
+}
+
+
 </script>
 
 </body>
