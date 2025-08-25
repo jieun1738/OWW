@@ -42,10 +42,15 @@
 
 <select id="getloanexist" resultType="int" parameterType="String">
     SELECT COUNT(*) 
-    FROM user_loans 
-    WHERE user_email = #{userEmail}
+    FROM USERLOAN 
+    WHERE USEREMAIL = #{userEmail}
 </select>
 
+    <select id="getloanapprove" parameterType="String" resultType="int">
+        SELECT APPROVAL
+        FROM USERLOAN
+        WHERE USEREMAIL = #{userEmail}
+    </select>
 
 
 </mapper>

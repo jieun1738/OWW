@@ -19,7 +19,7 @@ public interface LoanService {
 
 	ArrayList<String> searchloan(String search) throws StreamReadException, DatabindException, IOException;
 
-	double sumMonthlyInstallment(String useremail);
+	long sumMonthlyInstallment(String useremail);
 
 	void insertloan(String loanname, String loanname2, int loanamountint, int loanperiodint, int loanrepaymenttypeint,
 			double interestratedouble);
@@ -32,7 +32,7 @@ public interface LoanService {
 	void repaymentloan(int paidamaountint, String useremail);
 
 
-	int costcalculate(int earningsint, int monthlyinstallmentint, int costint);
+	double costcalculate(int earningsint, double monthlyinstallmentint, int costint);
 
 	void resetpaidmonthlyamount();
 	

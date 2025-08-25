@@ -6,7 +6,7 @@ import com.example.loan.vo.UserLoanVO;
 
 @Mapper
 public interface UserLoanMapper {
-	int insertUserLoan();
+	int insertUserLoan(UserLoanVO loan);
 	
 	UserLoanVO getUserLoan(String UserEmail);
 	
@@ -16,7 +16,7 @@ public interface UserLoanMapper {
 	
 	int getloanexist(String UserEmail);
 
-	int getloanappreove(String userEmail);
+	int getloanapprove(String userEmail);
 	
 	int getcurrentAmount(String UserEmail);
 

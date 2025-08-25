@@ -113,22 +113,18 @@ public class LoanController {
 			,HttpServletRequest request) throws Exception
 	{
 		
-		 String token = null;
-		    if (request.getCookies() != null) {
-		        for (Cookie cookie : request.getCookies()) {
-		            if ("jwt-token".equals(cookie.getName())) {
-		                token = cookie.getValue();
-		                break;
-		            }
-		        }
-		    }
-
-		    if (token == null) {
-		        throw new IllegalArgumentException("JWT 토큰이 없습니다.");
-		    }
-		    
-		Claims claims = jwtutil.validateAndGetClaims(token);
-		String useremail = claims.getSubject();
+		/*
+		 * String token = null; if (request.getCookies() != null) { for (Cookie cookie :
+		 * request.getCookies()) { if ("jwt-token".equals(cookie.getName())) { token =
+		 * cookie.getValue(); break; } } }
+		 * 
+		 * if (token == null) { throw new IllegalArgumentException("JWT 토큰이 없습니다."); }
+		 * 
+		 * Claims claims = jwtutil.validateAndGetClaims(token); 
+		 * String useremail = claims.getSubject();
+		 */
+		
+			String useremail = "testmail@gmail.com";
 		
 		loanservice.insertloan(useremail,loanname,loanamount,loanperiod,loanrepaymenttype,interestrate);
 		
@@ -138,27 +134,31 @@ public class LoanController {
 	
 	@GetMapping("/repayment")
 	public String repayment(RedirectAttributes redirectAttributes ,Model model,HttpServletRequest request){//여기에 토큰에서 이메일 정보 넣어야함
-		String useremail = request.getHeader("X-useremail");
+		/* String useremail = request.getHeader("X-useremail"); */
+		String useremail = "testmail@gmail.com";
 		int approve = loanservice.getloanapprove(useremail);
+		long monthlyinstallments = loanservice.sumMonthlyInstallment(useremail);
 		if(approve == 0) {
 			model.addAttribute("infoMessage", "상환할 대출이 없습니다.");
 			return "Repayment";
 		}
+		
+		
 		UserLoanVO userloan = loanservice.getuserloan(useremail);
 		model.addAttribute("userloan",userloan);
+		model.addAttribute("monthlyinstallment",monthlyinstallments);
 		return "Repayment";
 	}
 	
 	@GetMapping("/repaymentloan")
-	public String repaymentloan(@RequestParam("paidamaount") String paidamaount,RedirectAttributes redirectAttributes,Model model,HttpServletRequest request) 
+	public String repaymentloan(@RequestParam("paidamaount") int paidamaount,RedirectAttributes redirectAttributes,Model model,HttpServletRequest request) 
 	{
 		
-			int paidamaountint = Integer.parseInt(paidamaount);
 			String useremail = request.getHeader("X-useremail");
 			//여기에 계좌 잔액 가져와서 뺀 금액 다시 돌려보내야 함
 			
 			//
-			loanservice.repaymentloan(paidamaountint,useremail);
+			loanservice.repaymentloan(paidamaount,useremail);
 			UserLoanVO userloan = loanservice.getuserloan(useremail);
 			model.addAttribute("userloan",userloan);
 		return "Repayment";
@@ -167,22 +167,30 @@ public class LoanController {
 	@GetMapping("/costcalculate")
 	public String costcalculate(Model model,HttpServletRequest request) {
 		
-		String useremail = request.getHeader("X-useremail");
+		/* String useremail = request.getHeader("X-useremail"); */
+		String useremail = "testmail@gmail.com";
 		
-		double monthlyinstellment = loanservice.sumMonthlyInstallment(useremail);
+		long monthlyinstallment = loanservice.sumMonthlyInstallment(useremail);
 		
-		model.addAttribute("monthlyinstellment",monthlyinstellment);
+		model.addAttribute("monthlyinstallment",monthlyinstallment);
 		
 		return "CostCalculate";
 		
 	}
 	
 	@GetMapping("/costcalculateresult")
-	public String costcalculateresult(@RequestParam("earnings")int earnings,@RequestParam("monthlyinstallment")int monthlyinstallment,@RequestParam("cost") int cost,Model model) {
+	public String costcalculateresult(@RequestParam("earnings")int earnings,@RequestParam("monthlyinstallment")double monthlyinstallment,@RequestParam("cost") int cost,Model model) {
 		
-		int restcost = loanservice.costcalculate(earnings,monthlyinstallment,cost);
+		
+
+
+		
+		double restcostD = loanservice.costcalculate(earnings,monthlyinstallment,cost);
+		
+		long restcost = Math.round(restcostD);
 		
 		model.addAttribute("restcost",restcost);
+		model.addAttribute("monthlyinstallment",monthlyinstallment);
 		
 		return "CostCalculate";
 		
