@@ -77,18 +77,6 @@
          th:href="@{/planner/plan/list}">
         <i class='bx bx-collection'></i><span>플랜 보관함</span>
       </a>
-
-      <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingProductCompare')}? ' active' : ''"
-         th:href="@{/planner/compare/product}">
-        <i class='bx bx-git-compare'></i><span>상품 비교</span>
-      </a>
-
-      <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlanCompare')}? ' active' : ''"
-         th:href="@{/planner/compare/plan}">
-        <i class='bx bx-slider-alt'></i><span>플랜 비교</span>
-      </a>
     </nav>
 
     <!-- 도움말 -->

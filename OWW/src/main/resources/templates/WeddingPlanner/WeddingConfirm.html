@@ -1,72 +1,53 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">웨딩플래너 | 선택 확인</title>
+  <title layout:fragment="title">WeddingConfirm</title>
+  <link rel="stylesheet" th:href="@{/css/WeddingConfirm.css}">
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wp-confirm">
-
-    <!-- 좌측 사이드바 -->
+  <div class="page" id="wpconfirm">
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingConfirm', progress=${progressPercent})}"></div>
 
-    <!-- 우측 본문 -->
-    <main class="main">
-      <h1 class="section-title">선택 확인</h1>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="title section-title"><i class='bx bx-check-shield'></i> 확정 전 미리보기</h1>
+        <p class="desc" th:text="${isPackage ? '패키지 구성 확인' : 'DIY 구성 확인'}">구성 확인</p>
+      </header>
 
-      <!-- 패키지 분기 -->
-      <section th:if="${isPackage}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card);margin-bottom:18px">
-        <h3 style="margin-top:0">패키지 번호: <span th:text="${pkg.package_no}">1</span></h3>
-        <ul style="margin-left:16px;color:var(--sub)">
-          <li>홀: <span th:text="${pkg.hall_name}">Hall</span></li>
-          <li>스튜디오: <span th:text="${pkg.studio_name}">Studio</span></li>
-          <li>드레스: <span th:text="${pkg.dress_name}">Dress</span></li>
-          <li>메이크업: <span th:text="${pkg.makeup_name}">Makeup</span></li>
-        </ul>
-        <p style="margin:10px 0">
-          총액 <span style="text-decoration:line-through"
-                  th:text="${#numbers.formatInteger(total,3,'COMMA')}">0</span>
-          →
-          최종가 <strong th:text="${#numbers.formatInteger(finalTotal,3,'COMMA')}">0</strong>
-          (<span th:text="${discountPercent}">0</span>%)
-        </p>
-
-        <!-- 최종 확정(Plan INSERT) -->
-        <form method="post" th:action="@{/planner/plan/confirm}" style="display:flex;flex-wrap:wrap;gap:8px">
-          <input type="hidden" name="userEmail" value="user1@example.com"><!-- 데모용 -->
-          <input type="hidden" name="packageNo" th:value="${pkg.package_no}">
-          <input type="hidden" name="hall"   th:value="${pkg.hall}">
-          <input type="hidden" name="studio" th:value="${pkg.studio}">
-          <input type="hidden" name="dress"  th:value="${pkg.dress}">
-          <input type="hidden" name="makeup" th:value="${pkg.makeup}">
-          <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">최종 확정</button>
-        </form>
-      </section>
-
-      <!-- DIY 분기 -->
-      <section th:if="${!isPackage}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card)">
-        <h3 style="margin-top:0">DIY 선택</h3>
-        <ul style="margin-left:16px;color:var(--sub)">
-          <li>hall: <span th:text="${hall}">0</span></li>
-          <li>studio: <span th:text="${studio}">0</span></li>
-          <li>dress: <span th:text="${dress}">0</span></li>
-          <li>makeup: <span th:text="${makeup}">0</span></li>
+      <section class="panel">
+        <ul class="meta">
+          <li><b>홀</b> <span th:text="${card.hallName}">-</span> <small th:text="${card.hallCost > 0 ? #numbers.formatInteger(card.hallCost,3,'COMMA') + '원' : ''}"></small></li>
+          <li><b>스튜디오</b> <span th:text="${card.studioName}">-</span> <small th:text="${card.studioCost > 0 ? #numbers.formatInteger(card.studioCost,3,'COMMA') + '원' : ''}"></small></li>
+          <li><b>드레스</b> <span th:text="${card.dressName}">-</span> <small th:text="${card.dressCost > 0 ? #numbers.formatInteger(card.dressCost,3,'COMMA') + '원' : ''}"></small></li>
+          <li><b>메이크업</b> <span th:text="${card.makeupName}">-</span> <small th:text="${card.makeupCost > 0 ? #numbers.formatInteger(card.makeupCost,3,'COMMA') + '원' : ''}"></small></li>
         </ul>
 
-        <!-- 최종 확정(Plan INSERT) : DIY는 package_no=9999 -->
-        <form method="post" th:action="@{/planner/plan/confirm}" style="display:flex;flex-wrap:wrap;gap:8px">
-          <input type="hidden" name="userEmail" value="user1@example.com"><!-- 데모용 -->
-          <input type="hidden" name="hall"   th:value="${hall}">
-          <input type="hidden" name="studio" th:value="${studio}">
-          <input type="hidden" name="dress"  th:value="${dress}">
-          <input type="hidden" name="makeup" th:value="${makeup}">
-          <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">최종 확정</button>
-        </form>
-        <p class="hint" style="margin-top:8px;color:var(--sub)">* DIY는 할인 없음. 저장 시 plan.package_no는 9999로 기록됩니다.</p>
+        <div class="price-row">
+          <div class="label"><i class='bx bx-calculator'></i> 총 금액</div>
+          <div class="value">
+            <del th:if="${isPackage}" th:text="${#numbers.formatInteger(card.totalPrice,3,'COMMA') + '원'}">0원</del>
+            <b th:text="${#numbers.formatInteger(card.finalPrice,3,'COMMA') + '원'}">0원</b>
+            <span class="badge" th:if="${isPackage}" th:text="${card.discount + '%'}">0%</span>
+          </div>
+        </div>
       </section>
+
+      <footer class="toolbar">
+        <a class="btn" th:href="@{/planner/diy}"><i class='bx bx-wrench'></i> DIY로</a>
+        <a class="btn" th:href="@{/planner/category}"><i class='bx bx-book-content'></i> 패키지로</a>
+
+        <!-- 확정 -->
+        <form th:action="@{/planner/confirm}" method="post" th:if="${!isPackage}">
+          <button class="btn brand" type="submit"><i class='bx bx-badge-check'></i> DIY 확정</button>
+        </form>
+        <form th:action="@{/planner/package/confirm}" method="post" th:if="${isPackage}">
+          <input type="hidden" name="packageNo" th:value="${card.packageNo}">
+          <button class="btn brand" type="submit"><i class='bx bx-badge-check'></i> 이 패키지 확정</button>
+        </form>
+      </footer>
     </main>
   </div>
 </section>

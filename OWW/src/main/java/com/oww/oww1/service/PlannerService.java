@@ -2,24 +2,30 @@ package com.oww.oww1.service;
 
 import java.util.List;
 
+import com.oww.oww1.VO.PackagePreviewDTO;
 import com.oww.oww1.VO.PackageVO;
+import com.oww.oww1.VO.PlanCardDTO;
 import com.oww.oww1.VO.PlanVO;
 import com.oww.oww1.VO.ProductVO;
 
-/**
- * 가장 기본적인 서비스 계층
- * - 자료형 단순화(int, String)
- * - 흐름: Controller → Service → Mapper(XML) → DB
- */
 public interface PlannerService {
-    // [DIY] 카테고리별 상품 목록
-    List<ProductVO> findProductsByCategory(int category);
 
-    // [패키지] 목록/상세
-    List<PackageVO> listPackages();
+    /* 제품/패키지 조회 */
+    List<ProductVO> getProducts(int category, String q, String sort); // category -1이면 전체
+    List<ProductVO> getProductsByIds(List<Integer> ids);
+    List<PackageVO> getPackages(int type); // type -1이면 전체
     PackageVO getPackage(int packageNo);
 
-    // [확정] plan 저장 및 사용자별 목록
-    void confirmPlan(String userEmail, Integer packageNo, int hall, int studio, int dress, int makeup);
-    List<PlanVO> getPlansByUser(String userEmail);
+    /* 확정/보관 */
+    void confirmDIY(String email, int hall, int studio, int dress, int makeup); // 0이면 미선택
+    void confirmPackage(String email, int packageNo);
+    List<PlanVO> getCommittedPlans(String email);
+    int getCommittedPlanCount(String email);
+
+    /* 프리뷰/카드 */
+    List<PackagePreviewDTO> getPackagePreviews(int limit);
+    List<PlanCardDTO> getPlanCards(String email);
+
+    /* 최근 1건 */
+    PlanVO findRecentPlan(String email);
 }

@@ -1,61 +1,69 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">웨딩플래너 | 테마별 패키지</title>
+  <title layout:fragment="title">WeddingCategory</title>
+  <link rel="stylesheet" th:href="@{/css/WeddingCategory.css}">
+  <style>
+    .cat-bar { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 20px; }
+    .cat-bar .btn { padding:8px 12px; border-radius:8px; }
+    .btn.active { font-weight:700; box-shadow:0 0 0 2px rgba(0,0,0,.08) inset; }
+  </style>
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wp-category">
-
-    <!-- 좌측 사이드바 (디자인/구조 유지: 프래그먼트 사용) -->
+  <div class="page" id="wpcategory">
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingCategory', progress=${progressPercent})}"></div>
 
-    <!-- 우측 본문 -->
-    <main class="main">
-      <h1 class="section-title">테마별 패키지</h1>
-      <p class="section-desc">관리자가 구성한 패키지를 선택해 확인 후 최종 확정할 수 있습니다.</p>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="title section-title"><i class='bx bx-book-content'></i> 테마별 패키지</h1>
+        <div class="cat-bar">
+          <a class="btn" th:classappend="${type == -1} ? ' active'" th:href="@{/planner/category(type=-1)}">전체보기</a>
+          <a class="btn" th:classappend="${type == 0} ? ' active'" th:href="@{/planner/category(type=0)}">가성비</a>
+          <a class="btn" th:classappend="${type == 1} ? ' active'" th:href="@{/planner/category(type=1)}">프리미엄</a>
+          <a class="btn" th:classappend="${type == 2} ? ' active'" th:href="@{/planner/category(type=2)}">호텔</a>
+          <a class="btn" th:classappend="${type == 3} ? ' active'" th:href="@{/planner/category(type=3)}">채플</a>
+          <a class="btn" th:classappend="${type == 4} ? ' active'" th:href="@{/planner/category(type=4)}">가든</a>
+        </div>
+      </header>
 
-      <!-- 패키지 카드 그리드 -->
-      <div class="grid cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-        <article class="card" th:each="p : ${packages}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card)">
-          <div class="card-media" style="aspect-ratio:16/9;overflow:hidden;border-radius:12px;margin-bottom:12px">
-            <img th:src="${p.hall_img}" alt="패키지 대표 이미지" style="width:100%;height:100%;object-fit:cover">
+      <!-- 컨트롤러 모델키: packageList -->
+      <section class="grid">
+        <article class="card" th:each="p : ${packageList}">
+          <div class="thumb"
+               th:style="|background-image:url(${#strings.contains(p.thumbnailImg,'http') ? p.thumbnailImg : @{/img/{img}(img=${p.thumbnailImg})}});|">
+            <div class="thumb-fallback" th:if="${p.thumbnailImg == null or p.thumbnailImg == ''}">
+              <i class="bx bx-image-alt"></i> 패키지 이미지
+            </div>
           </div>
-
-          <header class="card-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <h3 class="card-title">패키지 번호 <span th:text="${p.package_no}">1</span></h3>
-            <span class="pill" style="border:1px solid var(--line);padding:2px 8px;border-radius:999px">type: <span th:text="${p.type}">0</span></span>
-          </header>
-
-          <!-- 가격(원가/할인가) 표시 : 쿠팡 스타일 -->
-          <p class="price" style="margin:6px 0 10px">
-            <span style="text-decoration:line-through;opacity:.7"
-                  th:text="${#numbers.formatInteger(p.total_price,3,'COMMA')}">0</span>
-            →
-            <strong style="font-size:1.1rem"
-                    th:text="${#numbers.formatInteger(p.final_price,3,'COMMA')}">0</strong>
-            <small style="margin-left:6px;color:var(--brand)" th:text="${p.discount + '%'}">0%</small>
-          </p>
-
-          <!-- 간단 설명(조인된 대표 항목명) -->
-          <ul style="font-size:.95rem;color:var(--sub);margin:0 0 10px 16px;line-height:1.4">
-            <li>홀: <span th:text="${p.hall_name}">Hall</span></li>
-            <li>스튜디오: <span th:text="${p.studio_name}">Studio</span></li>
-            <li>드레스: <span th:text="${p.dress_name}">Dress</span></li>
-            <li>메이크업: <span th:text="${p.makeup_name}">Makeup</span></li>
-          </ul>
-
-          <!-- 확인 화면으로 전송 -->
-          <form method="post" th:action="@{/planner/confirm}" style="margin-top:auto;display:flex;gap:8px">
-            <input type="hidden" name="packageNo" th:value="${p.package_no}">
-            <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">이 패키지 확인하기</button>
-            <a th:href="@{/planner/diy}" class="btn" style="padding:10px 14px;border-radius:10px;border:1px dashed var(--line)">DIY로 선택</a>
-          </form>
+          <div class="content">
+            <h3 class="title" th:text="${p.title}">패키지 #</h3>
+            <div class="price-row">
+              <div class="label"><i class='bx bx-calculator'></i> 가격</div>
+              <div class="value">
+                <del th:text="${#numbers.formatInteger(p.totalPrice,3,'COMMA') + '원'}">0원</del>
+                <b th:text="${#numbers.formatInteger(p.finalPrice,3,'COMMA') + '원'}">0원</b>
+                <span class="badge" th:text="${p.discount + '%'}">0%</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="btn" th:href="@{/planner/confirm(packageNo=${p.packageNo})}">
+                <i class="bx bx-search-alt"></i> 상세/확인
+              </a>
+              <form th:action="@{/planner/package/confirm}" method="post">
+                <input type="hidden" name="packageNo" th:value="${p.packageNo}">
+                <button class="btn brand" type="submit"><i class="bx bx-badge-check"></i> 이 패키지 확정</button>
+              </form>
+            </div>
+          </div>
         </article>
-      </div>
+
+        <div class="empty" th:if="${packageList == null or #lists.isEmpty(packageList)}">
+          <i class='bx bx-info-circle'></i> 표시할 패키지가 없습니다.
+        </div>
+      </section>
     </main>
   </div>
 </section>

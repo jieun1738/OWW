@@ -1,0 +1,42 @@
+<!-- templates/products/fragments/product-form.html -->
+<div th:fragment="form">
+  <!-- 상품명 -->
+  <div class="field">
+    <label for="name">상품명</label>
+    <input type="text" id="name" th:field="*{name}" placeholder="상품명을 입력하세요" required/>
+  </div>
+
+  <!-- 카테고리 -->
+  <div class="field">
+    <label for="category">카테고리</label>
+    <input type="text" id="category" th:field="*{category}" placeholder="예: 스튜디오, 드레스, 메이크업" required/>
+  </div>
+
+  <!-- 업체명 -->
+  <div class="field">
+    <label for="enterpriseName">업체명</label>
+    <input type="text" id="enterpriseName" th:field="*{enterpriseName}" placeholder="업체명을 입력하세요"/>
+  </div>
+
+  <!-- 가격 -->
+  <div class="field">
+    <label for="price">가격</label>
+    <input type="number" id="price" th:field="*{price}" placeholder="가격 (원 단위)" required/>
+  </div>
+
+  <!-- 설명 -->
+  <div class="field">
+    <label for="description">상품 설명</label>
+    <textarea id="description" th:field="*{description}" rows="5"
+              placeholder="상품 설명을 입력하세요"></textarea>
+  </div>
+
+  <!-- 이미지 업로드 -->
+  <div class="field">
+    <label for="file">대표 이미지</label>
+    <input type="file" id="file" name="file" accept="image/*"/>
+    <div class="preview">
+      <img th:if="*{thumbUrl} != null" th:src="*{thumbUrl}" alt="현재 썸네일" style="max-width:150px"/>
+    </div>
+  </div>
+</div>

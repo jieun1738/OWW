@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <title>관리자 - 상품등록</title>
+  <link th:href="@{/css/base.css}" rel="stylesheet">
+  <link th:href="@{/css/sidebar.css}" rel="stylesheet">
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <div th:replace="sidebar :: sidebar('product')"></div>
+  </aside>
+
+  <main>
+    <h2>상품 등록</h2>
+
+    <form th:action="@{/admin/products}" th:object="${productForm}"
+          method="post" enctype="multipart/form-data">
+      <div th:replace="products/fragments/product-form :: form"></div>
+      <button type="submit">등록</button>
+      <a th:href="@{/admin/products}">목록</a>
+    </form>
+  </main>
+</div>
+</body>
+</html>

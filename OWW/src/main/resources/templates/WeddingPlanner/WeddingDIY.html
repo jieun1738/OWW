@@ -1,56 +1,144 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">웨딩플래너 | DIY</title>
+  <title layout:fragment="title">WeddingDIY</title>
+  <link rel="stylesheet" th:href="@{/css/WeddingDIY.css}">
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wp-diy">
-
-    <!-- 좌측 사이드바 -->
+  <div class="page" id="wpdiy">
+    <!-- 원본 규격: sidebar(user, active, progress) -->
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingDIY', progress=${progressPercent})}"></div>
 
-    <!-- 우측 본문 -->
-    <main class="main">
-      <h1 class="section-title">사용자 DIY</h1>
-      <p class="section-desc">카테고리를 전환하며 원하는 상품을 고르고, 확인 화면에서 최종 확정하세요.</p>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="title section-title"><i class="bx bx-wrench"></i> DIY</h1>
 
-      <!-- 폴더 탭: '전체보기'가 가장 왼쪽(요구사항 반영) -->
-      <nav class="folder-tabs" aria-label="카테고리" style="display:flex;gap:8px;margin:10px 0 16px">
-        <a th:href="@{/planner/diy(cat=0)}" th:classappend="${cat==0} ? 'active'" class="pill" style="padding:8px 12px;border:1px solid var(--line);border-radius:999px">웨딩홀</a>
-        <a th:href="@{/planner/diy(cat=1)}" th:classappend="${cat==1} ? 'active'" class="pill" style="padding:8px 12px;border:1px solid var(--line);border-radius:999px">스튜디오</a>
-        <a th:href="@{/planner/diy(cat=2)}" th:classappend="${cat==2} ? 'active'" class="pill" style="padding:8px 12px;border:1px solid var(--line);border-radius:999px">드레스</a>
-        <a th:href="@{/planner/diy(cat=3)}" th:classappend="${cat==3} ? 'active'" class="pill" style="padding:8px 12px;border:1px solid var(--line);border-radius:999px">메이크업</a>
-      </nav>
-
-      <!-- 상품 카드 목록 -->
-      <div class="grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-        <article class="card" th:each="pr : ${products}" style="border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--card)">
-          <div class="media" style="aspect-ratio:16/9;overflow:hidden;border-radius:12px;margin-bottom:8px">
-            <img th:src="${pr.img}" th:alt="${pr.product_name}" style="width:100%;height:100%;object-fit:cover">
-          </div>
-          <h4 class="title" th:text="${pr.product_name}">상품명</h4>
-          <p class="price" th:text="${#numbers.formatInteger(pr.cost,3,'COMMA')}" style="color:var(--ink)">0</p>
-          <small class="addr" th:text="${pr.address}" style="color:var(--sub)"></small>
-        </article>
-      </div>
-
-      <!-- 가장 단순한 DIY 선택 제출 폼 (JS 없이도 테스트 가능) -->
-      <section style="margin-top:22px">
-        <h2 class="section-subtitle">DIY 선택 결과 보내기</h2>
-        <form method="post" th:action="@{/planner/confirm}" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:720px">
-          <input type="number" name="hall"   placeholder="hall product_no"   required>
-          <input type="number" name="studio" placeholder="studio product_no" required>
-          <input type="number" name="dress"  placeholder="dress product_no"  required>
-          <input type="number" name="makeup" placeholder="makeup product_no" required>
-          <div style="grid-column:1/-1">
-            <button type="submit" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">DIY 선택 확인</button>
-          </div>
+        <!-- 필터/검색: 원본 구조 유지, 컨트롤러 파라미터 일치 -->
+        <form th:action="@{/planner/diy}" method="get" class="filters">
+          <select name="category">
+            <option th:value="-1" th:selected="${category == -1}">전체보기</option>
+            <option th:value="0"  th:selected="${category == 0}">웨딩홀</option>
+            <option th:value="1"  th:selected="${category == 1}">스튜디오</option>
+            <option th:value="2"  th:selected="${category == 2}">드레스</option>
+            <option th:value="3"  th:selected="${category == 3}">메이크업</option>
+          </select>
+          <input type="text" name="keyword" th:value="${keyword}" placeholder="상품명 검색">
+          <button type="submit" class="btn"><i class="bx bx-search"></i> 검색</button>
         </form>
-        <p class="hint" style="margin-top:8px;color:var(--sub)">* DIY는 할인 없음. 확인 화면에서 선택값을 다시 확인하고 최종 확정합니다.</p>
+      </header>
+
+      <!-- 상품 그리드(원본 클래스 유지) -->
+      <section class="grid">
+        <article class="card" th:each="p : ${products}">
+          <div class="thumb"
+               th:style="|background-image:url(${#strings.contains(p.img,'http') ? p.img : @{/img/{img}(img=${p.img})}});|">
+            <div class="thumb-fallback" th:if="${p.img == null or p.img == ''}">
+              <i class="bx bx-image-alt"></i> 이미지가 없음
+            </div>
+          </div>
+          <div class="content">
+            <h3 class="title" th:text="${p.productName}">상품명</h3>
+            <div class="price" th:text="${#numbers.formatInteger(p.cost,3,'COMMA') + '원'}">0원</div>
+
+            <div class="actions">
+              <!-- 선택 -->
+              <form th:action="@{/planner/diy/select}" method="post">
+                <input type="hidden" name="category" th:value="${p.category}">
+                <input type="hidden" name="productNo" th:value="${p.productNo}">
+                <button class="btn" type="submit"><i class="bx bx-plus"></i> 선택</button>
+              </form>
+
+              <!-- 비우기 -->
+              <form th:action="@{/planner/diy/clearSlot}" method="post">
+                <input type="hidden" name="category" th:value="${p.category}">
+                <button class="btn" type="submit"><i class="bx bx-eraser"></i> 비우기</button>
+              </form>
+
+              <!-- 비교 담기(세션 저장 후 같은 페이지 유지) -->
+              <form th:action="@{/planner/compare/product/toggle}" method="post">
+                <input type="hidden" name="productNo" th:value="${p.productNo}">
+                <input type="hidden" name="category" th:value="${category}">
+                <input type="hidden" name="keyword" th:value="${keyword}">
+                <button class="btn" type="submit"><i class="bx bx-git-compare"></i> 비교 담기</button>
+              </form>
+            </div>
+          </div>
+        </article>
+
+        <div class="empty" th:if="${products == null or #lists.isEmpty(products)}">
+          <i class='bx bx-info-circle'></i> 표시할 상품이 없습니다.
+        </div>
+      </section>
+
+      <!-- 선택 현황: 원본 배치 유지(간단 표기) -->
+      <section class="panel">
+        <h2 class="panel-title"><i class="bx bx-list-check"></i> 선택 현황</h2>
+        <ul class="meta">
+          <li><b>홀</b> <span th:text="${draft.hall}">0</span></li>
+          <li><b>스튜디오</b> <span th:text="${draft.studio}">0</span></li>
+          <li><b>드레스</b> <span th:text="${draft.dress}">0</span></li>
+          <li><b>메이크업</b> <span th:text="${draft.makeup}">0</span></li>
+        </ul>
+      </section>
+
+      <!-- 하단 툴바: '비교하기'는 같은 페이지 하단 표시로 변경 -->
+      <footer class="toolbar">
+        <a class="btn" th:href="@{/planner/diy/compare}">
+          <i class="bx bx-git-compare"></i> 상품 비교 ( <span th:text="${#lists.size(compareProducts)}">0</span> )
+        </a>
+        <a class="btn brand" th:href="@{/planner/confirm}">
+          <i class="bx bx-check-shield"></i> 미리보기
+        </a>
+      </footer>
+
+      <!-- DIY 하단 비교 패널(같은 페이지 내 표시) -->
+      <section class="compare" th:if="${showCompare == 1}">
+        <h2 class="section-title"><i class='bx bx-git-compare'></i> 상품 비교</h2>
+        <div class="table-wrap" th:if="${compareItems != null and #lists.size(compareItems) > 0}">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>항목</th>
+                <th th:each="p,st : ${compareItems}" th:text="'상품#' + ${p.productNo}">상품#</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>이미지</td>
+                <td th:each="p : ${compareItems}">
+                  <div class="thumb --mini"
+                       th:style="|background-image:url(${#strings.contains(p.img,'http') ? p.img : @{/img/{img}(img=${p.img})}});|">
+                    <div class="thumb-fallback" th:if="${p.img == null or p.img == ''}">
+                      <i class="bx bx-image-alt"></i> 없음
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>이름</td>
+                <td th:each="p : ${compareItems}" th:text="${p.productName}">상품명</td>
+              </tr>
+              <tr>
+                <td>가격</td>
+                <td th:each="p : ${compareItems}" th:text="${#numbers.formatInteger(p.cost,3,'COMMA') + '원'}">0원</td>
+              </tr>
+              <tr>
+                <td>주소</td>
+                <td th:each="p : ${compareItems}" th:text="${p.address}">주소</td>
+              </tr>
+              <tr>
+                <td>설명</td>
+                <td th:each="p : ${compareItems}" th:text="${p.description}">설명</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="empty" th:if="${compareItems == null or #lists.isEmpty(compareItems)}">
+          비교할 상품이 없습니다.
+        </p>
       </section>
     </main>
   </div>

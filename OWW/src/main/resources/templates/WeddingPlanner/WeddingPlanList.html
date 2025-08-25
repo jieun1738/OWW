@@ -1,53 +1,95 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">웨딩플래너 | 플랜 목록</title>
+  <title layout:fragment="title">WeddingPlanList</title>
+  <link rel="stylesheet" th:href="@{/css/WeddingPlanList.css}">
 </head>
 <body>
 <section layout:fragment="content">
-  <div class="page" id="wp-planlist">
-
-    <!-- 좌측 사이드바 -->
+  <div class="page" id="wpplanlist">
     <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingPlanList', progress=${progressPercent})}"></div>
 
-    <!-- 우측 본문 -->
-    <main class="main">
-      <h1 class="section-title">최종 확정된 플랜</h1>
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <h1 class="title section-title"><i class='bx bx-collection'></i> 플랜 보관함</h1>
+          <p class="desc">임시 플랜 보관함 / 플랜 비교 / 최종 결정된 플랜</p>
+        </div>
+        <div class="actions">
+          <a class="btn" th:href="@{/planner/diy}"><i class='bx bx-wrench'></i> DIY로 돌아가기</a>
+          <!-- 내부 비교로 표시되도록 파라미터 사용 -->
+          <a class="btn brand" th:href="@{/planner/plan/list(showCompare=1)}"><i class='bx bx-git-compare'></i> 플랜 비교</a>
+        </div>
+      </header>
 
-      <div th:if="${#lists.isEmpty(plans)}" style="border:1px dashed var(--line);border-radius:12px;padding:14px;background:var(--muted)">
-        아직 확정된 플랜이 없습니다.
-      </div>
+      <!-- (1) 임시 플랜 보관함 -->
+      <section class="grid">
+        <article class="card" th:each="d : ${draftPlans}">
+          <div class="content">
+            <h3 class="title"><i class='bx bx-time'></i> 임시 플랜</h3>
+            <ul class="meta">
+              <li><b>홀</b> <span th:text="${d.hall}">-</span></li>
+              <li><b>스튜디오</b> <span th:text="${d.studio}">-</span></li>
+              <li><b>드레스</b> <span th:text="${d.dress}">-</span></li>
+              <li><b>메이크업</b> <span th:text="${d.makeup}">-</span></li>
+            </ul>
+          </div>
+        </article>
 
-      <table th:if="${!#lists.isEmpty(plans)}" style="width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden">
-        <thead style="background:var(--muted)">
-          <tr>
-            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Plan No</th>
-            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Package No</th>
-            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Hall</th>
-            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Studio</th>
-            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Dress</th>
-            <th style="padding:10px;border-bottom:1px solid var(--line);text-align:left">Makeup</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="pl : ${plans}">
-            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.plan_no}">1</td>
-            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.package_no}">9999</td>
-            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.hall}">0</td>
-            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.studio}">0</td>
-            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.dress}">0</td>
-            <td style="padding:10px;border-bottom:1px solid var(--line)" th:text="${pl.makeup}">0</td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="empty" th:if="${draftPlans == null or #lists.isEmpty(draftPlans)}">
+          <i class='bx bx-info-circle'></i> 임시 저장된 플랜이 없습니다.
+        </div>
+      </section>
 
-      <!-- 마이페이지로 이동하는 링크(선택) -->
-      <div style="margin-top:12px">
-        <a href="/mypage" class="btn" style="padding:10px 14px;border-radius:10px;border:1px solid var(--line)">마이페이지로 이동</a>
-      </div>
+      <!-- (2) 플랜 비교(보관함 내부에서 표시) -->
+      <section class="compare" th:if="${showCompare == 1}">
+        <h2 class="section-title"><i class='bx bx-git-compare'></i> 플랜 비교</h2>
+        <div class="grid --compare" th:if="${draftPlans != null and #lists.size(draftPlans) > 0}">
+          <article class="card" th:each="d,stat : ${draftPlans}">
+            <div class="content">
+              <h3 class="title" th:text="'플랜 #' + ${stat.index + 1}">플랜 #1</h3>
+              <ul class="meta">
+                <li><b>홀</b> <span th:text="${d.hall}">-</span></li>
+                <li><b>스튜디오</b> <span th:text="${d.studio}">-</span></li>
+                <li><b>드레스</b> <span th:text="${d.dress}">-</span></li>
+                <li><b>메이크업</b> <span th:text="${d.makeup}">-</span></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+        <p class="empty" th:if="${draftPlans == null or #lists.isEmpty(draftPlans)}">
+          비교할 임시 플랜이 없습니다.
+        </p>
+      </section>
+
+      <!-- (3) 최종 결정된 플랜 -->
+      <section class="grid">
+        <article class="card" th:each="p : ${confirmedPlans}">
+          <div class="content">
+            <h3 class="title"><i class='bx bx-file'></i> <span th:text="'플랜 #' + ${p.planNo}">플랜</span></h3>
+            <ul class="meta">
+              <li><b>패키지번호</b> <span th:text="${p.packageNo}">-</span></li>
+              <li><b>홀</b> <span th:text="${p.hall}">-</span></li>
+              <li><b>스튜디오</b> <span th:text="${p.studio}">-</span></li>
+              <li><b>드레스</b> <span th:text="${p.dress}">-</span></li>
+              <li><b>메이크업</b> <span th:text="${p.makeup}">-</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <div class="empty" th:if="${confirmedPlans == null or #lists.isEmpty(confirmedPlans)}">
+          <i class='bx bx-info-circle'></i> 최종 결정된 플랜이 없습니다.
+        </div>
+      </section>
+
+      <!-- 최종결정 바로가기 -->
+      <footer class="toolbar">
+        <a class="btn brand" th:href="@{/planner/confirm}">
+          <i class="bx bx-check-shield"></i> 최종결정(확정하기)
+        </a>
+      </footer>
     </main>
   </div>
 </section>

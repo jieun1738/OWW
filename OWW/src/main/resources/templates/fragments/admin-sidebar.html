@@ -1,0 +1,36 @@
+<!-- templates/fragments/admin-sidebar.html -->
+<aside class="sidebar" th:fragment="sidebar" xmlns:th="http://www.thymeleaf.org">
+  <div class="profile">
+    <div class="avatar">ID</div>
+    <h2 class="name">관리자</h2>
+    <p class="role">Admin</p>
+  </div>
+
+  <!-- 메뉴 -->
+  <nav class="mymenu">
+    <a class="item"
+       th:classappend="${active}=='dashboard' ? ' active' : ''"
+       th:href="@{/admin}">
+      대시보드
+    </a>
+
+    <a class="item"
+   th:classappend="${active}=='enterprise' ? ' active' : ''"
+   th:href="@{/admin/enterprise}">   
+  업체관리
+</a>
+
+
+    <a class="item"
+       th:classappend="${active}=='product' ? ' active' : ''"
+       th:href="@{/admin/product}">
+      상품관리
+    </a>
+
+    <a class="item"
+       th:classappend="${active}=='loan' ? ' active' : ''"
+       th:href="@{/admin/loan}">
+      대출승인
+    </a>
+  </nav>
+</aside>

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -64,8 +63,8 @@ public class MypageController {
 			}
 		}
 		
-		int plan_no=dashservice.getPlan(user_email).getPlan_no();
-		int package_no = dashservice.getPlan(user_email).getPackage_no();
+		int plan_no=dashservice.getPlan(user_email).getPlanNo();
+		int package_no = dashservice.getPlan(user_email).getPackageNo();
 		int discount =0;
 		if(package_no==9999) {
 			model.addAttribute("discount", discount);
@@ -124,7 +123,7 @@ public class MypageController {
 	    try {
 	    	System.out.println("결제 정보 받음: " + payment);
 	        // DB에 저장
-	    	int plan_no=dashservice.getPlan(payment.getUser_email()).getPlan_no();
+	    	int plan_no=dashservice.getPlan(payment.getUser_email()).getPlanNo();
 	    	payment.setPlan_no(plan_no);
 	    	int category=payment.getCategory();
 	    	double real_pay_ratio = (100-payment.getDiscount())/100.0;
@@ -134,7 +133,7 @@ public class MypageController {
 	    			
 	    				payment.setCategory(imsi.getCategory());
 	    				payment.setAmount((int)(imsi.getCost()*real_pay_ratio));
-	    				payment.setItemName(imsi.getProduct_name());
+	    				payment.setItemName(imsi.getProductName());
 	    				payment.getCategorytoString();
 	    				int aa_in =dashservice.savePayment(payment); 
 	    		    		if(aa_in>0) {
@@ -173,7 +172,7 @@ public class MypageController {
 	    Map<String, Object> result = new HashMap<>();
 	    try {
 	    		String user_email = "user2@example.com";
-	    		int plan_no=dashservice.getPlan(user_email).getPlan_no();
+	    		int plan_no=dashservice.getPlan(user_email).getPlanNo();
 	        String contract_category = (String)param.get("baseName");
 	        boolean checked = (boolean) param.get("checked");
 	        String YorN = checked?"Y":"N";

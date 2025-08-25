@@ -1,73 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
- "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oww.oww1.mapper.PackageMapper">
 
-  <!-- 패키지 목록(조인) : 파생표시필드 포함 / 가격 강조(원가/할인가) -->
-  <select id="listPackagesWithParts" resultType="com.oww.oww1.VO.PackageVO">
+  <!-- 패키지 카드/상세용: package_admin_v 뷰 사용 -->
+  <select id="selectAllPackages" resultType="com.oww.oww1.VO.PackageAdminViewVO">
     SELECT
-      p.package_no,
-      p.type,
-      p.hall,
-      p.studio,
-      p.dress,
-      p.makeup,
-      NVL(p.discount,0) AS discount,
-
-      h.product_name AS hall_name,
-      h.cost         AS hall_cost,
-      h.img          AS hall_img,
-
-      s.product_name AS studio_name,
-      s.cost         AS studio_cost,
-
-      d.product_name AS dress_name,
-      d.cost         AS dress_cost,
-
-      m.product_name AS makeup_name,
-      m.cost         AS makeup_cost,
-
-      (h.cost + s.cost + d.cost + m.cost) AS total_price,
-      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS final_price
-    FROM package p
-    JOIN product h ON p.hall   = h.product_no
-    JOIN product s ON p.studio = s.product_no
-    JOIN product d ON p.dress  = d.product_no
-    JOIN product m ON p.makeup = m.product_no
-    ORDER BY p.package_no
+      package_no   AS packageNo,
+      type,
+      NVL(discount,0) AS discount,
+      hall_no      AS hallNo,
+      hall_name    AS hallName,
+      hall_vendor  AS hallVendor,
+      hall_address AS hallAddress,
+      hall_cost    AS hallCost,
+      hall_img     AS hallImg,
+      studio_no    AS studioNo,
+      studio_name  AS studioName,
+      studio_vendor AS studioVendor,
+      studio_cost  AS studioCost,
+      dress_no     AS dressNo,
+      dress_name   AS dressName,
+      dress_vendor AS dressVendor,
+      dress_cost   AS dressCost,
+      makeup_no    AS makeupNo,
+      makeup_name  AS makeupName,
+      makeup_vendor AS makeupVendor,
+      makeup_cost  AS makeupCost,
+      total_price  AS totalPrice,
+      final_price  AS finalPrice
+    FROM package_admin_v
+    ORDER BY package_no
   </select>
 
-  <!-- 패키지 상세(조인) -->
-  <select id="findPackageWithParts" resultType="com.oww.oww1.VO.PackageVO">
+  <select id="selectByType" parameterType="int" resultType="com.oww.oww1.VO.PackageAdminViewVO">
     SELECT
-      p.package_no,
-      p.type,
-      p.hall,
-      p.studio,
-      p.dress,
-      p.makeup,
-      NVL(p.discount,0) AS discount,
+      package_no   AS packageNo,
+      type,
+      NVL(discount,0) AS discount,
+      hall_no      AS hallNo,
+      hall_name    AS hallName,
+      hall_vendor  AS hallVendor,
+      hall_address AS hallAddress,
+      hall_cost    AS hallCost,
+      hall_img     AS hallImg,
+      studio_no    AS studioNo,
+      studio_name  AS studioName,
+      studio_vendor AS studioVendor,
+      studio_cost  AS studioCost,
+      dress_no     AS dressNo,
+      dress_name   AS dressName,
+      dress_vendor AS dressVendor,
+      dress_cost   AS dressCost,
+      makeup_no    AS makeupNo,
+      makeup_name  AS makeupName,
+      makeup_vendor AS makeupVendor,
+      makeup_cost  AS makeupCost,
+      total_price  AS totalPrice,
+      final_price  AS finalPrice
+    FROM package_admin_v
+    WHERE type = #{type}
+    ORDER BY package_no
+  </select>
 
-      h.product_name AS hall_name,
-      h.cost         AS hall_cost,
-      h.img          AS hall_img,
-
-      s.product_name AS studio_name,
-      s.cost         AS studio_cost,
-
-      d.product_name AS dress_name,
-      d.cost         AS dress_cost,
-
-      m.product_name AS makeup_name,
-      m.cost         AS makeup_cost,
-
-      (h.cost + s.cost + d.cost + m.cost) AS total_price,
-      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS final_price
-    FROM package p
-    JOIN product h ON p.hall   = h.product_no
-    JOIN product s ON p.studio = s.product_no
-    JOIN product d ON p.dress  = d.product_no
-    JOIN product m ON p.makeup = m.product_no
-    WHERE p.package_no = #{packageNo}
+  <!-- 원본 package 테이블에서 구성 조회 -->
+  <select id="selectPackageByNo" parameterType="int" resultType="com.oww.oww1.VO.PackageVO">
+    SELECT
+      package_no AS packageNo,
+      type,
+      hall,
+      studio,
+      dress,
+      makeup,
+      NVL(discount,0) AS discount
+    FROM package
+    WHERE package_no = #{packageNo}
   </select>
 
 </mapper>

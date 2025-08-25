@@ -1,0 +1,108 @@
+@charset "UTF-8";
+/* ===== 상품/플랜 비교 공통 (0825 톤) ===== */
+#wp-pcompare, #wp-plcompare {
+	--ink: #111827;
+	--sub: #6b7280;
+	--line: #e5e7eb;
+	--muted: #f8fafc;
+	--card: #ffffff;
+	color: var(--ink);
+}
+
+html[data-theme="dark"] #wp-pcompare, html[data-theme="dark"] #wp-plcompare,
+	body.dark #wp-pcompare, body.dark #wp-plcompare {
+	--ink: #e5e7eb;
+	--sub: #a0a9b6;
+	--line: #1f2937;
+	--muted: #0b1016;
+	--card: #0f151c;
+}
+
+#wp-pcompare .page, #wp-plcompare .page {
+	display: grid;
+	grid-template-columns: 260px 1fr;
+	gap: 24px;
+	min-height: calc(100vh - 120px);
+}
+
+.main {
+	padding: 16px 12px 40px;
+	max-width: 1080px;
+	width: 100%;
+}
+
+.title {
+	font-size: 22px;
+	font-weight: 800;
+	margin: 6px 0 6px;
+}
+
+.desc {
+	color: var(--sub);
+	margin-bottom: 12px;
+}
+
+/* 링크 톤(0825) */
+#wp-info a, #wp-diy a, #wp-category a, #wp-planlist a, #wp-pcompare a,
+	#wp-plcompare a, #wp-confirm a {
+	color: #7b2cbf;
+	text-decoration: none;
+}
+
+#wp-info a:hover, #wp-diy a:hover, #wp-category a:hover, #wp-planlist a:hover,
+	#wp-pcompare a:hover, #wp-plcompare a:hover, #wp-confirm a:hover {
+	text-decoration: underline;
+}
+
+.table-wrap {
+	overflow: auto;
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	background: var(--card);
+}
+
+.cmp-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 720px;
+}
+
+.cmp-table th, .cmp-table td {
+	border-bottom: 1px solid var(--line);
+	padding: 12px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.cmp-table thead th {
+	background: var(--muted);
+}
+
+.cmp-table .img {
+	width: 160px;
+	height: 100px;
+	background: #ddd;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+}
+
+.cmp-table .desc {
+	color: var(--sub);
+}
+
+.actions {
+	margin-top: 12px;
+}
+
+.btn {
+	display: inline-block;
+	padding: 8px 12px;
+	border-radius: 10px;
+	border: 1px solid var(--line);
+	color: inherit;
+	text-decoration: none;
+}
+
+.btn:hover {
+	background: var(--muted);
+}

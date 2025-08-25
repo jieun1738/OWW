@@ -1,0 +1,37 @@
+package com.oww.oww1.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class AdminHomeController {
+
+    // 대시보드
+    @GetMapping({"/", "/admin"})
+    public String dashboard(Model model) {
+        model.addAttribute("active", "dashboard");
+        return "admin-dashboard";
+    }
+
+    // 업체관리
+    @GetMapping("/admin/company")
+    public String company(Model model) {
+        model.addAttribute("active", "company");
+        return "admin-company";  // templates/admin-company.html 
+    }
+
+    // 상품관리
+    @GetMapping("/admin/product")
+    public String product(Model model) {
+        model.addAttribute("active", "product");
+        return "admin-product";  // templates/admin-product.html
+    }
+
+    // 대출승인
+    @GetMapping("/admin/loan")
+    public String loan(Model model) {
+        model.addAttribute("active", "loan");
+        return "admin-loan";     // templates/admin-loan.html
+    }
+}

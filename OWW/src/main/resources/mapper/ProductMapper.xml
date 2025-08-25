@@ -1,12 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
- "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oww.oww1.mapper.ProductMapper">
 
-  <!-- 카테고리별 상품 목록 -->
-  <select id="findByCategory" resultType="com.oww.oww1.VO.ProductVO">
+  <!-- 모든 상품 -->
+  <select id="selectAll" resultType="com.oww.oww1.VO.ProductVO">
     SELECT
-      product_no,
-      product_name,
+      product_no   AS productNo,
+      product_name AS productName,
+      category,
+      cost,
+      address,
+      description,
+      img
+    FROM product
+    ORDER BY product_no
+  </select>
+
+  <!-- 카테고리별 -->
+  <select id="selectByCategory" parameterType="int" resultType="com.oww.oww1.VO.ProductVO">
+    SELECT
+      product_no   AS productNo,
+      product_name AS productName,
       category,
       cost,
       address,
@@ -17,9 +32,16 @@
     ORDER BY product_no
   </select>
 
-  <!-- 단건 조회 -->
-  <select id="findByNo" resultType="com.oww.oww1.VO.ProductVO">
-    SELECT product_no, product_name, category, cost, address, description, img
+  <!-- PK 조회 -->
+  <select id="selectByPk" parameterType="int" resultType="com.oww.oww1.VO.ProductVO">
+    SELECT
+      product_no   AS productNo,
+      product_name AS productName,
+      category,
+      cost,
+      address,
+      description,
+      img
     FROM product
     WHERE product_no = #{productNo}
   </select>

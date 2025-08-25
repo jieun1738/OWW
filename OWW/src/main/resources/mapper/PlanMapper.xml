@@ -1,26 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
- "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oww.oww1.mapper.PlanMapper">
 
-  <!-- 최종 확정 저장 (plan_no는 트리거로 자동 부여) -->
-  <insert id="insertPlan" parameterType="com.oww.oww1.VO.PlanVO">
-    INSERT INTO plan (user_email, package_no, hall, studio, dress, makeup)
-    VALUES (#{user_email}, #{package_no}, #{hall}, #{studio}, #{dress}, #{makeup})
-  </insert>
-
-  <!-- 사용자별 확정 목록 -->
-  <select id="findByUser" resultType="com.oww.oww1.VO.PlanVO">
+  <!-- 사용자별 최종 확정 플랜 목록 -->
+  <select id="selectPlansByUser" parameterType="string" resultType="com.oww.oww1.VO.PlanVO">
     SELECT
-      plan_no,
-      user_email,
-      package_no,
-      hall,
-      studio,
-      dress,
-      makeup
+      plan_no      AS planNo,
+      NVL(package_no,0) AS packageNo,
+      user_email   AS userEmail,
+      hall, studio, dress, makeup
     FROM plan
     WHERE user_email = #{userEmail}
     ORDER BY plan_no DESC
   </select>
+
+  <!-- 최종 확정 플랜 저장 (plan_no는 트리거로 자동) -->
+  <insert id="insertPlan" parameterType="com.oww.oww1.VO.PlanVO">
+    INSERT INTO plan (user_email, package_no, hall, studio, dress, makeup)
+    VALUES (#{userEmail}, #{packageNo}, #{hall}, #{studio}, #{dress}, #{makeup})
+  </insert>
 
 </mapper>
