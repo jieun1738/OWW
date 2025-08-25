@@ -7,7 +7,7 @@ import lombok.Data;
 public class PlanVO {
 	private int plan_no;
 	private String user_email; // 외래키 ()
-	private Integer package_no; // 패키지 확정 시 번호, DIY면 9999
+	private int package_no; // 패키지 확정 시 번호, DIY면 9999
 	private int hall;
 	private int studio;
 	private int dress;
