@@ -26,6 +26,7 @@ import com.oww.oww1.service.DashboardService;
 public class MypageController {
 
     private final OwwApplication owwApplication;
+    
 	@Autowired
 	DashboardService dashservice;
 	
@@ -63,15 +64,18 @@ public class MypageController {
 				break;
 			}
 		}
-		
+		System.out.println(dashservice.getPlan(user_email));
 		int plan_no=dashservice.getPlan(user_email).getPlan_no();
+		System.out.println("plan_no: "+plan_no);
 		int package_no = dashservice.getPlan(user_email).getPackage_no();
+		System.out.println("▶ packageNo 전달값: " + package_no);
 		int discount =0;
 		if(package_no==9999) {
 			model.addAttribute("discount", discount);
 			System.out.println("할인율: "+discount);
 		}else {
 			discount=dashservice.getDiscount(package_no);
+			System.out.println("▶ Mapper 반환값: " + discount);
 		model.addAttribute("discount", discount);
 		}
 		model.addAttribute("total_cost", total_cost*(100-discount)/100);

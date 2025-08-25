@@ -1,156 +1,34 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/totdesign}">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
-	<title>myPage</title>
-	<!-- tsparticles JS -->
-	<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
-	<link th:href="@{/css/design.css}" rel="stylesheet" />
-	<link th:href="@{/css/WeddingDIY.css}" rel="stylesheet" />
+	<title layout:fragment="title">myPage | my Wedding plan</title>
+	<link rel="stylesheet" th:href="@{/css/Mypage.css}">
 	<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 	<script src="/js/payment.js" defer></script>
 	
 	<style>
-		.card-content {
-			display: grid;
-			grid-template-columns: 120px 1fr;
-			gap: 15px;
-			align-items: start;
-		}
-
-		.card-image {
-			width: 100%;
-			height: 100px;
-			object-fit: cover;
-			border-radius: 8px;
-		}
-
-		.card-details {
-			display: grid;
-			grid-template-columns: 1fr auto;
-			gap: 15px;
-			align-items: start;
-		}
-
-		.card-info h3 {
-			margin: 0 0 8px 0;
-			color: #FF6F61;
-			font-size: 18px;
-			font-weight: 600;
-		}
-
-		.card-price {
-			color: #e91e63;
-			font-size: 16px;
-			font-weight: bold;
-			margin: 5px 0;
-		}
-
-		.card-address {
-			color: #666;
-			font-size: 14px;
-			margin: 5px 0;
-		}
-
-		.card-description {
-			color: #777;
-			font-size: 13px;
-			line-height: 1.4;
-			margin: 8px 0;
-		}
-
-		.card-controls {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			min-width: 150px;
-		}
-
-		.control-row {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			font-size: 14px;
-		}
-
-		.control-row input[type="checkbox"] {
-			width: 16px;
-			height: 16px;
-		}
-
-		.amount-input {
-			width: 80px;
-			padding: 4px 8px;
-			border: 1px solid #ddd;
-			border-radius: 4px;
-			font-size: 12px;
-		}
-
-
-
-
-		@media (max-width: 768px) {
-			.card-content {
-				grid-template-columns: 1fr;
-				gap: 10px;
-			}
-
-			.card-details {
-				grid-template-columns: 1fr;
-				gap: 10px;
-			}
-
-			.card-controls {
-				min-width: auto;
-			}
-		}
+		
 	</style>
 </head>
 
 <body>
-	<th:block layout:fragment="header" th:insert="~{@{/fragments/header}}"></th:block>
-	<th:block layout:fragment="nav" th:insert="~{@{/fragments/nav}}"></th:block>
+	<section layout:fragment="content">
+	  <div class="page">
 
-	<!-- ========== Left Global Menu ========== -->
-	<aside class="leftnav" aria-label="글로벌 메뉴">
-		<div class="content">
-			<img src="/img/user.png" alt="사용자 프로필" width="20px" height="20px" /><br>
-			<span th:text="${totalBudget.user_email}">사용자 이메일</span>
-			<div class="progress-container">
-				<div class="progress-bar" th:style="'width:' + ${contract_progress}+'%'"></div>
-			</div>
-		</div>
-		<div class="sidebar">
-			<h2>메뉴</h2>
+	    <!-- 좌측 사이드바 -->
+	    <div th:replace="~{fragments/MypageSideBar :: sidebar(user=${user}, active='MyWeddingPlan', progress=${progressPercent})}"></div>
 
-			<a class="ln-item" href="/wedding-plan" aria-label="나의 웨딩플랜 보기">
-				<span>my 웨딩플랜</span><span class="ln-dot"></span>
-			</a><br>
-			<a class="ln-item" href="/budget-setting" aria-label="예산 설정하기">
-				<span>예산설정</span><span class="ln-dot"></span>
-			</a><br>
-			<a class="ln-item" href="/consumption-info" aria-label="소비정보 조회하기">
-				<span>소비정보 조회</span><span class="ln-dot"></span>
-			</a><br>
-			<a class="ln-item" href="/savings" aria-label="차곡차곡 금고 관리">
-				<span>차곡차곡 금고</span><span class="ln-dot"></span>
-			</a><br>
-			<a class="ln-item" href="/payment-history" aria-label="미니스토어 결제내역 보기">
-				<span>미니스토어 결제 내역</span><span class="ln-dot"></span>
-			</a>
-		</div>
-	</aside>
-
-	<!-- ========== Main ========== -->
-	<main class="main">
-
-
-		<!-- 웨딩 상품 카드들 -->
-		<section class="cards" aria-live="polite">
-			<div class="smalltitle">my 웨딩 플랜</div>
+		<div class="cards">
+	    <!-- 우측 본문 -->
+	    <main class="content">
+			<header class="page-header">
+			<h1 class="title">my 웨딩 플랜</h1>
 			<div class="progress-card">
 				<div class="progress-item">
 					<h4>결혼 준비 진행율</h4>
@@ -169,6 +47,7 @@
 					</div>
 				</div>
 			</div>
+			</header>
 			<div class="total-card">
 				<h3 th:if="${discount != 0}">💡 저장된 상품은 패키지 상품으로 <span th:text="|${discount}%|"></span> 할인 적용됩니다.</h3>
 				<h5 th:if="${discount != 0}">⚠️ 개별항목 수정시 할인적용이 불가능 합니다.</h5>
@@ -354,8 +233,6 @@
 		</section>
 	</main>
 
-	<th:block layout:fragment="footer" th:insert="~{@{/fragments/footer}}"></th:block>
-	
 </body>
 <script src="/js/checkbox_progressbar_db.js"></script>
 <script src="/js/checkbox_control.js"></script>

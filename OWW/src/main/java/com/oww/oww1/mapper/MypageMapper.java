@@ -20,7 +20,7 @@ public interface MypageMapper {
 
 	public List<ProductVO> getProductInfo(String email);
 	
-	public PlanVO getPlan(String email);
+	public PlanVO getPlan(@Param("user_email") String user_email);
 	
 	public int getContractProgress(int plan_no);
 	
@@ -30,7 +30,7 @@ public interface MypageMapper {
 	
 	public PlanProgressVO getPlanProgress(int plan_no);
 	
-	public int getDiscount(int package_no);
+	public int getDiscount(@Param("package_no") int package_no);
 	
 	public int savePayment(PaymentDTO payment);
 	

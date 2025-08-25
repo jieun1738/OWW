@@ -33,8 +33,9 @@ public class DashboardService {
 	        return mypageMapper.getProductInfo(email);
 	       
 	   }
-	   public PlanVO getPlan(String email) {
-		   return mypageMapper.getPlan(email);
+	   public PlanVO getPlan(String user_email) {
+		   
+		   return mypageMapper.getPlan(user_email);
 	   }
 	   
 	   public int getContractProgess(int plan_no) {
