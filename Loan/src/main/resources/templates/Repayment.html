@@ -16,7 +16,6 @@
 <div th:if="${infoMessage == null}">
     <div class="loan-card">
         <h1 th:text="${userloan.loanName}"></h1>
-        <p>상세 설명: <span th:text="${userloan.LoanExplanation}"></span></p>
         <p>대출 금액: <span th:text="${userloan.LoanAmount}"></span></p>
         <p>대출 기간(개월): <span th:text="${userloan.LoanPeriod}"></span></p>
         <p>상환 방식: 
@@ -39,7 +38,7 @@
 
         <form action="/repaymentloan" id="repayment">
             <label for="paidamount">납부할 금액 입력</label><br>
-            <input type="text" name="paidamaount" id="paidamount"  
+            <input type="text" name="paidamount" id="paidamount"  
                    th:value="${monthlyinstallment - userloan.paidmonthlyamount}">
             <button type="submit">상환하기</button>
         </form>

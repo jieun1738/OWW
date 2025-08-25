@@ -16,7 +16,7 @@
         </p>
         <p>
             월 납입금: 
-            <input type="text" name="monthlyinstallment" id="monthlyinstallment" value="${monthlyinstallment}" disabled>
+            <input type="text" name="monthlyinstallment" id="monthlyinstallment" th:value="${monthlyinstallment}" readonly>
             <input type="checkbox" id="editInstallment"> 수정
         </p>
         <p>
@@ -38,10 +38,10 @@
 
     checkbox.addEventListener('change', function() {
         if (this.checked) {
-            input.removeAttribute('disabled');
+            input.removeAttribute('readonly');
             input.focus();
         } else {
-            input.setAttribute('disabled', true);
+            input.setAttribute('readonly', true);
         }
     });
 </script>

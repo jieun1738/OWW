@@ -5,12 +5,12 @@ public class UserLoanVO {
 	private String LoanName;
 	private int LoanAmount;
 	private int LoanCurrentAmount;
-	private int LoanMonthlyAmount;
 	private int LoanPeriod;
 	private int LoanCurrentPeriod;
 	private int LoanRepaymentType;
 	private int Approval;
 	private double InterestRate;
+	private int paidmonthlyamount;
 	public String getUserEmail() {
 		return UserEmail;
 	}
@@ -65,11 +65,11 @@ public class UserLoanVO {
 	public void setInterestRate(double interestRate) {
 		InterestRate = interestRate;
 	}
-	public int getLoanMonthlyAmount() {
-		return LoanMonthlyAmount;
+	public int getPaidmonthlyamount() {
+		return paidmonthlyamount;
 	}
-	public void setLoanMonthlyAmount(int loanMonthlyAmount) {
-		LoanMonthlyAmount = loanMonthlyAmount;
+	public void setPaidmonthlyamount(int paidmonthlyamount) {
+		this.paidmonthlyamount = paidmonthlyamount;
 	}
 
 }
