@@ -1,5 +1,0 @@
-package oww.banking.config;
-
-public class GatewayUserInfoFilter {
-
-}

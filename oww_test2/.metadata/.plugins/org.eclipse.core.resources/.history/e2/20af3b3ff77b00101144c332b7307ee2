@@ -1,5 +1,0 @@
-package oww.banking.mapper;
-
-public interface AccountMapper {
-
-}

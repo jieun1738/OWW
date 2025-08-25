@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="lombok.Value"/>
-    <fullyQualifiedTypeName name="org.springframework.beans.factory.annotation.Value"/>
-    <fullyQualifiedTypeName name="java.util.Map"/>
-    <fullyQualifiedTypeName name="java.util.Collection"/>
-    <fullyQualifiedTypeName name="jakarta.servlet.http.Cookie"/>
-    <fullyQualifiedTypeName name="org.springframework.security.core.Authentication"/>
-</qualifiedTypeNameHistroy>
