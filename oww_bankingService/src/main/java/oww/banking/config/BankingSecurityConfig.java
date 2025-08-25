@@ -57,6 +57,7 @@ public class BankingSecurityConfig implements WebMvcConfigurer {
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/health", "/actuator/**").permitAll()
                     .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
+                    .requestMatchers("/mainside.html").permitAll()
                     .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex

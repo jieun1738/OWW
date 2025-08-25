@@ -310,58 +310,51 @@ public class BankingController {
 	 */
 	@GetMapping("/banking/main")
 	public String bankingMain(Model model, Authentication authentication, HttpServletRequest request) {
-	    System.out.println("Banking Main 호출됨");
-
 	    if (authentication == null || !authentication.isAuthenticated()) {
 	        return "redirect:http://localhost:8201/";
 	    }
-	    
-	    try {
-	        String userEmail = request.getHeader("x-user-email");
-	        String username = authentication.getName();
-	        
-	        // SafeboxController와 동일한 이메일 추출 로직 추가
-	        if (userEmail == null || "???".equals(userEmail)) {
-	            userEmail = "dudtlr5119@gmail.com";
-	            System.out.println("BANKING MAIN - Using actual logged-in email");
-	        }
-	        
-	        System.out.println("토큰 기반 인증 성공: " + username);
-	        System.out.println("사용자 이메일: " + userEmail);
-	        
-	        model.addAttribute("userName", username);
 
-	        // 계좌 정보 조회
-	        AccountVO account = accountService.getAccountByEmail(userEmail);
-	        if (account != null) {
-	            model.addAttribute("hasAccount", true);
-	            model.addAttribute("accountNumber", account.getAccountNumber());
-	            model.addAttribute("balance", account.getBalance());
-
-	            // 세이프박스 조회
-	            SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
-	            if (safebox != null) {
-	                model.addAttribute("hasSafebox", true);
-	                model.addAttribute("safeboxNumber", "SB-" + safebox.getSafeboxId());
-	                model.addAttribute("safeboxBalance", safebox.getBalance());
-	            } else {
-	                model.addAttribute("hasSafebox", false);
-	                model.addAttribute("safeboxBalance", 0);
-	            }
-	        } else {
-	            model.addAttribute("hasAccount", false);
-	            model.addAttribute("hasSafebox", false);
-	            model.addAttribute("safeboxBalance", 0);
-	        }
-
-	        return "banking_main";
-	        
-	    } catch (Exception e) {
-	        System.out.println("Banking Main 오류: " + e.getMessage());
-	        e.printStackTrace();
-	        return "redirect:http://localhost:8201/";
+	    String userEmail = request.getHeader("x-user-email");
+	    String userName = authentication.getName();
+	    if (userEmail == null) {
+	        userEmail = "dudtlr5119@gmail.com"; // 테스트용
 	    }
+
+	    model.addAttribute("userName", userName);
+	    model.addAttribute("userEmail", userEmail);
+	    model.addAttribute("active", "Main");
+
+	    // 계좌/세이프박스 조회
+	    AccountVO account = accountService.getAccountByEmail(userEmail);
+	    SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+
+	    int accountBalanceInt = account != null ? account.getBalance() : 0;
+	    long accountBalance = (long) accountBalanceInt;
+
+	    long safeboxBalance = 0;
+	    if (safebox != null && safebox.getBalance() != null) {
+	        safeboxBalance = safebox.getBalance().longValue(); // BigDecimal → long
+	    }
+
+	    long totalAssets = accountBalance + safeboxBalance;
+
+	    model.addAttribute("accountNumber", account.getAccountNumber());
+	    model.addAttribute("balance", account.getBalance());
+	    model.addAttribute("hasAccount", account != null);
+	    model.addAttribute("hasSafebox", safebox != null);
+	    model.addAttribute("accountBalance", accountBalance);
+	    model.addAttribute("safeboxBalance", safeboxBalance);
+	    model.addAttribute("totalAssets", totalAssets);
+
+	    // 목표 대비 비율 계산 (예시: 세이프박스 금액 / 총 자산)
+	    int goalPercent = totalAssets > 0 ? (int)((safeboxBalance * 100) / totalAssets) : 0;
+	    model.addAttribute("goalPercent", goalPercent);
+
+	    return "banking_main";
 	}
+
+
+
 
 	/**
 	 * 헬스체크 엔드포인트 (인증 불필요)

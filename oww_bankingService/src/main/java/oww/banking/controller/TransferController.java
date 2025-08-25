@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import oww.banking.service.AccountService;
+import oww.banking.service.SafeboxService;
 import oww.banking.service.TransferService;
 import oww.banking.vo.AccountVO;
+import oww.banking.vo.SafeboxVO;
 import oww.banking.vo.TransferHistoryVO;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/banking")
@@ -34,74 +36,125 @@ public class TransferController {
    
    @Autowired
    private TransferService transferService;
+   
+	@Autowired
+	private SafeboxService safeboxService;
 
    /**
     * 이체 1단계 - 내 계좌 정보 표시
     */
-   @GetMapping("/transfer_1")
-   public String transferStep1(Model model, Authentication authentication, HttpServletRequest request) {
-       if (authentication == null || !authentication.isAuthenticated()) {
-           return "redirect:http://localhost:8201/";
-       }
+	@GetMapping("/transfer_1")
+	public String transferStep1(Model model, Authentication authentication, HttpServletRequest request) {
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        return "redirect:http://localhost:8201/";
+	    }
 
-       try {
-           String userEmail = request.getHeader("x-user-email");
-           String username = authentication.getName();
-           
-           AccountVO account = accountService.getAccountByEmail(userEmail);
-           
-           if (account == null) {
-               model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
-               return "redirect:http://localhost:8201/banking/main";
-           }
+	    try {
+	        // 사용자 정보
+	        String userEmail = request.getHeader("x-user-email");
+	        String username = authentication.getName();
 
-           model.addAttribute("account", account);
-           model.addAttribute("userName", username);
-           
-           return "transfer/banking_transfer_1";
-           
-       } catch (Exception e) {
-           model.addAttribute("errorMessage", "계좌 정보 조회 중 오류가 발생했습니다.");
-           return "redirect:http://localhost:8201/banking/main";
-       }
-   }
+	        // 계좌 조회
+	        AccountVO account = accountService.getAccountByEmail(userEmail);
+	        if (account == null) {
+	            model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
+	            return "redirect:http://localhost:8201/banking/main";
+	        }
+
+	        // 세이프박스 조회
+	        SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+
+	        // 잔액 계산
+	        Integer accountBalanceInt = account != null ? account.getBalance() : 0;
+	        long accountBalance = accountBalanceInt != null ? accountBalanceInt.longValue() : 0;
+	        long safeboxBalance = (safebox != null && safebox.getBalance() != null) ? safebox.getBalance().longValue() : 0;
+	        long totalAssets = accountBalance + safeboxBalance;
+
+	        // 모델에 필요한 값 추가 (화면 출력용)
+	        model.addAttribute("account", account);
+	        model.addAttribute("accountNumber", account.getAccountNumber());
+	        model.addAttribute("balance", account.getBalance());
+	        model.addAttribute("accountBalance", accountBalance);
+	        model.addAttribute("safeboxBalance", safeboxBalance);
+	        model.addAttribute("totalAssets", totalAssets);
+	        model.addAttribute("hasAccount", account != null);
+	        model.addAttribute("hasSafebox", safebox != null);
+
+	        // 세션에 GlobalModelAdvice에서 읽을 값 저장
+	        HttpSession session = request.getSession();
+	        session.setAttribute("userName", username);
+	        session.setAttribute("userEmail", userEmail);
+	        session.setAttribute("totalAssets", totalAssets);
+	        session.setAttribute("safeboxBalance", safeboxBalance);
+	        session.setAttribute("goalPercent", 0); // 필요시 실제 값 계산 후 설정
+
+	        return "transfer/banking_transfer_1";
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        model.addAttribute("errorMessage", "계좌 정보 조회 중 오류가 발생했습니다.");
+	        return "redirect:http://localhost:8201/banking/main";
+	    }
+	}
+
 
    /**
     * 이체 2단계 - 받는 계좌 입력 및 이체 금액 입력
     */
-   @GetMapping("/transfer_2")
-   public String transferStep2(Model model, Authentication authentication, HttpServletRequest request) {
-      if (authentication == null || !authentication.isAuthenticated()) {
-          return "redirect:/";
-      }
+	@GetMapping("/transfer_2")
+	public String transferStep2(Model model, Authentication authentication, HttpServletRequest request) {
+	    if (authentication == null || !authentication.isAuthenticated()) {
+	        return "redirect:/";
+	    }
 
-      try {
-          String userEmail = request.getHeader("x-user-email");
-          String username = authentication.getName();
-          
-          System.out.println("Transfer_2 - userEmail: " + userEmail);
-          System.out.println("Transfer_2 - username: " + username);
-          
-          AccountVO account = accountService.getAccountByEmail(userEmail);
-          
-          System.out.println("Transfer_2 - account: " + account);
-          
-          if (account == null) {
-              System.out.println("Transfer_2 - Account is null, redirecting to main");
-              model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
-              return "redirect:http://localhost:8201/banking/main";
-          }
+	    try {
+	        // 사용자 정보
+	        String userEmail = request.getHeader("x-user-email");
+	        String username = authentication.getName();
 
-          model.addAttribute("account", account);
-          model.addAttribute("userName", username);
-          
-          return "transfer/banking_transfer_2";
-          
-      } catch (Exception e) {
-          model.addAttribute("errorMessage", "페이지 로드 중 오류가 발생했습니다.");
-          return "redirect:http://localhost:8201/banking/main";
-      }
-   }
+	        // 계좌 조회
+	        AccountVO account = accountService.getAccountByEmail(userEmail);
+	        if (account == null) {
+	            model.addAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
+	            return "redirect:http://localhost:8201/banking/main";
+	        }
+
+	        // 세이프박스 조회
+	        SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+
+	        // 잔액 계산
+	        Integer accountBalanceInt = account != null ? account.getBalance() : 0;
+	        long accountBalance = accountBalanceInt != null ? accountBalanceInt.longValue() : 0;
+	        long safeboxBalance = (safebox != null && safebox.getBalance() != null) ? safebox.getBalance().longValue() : 0;
+	        long totalAssets = accountBalance + safeboxBalance;
+
+	        // 모델에 필요한 값 추가 (화면 출력용)
+	        model.addAttribute("account", account);
+	        model.addAttribute("accountNumber", account.getAccountNumber());
+	        model.addAttribute("balance", account.getBalance());
+	        model.addAttribute("accountBalance", accountBalance);
+	        model.addAttribute("safeboxBalance", safeboxBalance);
+	        model.addAttribute("totalAssets", totalAssets);
+	        model.addAttribute("hasAccount", account != null);
+	        model.addAttribute("hasSafebox", safebox != null);
+
+	        // 세션에 GlobalModelAdvice에서 읽을 값 저장
+	        HttpSession session = request.getSession();
+	        session.setAttribute("userName", username);
+	        session.setAttribute("userEmail", userEmail);
+	        session.setAttribute("totalAssets", totalAssets);
+	        session.setAttribute("safeboxBalance", safeboxBalance);
+	        session.setAttribute("goalPercent", 0); // 필요 시 실제 값 계산 후 설정
+
+	        return "transfer/banking_transfer_2";
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        model.addAttribute("errorMessage", "페이지 로드 중 오류가 발생했습니다.");
+	        return "redirect:http://localhost:8201/banking/main";
+	    }
+	}
+
 
    /**
     * 계좌번호 유효성 검사 및 계좌 정보 조회
@@ -238,23 +291,66 @@ public class TransferController {
     */
    @GetMapping("/transfer_3")
    public String transferStep3(
-       @RequestParam(required = false) String recipientName,
-       @RequestParam(required = false) String toAccountNumber,
-       @RequestParam(required = false) Integer amount,
-       @RequestParam(required = false) String memo,
-       Model model, Authentication authentication) {
-       
+           @RequestParam(required = false) String recipientName,
+           @RequestParam(required = false) String toAccountNumber,
+           @RequestParam(required = false) Integer amount,
+           @RequestParam(required = false) String memo,
+           Model model,
+           Authentication authentication,
+           HttpServletRequest request) {
+
        if (authentication == null || !authentication.isAuthenticated()) {
            return "redirect:http://localhost:8201/";
        }
-       
-       model.addAttribute("recipientName", recipientName);
-       model.addAttribute("toAccountNumber", toAccountNumber);
-       model.addAttribute("amount", amount);
-       model.addAttribute("memo", memo);
-       
-       return "transfer/banking_transfer_3";
+
+       try {
+           // 사용자 정보
+           String userEmail = request.getHeader("x-user-email");
+           String username = authentication.getName();
+
+           // 계좌 조회
+           AccountVO account = accountService.getAccountByEmail(userEmail);
+
+           // 세이프박스 조회
+           SafeboxVO safebox = safeboxService.getSafeboxByEmail(userEmail);
+
+           // 잔액 계산
+           Integer accountBalanceInt = account != null ? account.getBalance() : 0;
+           long accountBalance = accountBalanceInt != null ? accountBalanceInt.longValue() : 0;
+           long safeboxBalance = (safebox != null && safebox.getBalance() != null) ? safebox.getBalance().longValue() : 0;
+           long totalAssets = accountBalance + safeboxBalance;
+
+           // 모델에 전달
+           model.addAttribute("recipientName", recipientName);
+           model.addAttribute("toAccountNumber", toAccountNumber);
+           model.addAttribute("amount", amount);
+           model.addAttribute("memo", memo);
+           model.addAttribute("account", account);
+           model.addAttribute("accountNumber", account != null ? account.getAccountNumber() : null);
+           model.addAttribute("balance", account != null ? account.getBalance() : null);
+           model.addAttribute("accountBalance", accountBalance);
+           model.addAttribute("safeboxBalance", safeboxBalance);
+           model.addAttribute("totalAssets", totalAssets);
+           model.addAttribute("hasAccount", account != null);
+           model.addAttribute("hasSafebox", safebox != null);
+
+           // 세션에 GlobalModelAdvice에서 읽을 값 저장
+           HttpSession session = request.getSession();
+           session.setAttribute("userName", username);
+           session.setAttribute("userEmail", userEmail);
+           session.setAttribute("totalAssets", totalAssets);
+           session.setAttribute("safeboxBalance", safeboxBalance);
+           session.setAttribute("goalPercent", 0); // 필요 시 실제 값 계산 후 설정
+
+           return "transfer/banking_transfer_3";
+
+       } catch (Exception e) {
+           e.printStackTrace();
+           model.addAttribute("errorMessage", "페이지 로드 중 오류가 발생했습니다.");
+           return "redirect:http://localhost:8201/banking/main";
+       }
    }
+
 
    /**
     * 거래내역 조회

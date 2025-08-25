@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-	<!-- 파라미터: active (현재 메뉴) -->
-	<div th:fragment="siteHeader(active)">
-		<header class="site-header">
-			<div class="site-header__inner">
-				<h1 class="brand">
-					<a th:href="@{/}">
-						<img src="/img/demo.png" alt="프로필" class="logo">
-					</a>
-				</h1>
-				<div id="tsparticles" class="site-header__fx" aria-hidden="true"></div>
-			</div>
-		</header>
+   <!-- 파라미터: active (현재 메뉴) -->
+   <div th:fragment="siteHeader(active)">
+      <header class="site-header">
+         <div class="site-header__inner">
+            <h1 class="brand">
+               <a th:href="@{/}">
+                  <img src="/img/demo.png" alt="프로필" class="logo">
+               </a>
+            </h1>
+            <div id="tsparticles" class="site-header__fx" aria-hidden="true"></div>
+         </div>
+      </header>
 
 <script>
 tsParticles.load("tsparticles", {
@@ -28,12 +28,12 @@ tsParticles.load("tsparticles", {
       value: ["#FADADD", "#E6CCFF", "#FFFFFF"] // 연핑크, 라일락, 진주색
     },
     shape: {
-    	  type: "image",
-    	  image: [
-    	    { src: "/img/particles/diamond1(1).png", width: 64, height: 56 },
-    	    { src: "/img/particles/diamond2(1).png", width: 64, height: 66 },
-    	  ]
-    	},
+         type: "image",
+         image: [
+           { src: "/img/particles/diamond1(1).png", width: 64, height: 56 },
+           { src: "/img/particles/diamond2(1).png", width: 64, height: 66 },
+         ]
+       },
 
     opacity: {
       value: 0.9,
