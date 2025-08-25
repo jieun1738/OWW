@@ -1,0 +1,478 @@
+:root{
+  --line:#e5e7eb;
+  --ink:#111827;
+  --sub:#6b7280;
+  --brand:#7c3aed;
+  --card:#ffffff;
+  --muted:#f9fafb;
+  --shadow:0 10px 20px rgba(17,24,39,.08);
+}
+
+/* 레이아웃: 사이드바 + 본문 2열 */
+.page{
+  display:grid;
+  grid-template-columns: 280px minmax(0,1fr);
+  gap:24px;
+  align-items:start;
+}
+
+/* 본문 영역 */
+ .content{
+  padding: 8px 16px 48px;
+  min-width: 0;
+}
+
+/* 헤더 */
+.page-header{
+  display:flex; 
+  align-items:flex-start; 
+  flex-direction: column;
+  justify-content:space-between;
+  gap:16px; margin-bottom:20px;
+}
+ .title{ margin:0; font-size:28px; font-weight:800; letter-spacing:-.3px; }
+ .desc{ margin:.25rem 0 0; color:var(--sub); }
+ .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+ .btn{
+  appearance:none; border:1px solid var(--brand); background:var(--brand); color:var(--card);
+  border-radius:12px; padding:10px 14px; font-weight:700; text-decoration:none;
+  display:inline-flex; align-items:center; gap:6px;
+}
+
+
+.grid{ display:grid; grid-template-columns: repeat(4, minmax(180px,1fr)); gap:14px; }
+.cards {
+	display: flex;
+	  width: 100%;
+	  gap:10px;
+	  flex-wrap: wrap;
+	  background-color: rgba(255, 240, 240, 0.3);
+	  padding: 30px 10px;
+	  border-radius: 8px;
+	  flex-direction: column;
+	  align-items: center;     
+	  
+	   }
+	   .card-dash{
+	   	background-color: rgba(255, 255, 255, 0.85);
+	   	border: 1px solid #ffd2cc;
+	   	padding: 30px;		
+	   	width: 600px;
+	   	text-align: left;
+	   	color: #5a3a36;
+	   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	   	border-radius: 10px;
+	   	transition: transform 0.3s ease;
+	   }
+	   .card-dash:hover {
+	   	transform: translateY(-5px);
+	   }
+	   .card:hover {
+	   	transform: translateY(-5px);
+	   }
+
+	   .card h3 {
+	   	color: #FF6F61;
+	   	margin-bottom: 10px;
+	   }
+	   .smalltitle{
+	   	margin: 10px 0 10px 200px;
+	   	/* 위:10px, 오른쪽:0, 아래:10px, 왼쪽:200px */
+	   	font-size: 25px;
+	   	font-weight: bold;
+	   	width:100%;
+	   }
+	   /* prgress bar */
+	   .progress-card {
+	   	
+	   	display: flex;
+	   	flex-wrap: wrap;
+	   	align-items: left;
+	   	/* 세로 가운데 정렬 */
+	   	gap: 10px;
+	   	/* 간격 */
+	   	background-color: rgba(255, 255, 255, 0.85);
+	   	border: 1px solid #ffd2cc;
+	   	padding: 30px;
+	   	width: 600px;
+	   	height: 80px;
+	   	text-align: left;
+	   	
+	   	color: #5a3a36;
+	   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	   	border-radius: 10px;
+	   	transition: transform 0.3s ease;
+	   }
+
+	   .progress-item {
+	   	display: flex;
+	   	flex: 1 1 100%; 
+	   	align-items: center;      /* 세로 가운데 정렬 */
+	   	gap: 15px;                /* 제목과 바 사이 간격 */
+	   	margin-bottom: 1px;      /* 아래 여백 */
+	   }
+	   .progress-item h4 {
+	     margin: 0;
+	     white-space: nowrap;      /* 제목 줄바꿈 방지 */
+	     flex-shrink: 0;           /* 제목 크기 줄어들지 않게 */
+	     width: 20%;             /* 제목 영역 고정 너비 (필요에 따라 조절) */
+	   }
+	   .progress-container {
+	   			background: rgb(244, 220, 252);
+	   			border-radius: 20px;
+	   			width: 60%;
+	   			height: 25px;
+	   			margin:5px 0;
+	   			overflow: hidden;
+	   			display: flex;
+	   			align-items: center; /* 세로 중앙 정렬 */
+	   		    padding-left: 4px; 
+	   		}
+	   		
+	   		.progress-bar {
+	   		    background: linear-gradient(90deg, rgb(64, 0, 128), rgb(186, 121, 225));
+	   		    height: 60%;
+	   		    border-radius: 20px;
+	   		    transition: width 0.3s ease;
+	   		    display: flex;             /* 가로세로 정렬 기능 활성화 */
+	   		    align-items: center;       /* 세로 가운데 정렬 */
+	   		    justify-content: flex-end; /* 가로 오른쪽 정렬 (flex-end → 오른쪽) */
+	   		    font-size: 12px;
+	   		    color: white;
+	   		    font-weight: bold;
+	   		    padding-right: 5px;        /* 오른쪽 여백 */
+	   		}
+	   		
+	   		
+	   .total-card {
+	   	display: flex;
+	   	flex-wrap: wrap;
+	   	/* 세로 가운데 정렬 */
+		margin-bottom: 10px;
+	   	/* 간격 */
+	   	background-color: rgba(255, 255, 255, 0.85);
+	   	border: 1px solid #ffd2cc;
+	   	padding: 30px;
+	   	width: 600px;
+	   	color: #5a3a36;
+	   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	   	border-radius: 10px;
+	   	transition: transform 0.3s ease;
+
+	   }
+	   .total-card h3 {
+	   	color: #FF6F61;
+	   	font-size: 18px;
+	   	text-align: left;
+	   	width: 100%;
+	   	margin-bottom: 5px;
+	   }
+	   .total-card h5 {
+	   	color: #FF6F61;
+	   	font-size: 12px;
+	   	text-align: left;
+	   	width: 100%;
+	   	margin-bottom: 5px;
+	   	margin-left: 5px;
+	   }
+	   .total-card .total {
+	       font-size: 20px;
+	   	font-weight: bold;
+	       text-align: right;
+	       width: 100%;
+	       margin-bottom: 2px;
+	   }
+
+	   .btn {
+	   	background: rgb(217, 137, 243);
+	   	color: white;
+	   	border: none;
+	   	padding: 8px 16px;
+	   	border-radius: 6px;
+	   	cursor: pointer;
+	   	font-size: 12px;
+	   	transition: background 0.3s ease;
+	   }
+
+	   .btn:hover {
+	   	background: rgb(128, 128, 255);
+	   }
+
+	   .underline-width {
+	     display: inline-block; /* width를 적용하기 위해 필요 */
+	     width: 40px; /* 원하는 너비 설정 */
+	     text-decoration: underline;
+	   }
+	   .payBtn{
+	   	background: rgb(217, 137, 243);
+	   	color: white;
+	   	border: none;
+	   	padding: 8px 16px;
+	   	border-radius: 6px;
+	   	cursor: pointer;
+	   	font-size: 12px;
+	   	transition: background 0.3s ease;
+	   }
+
+	   .payBtn:hover {
+	   	background: rgb(128, 128, 255);
+	   }
+	   		
+/*.card{
+	display: grid;
+	width:90%;
+	gap: 10px;
+	grid-template-columns: 150px 1fr 100px;   3열 
+	grid-template-rows: auto auto auto;    3행 
+	border: 1px solid var(--line);	
+    border-radius:16px; background:var(--card);
+    box-shadow:var(--shadow); padding:16px;
+	padding: 16px;
+	
+}
+.card img {
+  grid-row:1 /span 3;    1~3행 합치기 
+  grid-column:  1;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+.card h2 {
+	color: #FF6F61;
+grid-row: 1; grid-column: 2;
+  margin: 0;
+  text-align: left;
+}
+
+.card h3 {
+  grid-row: 2; grid-column: 2;
+  margin: 0;
+  text-align: left;
+}
+.card h4{ 
+	grid-row: 3; grid-column: 2;
+  	margin: 0; 
+	color:var(--sub);
+	text-align: left;
+}
+
+.btn-wrap {
+	grid-row: 3; 
+	 grid-column: 3; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-detail {
+  background-color:var(--brand); 
+  color: white;              
+  padding: 10px 10px;       
+  border: none;             
+  border-radius: 5px;       
+  cursor: pointer;          
+  font-size: 12px;           
+}
+
+.selectProduct {
+	display: flex;
+	flex-direction: column;
+	width:90%;
+	gap: 10px;
+	grid-template-columns: 150px 1fr 100px;   3열 
+	grid-template-rows: auto auto auto;    3행 
+	border: 1px solid var(--line);	
+	border-radius:16px; background:var(--card);
+	box-shadow:var(--shadow);
+	padding: 16px;
+}
+.selectProduct h3{
+	margin: 0;
+	font-size: 18px;
+}
+.product-list {
+  display: flex;
+  flex-wrap: wrap;  버튼이 많아지면 다음 줄로 넘어가도록 설정 
+  gap: 8px;  버튼 사이의 간격 
+}
+.product-list form {
+  display: inline-block;
+}
+.comparison-container{
+	display: flex;
+}
+.comparison-card {
+	display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+		width:42%;
+		margin-right: 5px;
+		margin-top: 10px;
+		border: 1px solid var(--line);	
+	    border-radius:16px; background:var(--card);
+	    box-shadow:var(--shadow); padding:16px;
+		padding: 16px;
+		gap: 10px;
+}
+.comparison-card h2{
+	 color: #FF6F61;
+	  margin: 0;
+	  text-align: left;
+}  
+.comparison-card h4{
+	margin: 0;
+	 text-align: left;
+  }
+.comparison-card .wrap{
+  	display: flex;    
+  	gap: 10px;
+  	justify-content: flex-start;	
+  }
+.comparison-card .btn-wrap{
+	display: flex;    
+	gap: 10px;
+	position: absolute;  이 줄을 추가 
+	bottom: 16px;        카드의 아래쪽으로부터 16px 위로 
+	right: 16px;         카드의 오른쪽으로부터 16px 왼쪽으로 
+}
+.comparison-card p{
+	margin: 0;
+	text-align: left;
+  }
+.card-detail {
+	display: flex;
+	flex-direction: column;
+	width: 70%;
+	margin: 10px;
+	border: 1px solid var(--line);	
+	border-radius:16px; background:var(--card);
+	box-shadow:var(--shadow);
+	padding: 40px;
+}
+.card-detail form {
+    margin: 0 auto;
+    display: flex;  자식 요소들을 세로로 정렬 
+    flex-direction: column;
+	align-items: center;
+    gap: 5px;
+}
+.input-row {
+    display: flex;  이 줄을 추가하여 label과 input을 가로로 정렬 
+    gap: 10px;
+    align-items: center;  세로 중앙 정렬 (선택 사항) 
+}
+.card-detail .btn-gaip{
+	background-color:var(--brand); 
+	width:150px;
+	 color: white;   
+	 align-items:center;           
+	 padding: 10px 10px;       
+	 border: none;             
+	 border-radius: 5px;       
+	 cursor: pointer;          
+	 font-size: 15px;
+	
+}
+.card-detail h1 {
+	text-align: center;
+}*/
+.dash {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap:15px
+}
+.card-content {
+			display: grid;
+			grid-template-columns: 120px 1fr;
+			margin-top: 5px;
+			align-items: start;
+		}
+
+		.card-image {
+			width: 100%;
+			height: 100px;
+			object-fit: cover;
+			border-radius: 8px;
+		}
+
+		.card-details {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: 15px;
+			align-items: start;
+		}
+
+		.card-info h3 {
+			margin: 0 0 8px 0;
+			color: #FF6F61;
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		.card-price {
+			color: #e91e63;
+			font-size: 16px;
+			font-weight: bold;
+			margin: 5px 0;
+		}
+
+		.card-address {
+			color: #666;
+			font-size: 14px;
+			margin: 5px 0;
+		}
+
+		.card-description {
+			color: #777;
+			font-size: 13px;
+			line-height: 1.4;
+			margin: 8px 0;
+		}
+
+		.card-controls {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			min-width: 150px;
+		}
+
+		.control-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 14px;
+		}
+
+		.control-row input[type="checkbox"] {
+			width: 16px;
+			height: 16px;
+		}
+
+		.amount-input {
+			width: 80px;
+			padding: 4px 8px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-size: 12px;
+		}
+
+
+
+
+
+/* 반응형 */
+@media (max-width: 1080px){
+  #wpintro .grid{ grid-template-columns: repeat(2, minmax(200px,1fr)); }
+}
+@media (max-width: 640px){
+  #wpintro.page{ grid-template-columns: 1fr; }
+  #wpintro .grid{ grid-template-columns: 1fr; }
+  #wpintro .page-header{ flex-direction:column; align-items:flex-start; }
+}
+
+
+

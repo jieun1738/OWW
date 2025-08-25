@@ -84,46 +84,57 @@ public class LoanServiceImpl implements LoanService {
 	    return matchedNames;
 	}
 
-	public double sumMonthlyInstallment(String useremail) {
-		
-		UserLoanVO userloan = userLoanMapper.getUserLoan(useremail);
-		
-		double interestRate = userloan.getInterestRate();
-		int loanRepaymentType = userloan.getLoanRepaymentType();
-		int loanPeriod = userloan.getLoanPeriod();
-		int loanAmount = userloan.getLoanAmount();
-		int currentMonth = userloan.getLoanCurrentPeriod();
-		
-		double monthlyRate = interestRate / 12 / 100; // 월 이자율
+	public long sumMonthlyInstallment(String useremail) {
 
-		if (loanRepaymentType == 0) {
-// 원리금균등상환 계산
-			double numerator = monthlyRate * Math.pow(1 + monthlyRate, loanPeriod);
-			double denominator = Math.pow(1 + monthlyRate, loanPeriod) - 1;
-			double fixedMonthlyPayment = loanAmount * (numerator / denominator);
-			return fixedMonthlyPayment;
+	    UserLoanVO userloan = userLoanMapper.getUserLoan(useremail);
 
-		} else if (loanRepaymentType == 1) {
-// 원금균등상환 계산
-			double monthlyPrincipal = (double) loanAmount / loanPeriod;
-			double remainingPrincipalForMonth = loanAmount - monthlyPrincipal * (currentMonth - 1);
-			double interest = remainingPrincipalForMonth * monthlyRate;
+	    double interestRate = userloan.getInterestRate();
+	    int loanRepaymentType = userloan.getLoanRepaymentType();
+	    int loanPeriod = userloan.getLoanPeriod();
+	    int loanAmount = userloan.getLoanAmount();
+	    int currentMonth = userloan.getLoanCurrentPeriod();
 
-// 마지막 달일 경우 남은 원금이 월 원금보다 작을 수 있으니 조정
-			double principalPayment = monthlyPrincipal;
-			if (remainingPrincipalForMonth < monthlyPrincipal) {
-				principalPayment = remainingPrincipalForMonth;
-			}
-			return principalPayment + interest;
-		}
+	    double monthlyRate = interestRate / 12 / 100; // 월 이자율
+	    double payment = 0;
 
-		return 0;
+	    if (loanRepaymentType == 0) {
+	        // 원리금균등상환 계산
+	        double numerator = monthlyRate * Math.pow(1 + monthlyRate, loanPeriod);
+	        double denominator = Math.pow(1 + monthlyRate, loanPeriod) - 1;
+	        double fixedMonthlyPayment = loanAmount * (numerator / denominator);
+	        payment = fixedMonthlyPayment;
+
+	    } else if (loanRepaymentType == 1) {
+	        // 원금균등상환 계산
+	        double monthlyPrincipal = (double) loanAmount / loanPeriod;
+	        double remainingPrincipalForMonth = loanAmount - monthlyPrincipal * (currentMonth - 1);
+	        double interest = remainingPrincipalForMonth * monthlyRate;
+
+	        double principalPayment = monthlyPrincipal;
+	        if (remainingPrincipalForMonth < monthlyPrincipal) {
+	            principalPayment = remainingPrincipalForMonth;
+	        }
+	        payment = principalPayment + interest;
+	    }
+
+	    // 소수점 반올림 (정수로
+
+	    long result = Math.round(payment);
+	    return result;
 	}
+
 
 	@Override
 	public void insertloan(String useremail,String loanname, int loanamountint, int loanperiodint, int loanrepaymenttypeint,
 			double interestratedouble) {
-		userLoanMapper.insertUserLoan();
+		  UserLoanVO userloanvo = new UserLoanVO();
+		userloanvo.setUserEmail(useremail);
+	    userloanvo.setLoanName(loanname);
+	    userloanvo.setLoanAmount(loanamountint);
+	    userloanvo.setLoanPeriod(loanperiodint);
+	    userloanvo.setLoanRepaymentType(loanrepaymenttypeint);
+	    userloanvo.setInterestRate(interestratedouble);
+		userLoanMapper.insertUserLoan(userloanvo);
 		
 	}
 
@@ -133,7 +144,7 @@ public class LoanServiceImpl implements LoanService {
 	int exist = userLoanMapper.getloanexist(useremail);
 	int approve =0;
 	if (exist == 1) {
-		approve = userLoanMapper.getloanappreove(useremail);
+		approve = userLoanMapper.getloanapprove(useremail);
 	}else {
 		return approve;
 	}
@@ -146,7 +157,9 @@ public class LoanServiceImpl implements LoanService {
 		// TODO Auto-generated method stub
 		int currentAmount = userLoanMapper.getcurrentAmount(useremail);
 		currentAmount = currentAmount + paidamount;
-		userLoanMapper.repaymentLoan(useremail, currentAmount);
+		int paidmonthlyamount = userLoanMapper.getpaidmonthlyamount(useremail);
+		paidmonthlyamount = paidmonthlyamount +paidamount;
+		userLoanMapper.repaymentLoan(useremail, currentAmount,paidmonthlyamount);
 		userLoanMapper.updatePeriod(useremail);
 	}
 
@@ -157,7 +170,7 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
-	public int costcalculate(int earningsint, int monthlyinstallmentint, int costint) {	
+	public double costcalculate(int earningsint, double monthlyinstallmentint, int costint) {	
 		
 		return earningsint -monthlyinstallmentint-costint;
 	}

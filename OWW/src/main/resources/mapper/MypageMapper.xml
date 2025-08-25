@@ -22,7 +22,7 @@
     </select>
     
     <select id="getPlan" resultType="PlanVO">
-        SELECT * FROM plan WHERE USER_EMAIL = #{user_email} 
+        SELECT * FROM plan WHERE USER_EMAIL = #{user_email}
     </select>
     
      <select id="getDiscount" resultType="int">
@@ -90,7 +90,7 @@
 		where pl.user_email = #{user_email} and makeup.category = 3
 	</select>
 
-	<select id="getContractProgress" resultType="Integer">
+	<select id="getContractProgress" resultType="int">
 		SELECT
 		( COUNT(CASE WHEN CONTRACT_HALL = 'Y' THEN 1 END)
 		+ COUNT(CASE WHEN CONTRACT_STUD = 'Y' THEN 1 END)
@@ -100,7 +100,7 @@
 		WHERE PLAN_NO=#{plan_no}
 	</select>
 
-	<select id="getPaidProgress" resultType="Integer">
+	<select id="getPaidProgress" resultType="int">
 		SELECT
 		NVL(pay_hall, 0) + NVL(pay_stud, 0) + NVL(pay_dres, 0) + NVL(pay_make, 0) 
 		FROM PLAN_PROGRESS

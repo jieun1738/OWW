@@ -1,40 +1,61 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
 <meta charset="UTF-8">
-<title>대출상품 상세</title>
-  <link rel="stylesheet" th:href="@{/css/design.css}">
-<link rel="stylesheet" th:href="@{/css/Detail.css}">
-<link rel="stylesheet" th:href="@{/css/icons.css}">
+<title layout:fragment="title">대출상품 상세 | OWW</title>
+  <link rel="stylesheet" th:href="@{/css/Loanmain.css}">
 </head>
 <body>
-
-<div class="card" style="max-width: 500px; margin: 40px auto; padding: 20px; text-align: left;">
-    <h1 class="title" th:text="${loandetails.loanName}">상품명</h1>
+	<section layout:fragment="content">
+		<div class="page">
+			<!-- ✅ 사이드바: 기존 프래그먼트 그대로 사용 (중복 선언 금지) -->
+			<div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}"></div>
+			<div class="cards">
+				<!-- Main Content -->
+				<main class="content">
+					<!-- 헤더 -->
+					<header class="page-header">
+						<div>
+							<h1 class="title">대출 상품 상세보기</h1>
+								<p class="desc">OWW 대출상품을 확인하고 가입하세요</p>
+						</div>													
+					</header>
+					
+		<div class="card-detail">
+    	<h1 class="title" th:text="|💰${loandetails.loanName}💰|">상품명</h1>
     
-    <p><strong>상세 설명:</strong> <span th:text="${loandetails.LoanExplanation}">설명</span></p>
-    <p><strong>대출 한도:</strong> <span th:text="${loandetails.LoanLimit}">-</span></p>
-    <p><strong>대출 기간(개월):</strong> <span th:text="${loandetails.LoanPeriod}">-</span></p>
-    <p><strong>상환 방식:</strong>
+    <p><strong>상세 설명:</strong><br> <span th:text="${loandetails.LoanExplanation}"> 설명</span></p>
+    <p><strong>대출 한도:</strong><br><span th:text="${loandetails.LoanLimit}">-</span> 원</p>
+    <p><strong>대출 기간(개월):</strong><br><span th:text="${loandetails.LoanPeriod}">-</span> 개월</p>
+    <p><strong>상환 방식:</strong><br>
         <span th:switch="${loandetails.LoanRepaymentType}">
             <span th:case="0">원리금 균등상환</span>
             <span th:case="1">원금균등상환</span>
             <span th:case="*">-</span>
         </span>
     </p>
-    <p><strong>이자율(%):</strong> <span th:text="${loandetails.InterestRate}">-</span></p>
+    <p><strong>이자율(%):</strong> <span th:text="${loandetails.InterestRate}">-</span> %</p>
 </div>
-
-<form th:action="@{/insertloan}" id="loanForm" class="loan-form" style="max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
-    <label for="loanamount">대출금 입력:</label>
+<div class="card-detail">
+	
+<form th:action="@{/insertloan}" id="loanForm" class="loan-form">
+    <div class="input-row">
+	<label for="loanamount">대출금 입력:</label>
     <input type="text" name="loanamount" id="loanamount" class="input-field" placeholder="숫자만 입력">
     <input type="hidden" name="loanname" th:value="${loandetails.loanName}">
     <input type="hidden" name="loanperiod" th:value="${loandetails.LoanPeriod}">
     <input type="hidden" name="loanrepaymenttype" th:value="${loandetails.LoanRepaymentType}">
     <input type="hidden" name="interestrate" th:value="${loandetails.InterestRate}">
-    <button type="submit" class="btn primary">가입하기</button>
+    </div>
+	<button type="submit" class="btn-gaip">가입하기</button>
 </form>
-
+</div>
+				</main>
+			</div>
+		</div>
+	</section>
 <script th:inline="javascript">
 document.getElementById('loanForm').addEventListener('submit', function(event) {
     const loanamountInput = document.getElementById('loanamount');

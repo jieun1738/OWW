@@ -20,8 +20,8 @@
 
 <update id="repaymentLoan" parameterType="com.example.loan.vo.UserLoanVO">
 	Update UserLoan
-	SET LoanCurrentAmount = #{LoanCurrentAmount}
-	WHERE UserEmail=#{UserEmail}
+	SET LoanCurrentAmount = #{param2}, paidmonthlyamount = #{param3}
+	WHERE UserEmail=#{param1}
 </update>
 
 <update id="updatePeriod">
@@ -42,11 +42,25 @@
 
 <select id="getloanexist" resultType="int" parameterType="String">
     SELECT COUNT(*) 
-    FROM user_loans 
-    WHERE user_email = #{userEmail}
+    FROM USERLOAN 
+    WHERE USEREMAIL = #{userEmail}
 </select>
 
-
+    <select id="getloanapprove" parameterType="String" resultType="int">
+        SELECT APPROVAL
+        FROM USERLOAN
+        WHERE USEREMAIL = #{userEmail}
+    </select>
+    <select id="getcurrentAmount" parameterType="string" resultType="int">
+        SELECT loancurrentamount
+        FROM USERLOAN
+        WHERE USEREMAIL = #{userEmail}
+    </select>
+<select id="getpaidmonthlyamount">
+	SELECT paidmonthlyamount
+	From USERLOAN
+     WHERE USEREMAIL = #{userEmail}
+</select>
 
 </mapper>
 
