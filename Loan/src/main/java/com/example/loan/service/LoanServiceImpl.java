@@ -157,7 +157,9 @@ public class LoanServiceImpl implements LoanService {
 		// TODO Auto-generated method stub
 		int currentAmount = userLoanMapper.getcurrentAmount(useremail);
 		currentAmount = currentAmount + paidamount;
-		userLoanMapper.repaymentLoan(useremail, currentAmount);
+		int paidmonthlyamount = userLoanMapper.getpaidmonthlyamount(useremail);
+		paidmonthlyamount = paidmonthlyamount +paidamount;
+		userLoanMapper.repaymentLoan(useremail, currentAmount,paidmonthlyamount);
 		userLoanMapper.updatePeriod(useremail);
 	}
 

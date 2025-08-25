@@ -2,3 +2,18 @@
 mypage (2).zip
 mypage.zip
 mypage+munubar.zip
+oww_banking/.classpath
+oww_banking/.project
+oww_banking/.settings/.jsdtscope
+oww_banking/.settings/org.eclipse.core.resources.prefs
+*.class
+*.prefs
+*.component
+*.MF
+*.container
+*.name
+*.jsdtscope
+oww_banking/.settings/org.eclipse.wst.common.project.facet.core.xml
+.classpath
+.project
+target/

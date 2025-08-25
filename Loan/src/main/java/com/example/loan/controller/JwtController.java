@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.loan.service.LoanService;
 import com.example.loan.util.jwtutil;
+import com.example.loan.vo.UserLoanVO;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 
@@ -65,6 +66,11 @@ public class JwtController {
         } catch (Exception e) {
            
         }
+        
+        //테스트용 임시
+		String useremail = "testmail@gmail.com";
+		UserLoanVO userloan = loanservice.getuserloan(useremail);
+        model.addAttribute("userloan", userloan);
 		return "LoanMain";
     }
 }

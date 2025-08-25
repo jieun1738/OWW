@@ -151,16 +151,21 @@ public class LoanController {
 	}
 	
 	@GetMapping("/repaymentloan")
-	public String repaymentloan(@RequestParam("paidamaount") int paidamaount,RedirectAttributes redirectAttributes,Model model,HttpServletRequest request) 
+	public String repaymentloan(@RequestParam(name = "paidamount", required = true) String paidamount
+,RedirectAttributes redirectAttributes,Model model,HttpServletRequest request) 
 	{
 		
-			String useremail = request.getHeader("X-useremail");
+		/* String useremail = request.getHeader("X-useremail"); */
+		String useremail = "testmail@gmail.com";
 			//여기에 계좌 잔액 가져와서 뺀 금액 다시 돌려보내야 함
-			
-			//
-			loanservice.repaymentloan(paidamaount,useremail);
+		int paidamounts = Integer.parseInt(paidamount);
+		
+			//성공 시 아래 코드 실행할거임
+			loanservice.repaymentloan(paidamounts,useremail);
 			UserLoanVO userloan = loanservice.getuserloan(useremail);
 			model.addAttribute("userloan",userloan);
+			long monthlyinstallments = loanservice.sumMonthlyInstallment(useremail);
+			model.addAttribute("monthlyinstallment",monthlyinstallments);
 		return "Repayment";
 	}
 	
@@ -181,8 +186,6 @@ public class LoanController {
 	@GetMapping("/costcalculateresult")
 	public String costcalculateresult(@RequestParam("earnings")int earnings,@RequestParam("monthlyinstallment")double monthlyinstallment,@RequestParam("cost") int cost,Model model) {
 		
-		
-
 
 		
 		double restcostD = loanservice.costcalculate(earnings,monthlyinstallment,cost);
