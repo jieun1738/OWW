@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!-- sidebar(user, active, progress) 시그니처 유지 -->
-<div th:fragment="sidebar (user, active, progress)">
+<div th:fragment="sidebar (user, active, progress, totalBudget, sumBudget)">
   <aside class="leftnav" aria-label="마이페이지 사이드바">
     <!-- 상단 사용자 박스 -->
     <div class="ln-header">
@@ -23,31 +23,42 @@
         <div class="ln-fill" th:style="${'width:' + (progress != null ? progress : 0) + '%'}"></div>
       </div>
     </div>
+	
+	<div class="budget">
+		<h5 class="mini-title">예산 설정 정보</h5>
+		    <ul class="mini-list">
+		      <li><h4 th:text="|웨딩홀: ${totalBudget.hall}|">웨딩홀:-</h4></li>
+		      <li><h4 th:text="|스튜디오: ${totalBudget.studio}|">스튜디오:-</h4></li>
+		      <li><h4 th:text="|드레스: ${totalBudget.dress}|">드레스:-</h4></li>
+		      <li><h4 th:text="|메이크업: ${totalBudget.makeup}|">메이크업:-</h4></li>			 
+		      </ul>
+			  <h6 th:text="|총 예산: ${sumBudget}|">총 예산:-</h6>
+		</div>
 
     <!-- 내비게이션 -->
     <div class="ln-title" style="margin-top:10px;">메뉴</div>
     <nav class="ln-list">
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlannerInfo')}? ' active' : ''"
-         th:href="@{/planner/info}">
+         th:classappend="${#strings.containsIgnoreCase(active,'Mypage')}? ' active' : ''"
+         th:href="@{/mypage}">
         <i class='bx bx-home-heart'></i><span>my 웨딩플랜</span>
       </a>
 
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlannerIntro')}? ' active' : ''"
-         th:href="@{/planner/intro}">
+         th:classappend="${#strings.containsIgnoreCase(active,'Mypage')}? ' active' : ''"
+         th:href="@{/budgetSetting}">
         <i class='bx bx-book-open'></i><span>예산 설정</span>
       </a>
 
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingCategory')}? ' active' : ''"
+         th:classappend="${#strings.containsIgnoreCase(active,'Mypage')}? ' active' : ''"
          th:href="@{/planner/category}">
         <i class='bx bx-category'></i><span>소비 정보</span>
       </a>
 
       <a class="ln-item"
          th:classappend="${#strings.containsIgnoreCase(active,'WeddingDIY')}? ' active' : ''"
-         th:href="@{/planner/diy}">
+         th:href="@{/safebox}">
         <i class='bx bx-wrench'></i><span>차곡차곡 금고</span>
       </a>
 
