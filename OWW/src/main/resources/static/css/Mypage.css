@@ -148,7 +148,7 @@
 	   	display: flex;
 	   	flex-wrap: wrap;
 	   	/* 세로 가운데 정렬 */
-	   	gap: 2px;
+		margin-bottom: 10px;
 	   	/* 간격 */
 	   	background-color: rgba(255, 255, 255, 0.85);
 	   	border: 1px solid #ffd2cc;
@@ -379,10 +379,16 @@ grid-row: 1; grid-column: 2;
 .card-detail h1 {
 	text-align: center;
 }*/
+.dash {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap:15px
+}
 .card-content {
 			display: grid;
 			grid-template-columns: 120px 1fr;
-			gap: 15px;
+			margin-top: 5px;
 			align-items: start;
 		}
 
