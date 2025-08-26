@@ -181,3 +181,43 @@
 .icon-box i {
 	color: var(--ink);
 }
+/*마이페이지에서 사용하는 부분*/
+.budget {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin: 5px 30px;
+	width:70%;
+	height: 200px;
+	gap:2px;
+	background: var(--brand-weak);
+	border: 1px solid var(--line);
+	border-radius: var(--r);
+	box-shadow: var(--shadow);
+	padding: 5px;
+	color: var(--ink);
+}
+.budget h5{
+	text-align: center;
+	
+	font-size: 15px;
+	color: var(--brand);
+}
+.budget h6{
+	text-align: center;
+	font-size: 14px;
+}
+.budget .mini-list{
+	text-align: left;
+	font-size: 12px;
+	
+}
+.budget h4,
+.budget h5,
+.budget h6 {
+  margin: 2px 0;   /* 위아래 여백 줄임 */
+  /* 필요하면 굵기도 조정 */
+}
+
+
+

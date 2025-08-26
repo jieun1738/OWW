@@ -22,7 +22,7 @@
 	  <div class="page">
 
 	    <!-- 좌측 사이드바 -->
-	    <div th:replace="~{fragments/MypageSideBar :: sidebar(user=${user}, active='MyWeddingPlan', progress=${contract_progress})}"></div>
+	    <div th:replace="~{fragments/MypageSideBar :: sidebar(user=${user}, active='MyWeddingPlan', progress=${contract_progress}, totalBudget=${totalBudget}, sumBudget=${sumBudget})}"></div>
 
 		<div class="cards">
 	    <!-- 우측 본문 -->
