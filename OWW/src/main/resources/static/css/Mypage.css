@@ -1,410 +1,476 @@
-:root{
-  --line:#e5e7eb;
-  --ink:#111827;
-  --sub:#6b7280;
-  --brand:#7c3aed;
-  --card:#ffffff;
-  --muted:#f9fafb;
-  --shadow:0 10px 20px rgba(17,24,39,.08);
+:root {
+	--line: #e5e7eb;
+	--ink: #111827;
+	--sub: #6b7280;
+	--brand: #7c3aed;
+	--card: #ffffff;
+	--muted: #f9fafb;
+	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
 }
 
 /* 레이아웃: 사이드바 + 본문 2열 */
-.page{
-  display:grid;
-  grid-template-columns: 280px minmax(0,1fr);
-  gap:24px;
-  align-items:start;
+.page {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
 }
 
 /* 본문 영역 */
- .content{
-  padding: 8px 16px 48px;
-  min-width: 0;
+.content {
+	padding: 8px 16px 48px;
+	min-width: 0;
 }
 
 /* 헤더 */
-.page-header{
-  display:flex; 
-  align-items:flex-start; 
-  flex-direction: column;
-  justify-content:space-between;
-  gap:16px; margin-bottom:20px;
+.page-header {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 20px;
 }
- .title{ margin:0; font-size:28px; font-weight:800; letter-spacing:-.3px; }
- .desc{ margin:.25rem 0 0; color:var(--sub); }
- .actions{ display:flex; gap:8px; flex-wrap:wrap; }
- .btn{
-  appearance:none; border:1px solid var(--brand); background:var(--brand); color:var(--card);
-  border-radius:12px; padding:10px 14px; font-weight:700; text-decoration:none;
-  display:inline-flex; align-items:center; gap:6px;
+
+.title {
+	margin: 0;
+	font-size: 28px;
+	font-weight: 800;
+	letter-spacing: -.3px;
+}
+
+.desc {
+	margin: .25rem 0 0;
+	color: var(--sub);
+}
+
+.actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.btn {
+	appearance: none;
+	border: 1px solid var(--brand);
+	background: var(--brand);
+	color: var(--card);
+	border-radius: 12px;
+	padding: 10px 14px;
+	font-weight: 700;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
 }
 
 
-.grid{ display:grid; grid-template-columns: repeat(4, minmax(180px,1fr)); gap:14px; }
+.grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(180px, 1fr));
+	gap: 14px;
+}
+
 .cards {
 	display: flex;
-	  width: 100%;
-	  gap:10px;
-	  flex-wrap: wrap;
-	  background-color: rgba(255, 240, 240, 0.3);
-	  padding: 30px 10px;
-	  border-radius: 8px;
-	  flex-direction: column;
-	  align-items: center;     
-	  
-	   }
-	   .card-dash{
-	   	background-color: rgba(255, 255, 255, 0.85);
-	   	border: 1px solid #ffd2cc;
-	   	padding: 30px;		
-	   	width: 600px;
-	   	text-align: left;
-	   	color: #5a3a36;
-	   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
-	   	border-radius: 10px;
-	   	transition: transform 0.3s ease;
-	   }
-	   .card-dash:hover {
-	   	transform: translateY(-5px);
-	   }
-	   .card:hover {
-	   	transform: translateY(-5px);
-	   }
+	width: 100%;
+	gap: 10px;
+	flex-wrap: wrap;
+	background-color: rgba(255, 240, 240, 0.3);
+	padding: 30px 10px;
+	border-radius: 8px;
+	flex-direction: column;
+	align-items: center;
 
-	   .card h3 {
-	   	color: #FF6F61;
-	   	margin-bottom: 10px;
-	   }
-	   .smalltitle{
-	   	margin: 10px 0 10px 200px;
-	   	/* 위:10px, 오른쪽:0, 아래:10px, 왼쪽:200px */
-	   	font-size: 25px;
-	   	font-weight: bold;
-	   	width:100%;
-	   }
-	   /* prgress bar */
-	   .progress-card {
-	   	
-	   	display: flex;
-	   	flex-wrap: wrap;
-	   	align-items: left;
-	   	/* 세로 가운데 정렬 */
-	   	gap: 10px;
-	   	/* 간격 */
-	   	background-color: rgba(255, 255, 255, 0.85);
-	   	border: 1px solid #ffd2cc;
-	   	padding: 30px;
-	   	width: 600px;
-	   	height: 80px;
-	   	text-align: left;
-	   	
-	   	color: #5a3a36;
-	   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
-	   	border-radius: 10px;
-	   	transition: transform 0.3s ease;
-	   }
+}
 
-	   .progress-item {
-	   	display: flex;
-	   	flex: 1 1 100%; 
-	   	align-items: center;      /* 세로 가운데 정렬 */
-	   	gap: 15px;                /* 제목과 바 사이 간격 */
-	   	margin-bottom: 1px;      /* 아래 여백 */
-	   }
-	   .progress-item h4 {
-	     margin: 0;
-	     white-space: nowrap;      /* 제목 줄바꿈 방지 */
-	     flex-shrink: 0;           /* 제목 크기 줄어들지 않게 */
-	     width: 20%;             /* 제목 영역 고정 너비 (필요에 따라 조절) */
-	   }
-	   .progress-container {
-	   			background: rgb(244, 220, 252);
-	   			border-radius: 20px;
-	   			width: 60%;
-	   			height: 25px;
-	   			margin:5px 0;
-	   			overflow: hidden;
-	   			display: flex;
-	   			align-items: center; /* 세로 중앙 정렬 */
-	   		    padding-left: 4px; 
-	   		}
-	   		
-	   		.progress-bar {
-	   		    background: linear-gradient(90deg, rgb(64, 0, 128), rgb(186, 121, 225));
-	   		    height: 60%;
-	   		    border-radius: 20px;
-	   		    transition: width 0.3s ease;
-	   		    display: flex;             /* 가로세로 정렬 기능 활성화 */
-	   		    align-items: center;       /* 세로 가운데 정렬 */
-	   		    justify-content: flex-end; /* 가로 오른쪽 정렬 (flex-end → 오른쪽) */
-	   		    font-size: 12px;
-	   		    color: white;
-	   		    font-weight: bold;
-	   		    padding-right: 5px;        /* 오른쪽 여백 */
-	   		}
-	   		
-	   		
-	   .total-card {
-	   	display: flex;
-	   	flex-wrap: wrap;
-	   	/* 세로 가운데 정렬 */
-		margin-bottom: 10px;
-	   	/* 간격 */
-	   	background-color: rgba(255, 255, 255, 0.85);
-	   	border: 1px solid #ffd2cc;
-	   	padding: 30px;
-	   	width: 600px;
-	   	color: #5a3a36;
-	   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
-	   	border-radius: 10px;
-	   	transition: transform 0.3s ease;
+.card-dash {
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 1px solid #ffd2cc;
+	padding: 30px;
+	width: 600px;
+	text-align: left;
+	color: #5a3a36;
+	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	border-radius: 10px;
+	transition: transform 0.3s ease;
+}
 
-	   }
-	   .total-card h3 {
-	   	color: #FF6F61;
-	   	font-size: 18px;
-	   	text-align: left;
-	   	width: 100%;
-	   	margin-bottom: 5px;
-	   }
-	   .total-card h5 {
-	   	color: #FF6F61;
-	   	font-size: 12px;
-	   	text-align: left;
-	   	width: 100%;
-	   	margin-bottom: 5px;
-	   	margin-left: 5px;
-	   }
-	   .total-card .total {
-	       font-size: 20px;
-	   	font-weight: bold;
-	       text-align: right;
-	       width: 100%;
-	       margin-bottom: 2px;
-	   }
+.card-dash:hover {
+	transform: translateY(-5px);
+}
 
-	   .btn {
-	   	background: rgb(217, 137, 243);
-	   	color: white;
-	   	border: none;
-	   	padding: 8px 16px;
-	   	border-radius: 6px;
-	   	cursor: pointer;
-	   	font-size: 12px;
-	   	transition: background 0.3s ease;
-	   }
+.card:hover {
+	transform: translateY(-5px);
+}
 
-	   .btn:hover {
-	   	background: rgb(128, 128, 255);
-	   }
+.card h3 {
+	color: #FF6F61;
+	margin-bottom: 10px;
+}
 
-	   .underline-width {
-	     display: inline-block; /* width를 적용하기 위해 필요 */
-	     width: 40px; /* 원하는 너비 설정 */
-	     text-decoration: underline;
-	   }
-	   .payBtn{
-	   	background: rgb(217, 137, 243);
-	   	color: white;
-	   	border: none;
-	   	padding: 8px 16px;
-	   	border-radius: 6px;
-	   	cursor: pointer;
-	   	font-size: 12px;
-	   	transition: background 0.3s ease;
-	   }
+.smalltitle {
+	margin: 10px 0 10px 200px;
+	/* 위:10px, 오른쪽:0, 아래:10px, 왼쪽:200px */
+	font-size: 25px;
+	font-weight: bold;
+	width: 100%;
+}
 
-	   .payBtn:hover {
-	   	background: rgb(128, 128, 255);
-	   }
-	   		
-	   .budget-container {
-	       width: 60%;
-	       margin: 20px auto;
-	       font-family: Arial, sans-serif;
-	   }
+/* prgress bar */
+.progress-card {
 
-	   .budget-table {
-	       width: 100%;
-	       border-collapse: collapse;
-	       margin-bottom: 20px;
-	   }
+	display: flex;
+	flex-wrap: wrap;
+	align-items: left;
+	/* 세로 가운데 정렬 */
+	gap: 10px;
+	/* 간격 */
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 1px solid #ffd2cc;
+	padding: 30px;
+	width: 600px;
+	height: 80px;
+	text-align: left;
 
-	   .budget-table th, .budget-table td {
-	       border: 1px solid #ddd;
-	       padding: 10px;
-	       text-align: center;
-	   }
+	color: #5a3a36;
+	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	border-radius: 10px;
+	transition: transform 0.3s ease;
+}
 
-	   .budget-table th {
-	       background-color: #f8f8f8;
-	       font-weight: bold;
-	   }
+.progress-item {
+	display: flex;
+	flex: 1 1 100%;
+	align-items: center;
+	/* 세로 가운데 정렬 */
+	gap: 15px;
+	/* 제목과 바 사이 간격 */
+	margin-bottom: 1px;
+	/* 아래 여백 */
+}
 
-	   .budget-table input {
-	       width: 80%;
-	       padding: 5px;
-	       text-align: right;
-	   }
+.progress-item h4 {
+	margin: 0;
+	white-space: nowrap;
+	/* 제목 줄바꿈 방지 */
+	flex-shrink: 0;
+	/* 제목 크기 줄어들지 않게 */
+	width: 20%;
+	/* 제목 영역 고정 너비 (필요에 따라 조절) */
+}
 
-	   .btn-wrap {
-	       text-align: right;
-	   }
+.progress-container {
+	background: rgb(244, 220, 252);
+	border-radius: 20px;
+	width: 60%;
+	height: 25px;
+	margin: 5px 0;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	/* 세로 중앙 정렬 */
+	padding-left: 4px;
+}
+
+.progress-bar {
+	background: linear-gradient(90deg, rgb(64, 0, 128), rgb(186, 121, 225));
+	height: 60%;
+	border-radius: 20px;
+	transition: width 0.3s ease;
+	display: flex;
+	/* 가로세로 정렬 기능 활성화 */
+	align-items: center;
+	/* 세로 가운데 정렬 */
+	justify-content: flex-end;
+	/* 가로 오른쪽 정렬 (flex-end → 오른쪽) */
+	font-size: 12px;
+	color: white;
+	font-weight: bold;
+	padding-right: 5px;
+	/* 오른쪽 여백 */
+}
+
+
+.total-card {
+	display: flex;
+	flex-wrap: wrap;
+	/* 세로 가운데 정렬 */
+	margin-bottom: 10px;
+	/* 간격 */
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 1px solid #ffd2cc;
+	padding: 30px;
+	width: 600px;
+	color: #5a3a36;
+	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	border-radius: 10px;
+	transition: transform 0.3s ease;
+
+}
+
+.total-card h3 {
+	color: #FF6F61;
+	font-size: 18px;
+	text-align: left;
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.total-card h5 {
+	color: #FF6F61;
+	font-size: 12px;
+	text-align: left;
+	width: 100%;
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
+
+.total-card .total {
+	font-size: 20px;
+	font-weight: bold;
+	text-align: right;
+	width: 100%;
+	margin-bottom: 2px;
+}
+
+.btn {
+	background: rgb(217, 137, 243);
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.3s ease;
+}
+
+.btn:hover {
+	background: rgb(128, 128, 255);
+}
+
+.underline-width {
+	display: inline-block;
+	/* width를 적용하기 위해 필요 */
+	width: 40px;
+	/* 원하는 너비 설정 */
+	text-decoration: underline;
+}
+
+.payBtn {
+	background: rgb(217, 137, 243);
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.3s ease;
+}
+
+.payBtn:hover {
+	background: rgb(128, 128, 255);
+}
+
+.budget-container {
+	width: 60%;
+	margin: 20px auto;
+	font-family: Arial, sans-serif;
+}
+
+.budget-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
+
+.budget-table th,
+.budget-table td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: center;
+}
+
+.budget-table th {
+	background-color: #f8f8f8;
+	font-weight: bold;
+}
+
+.budget-table input {
+	width: 80%;
+	padding: 5px;
+	text-align: right;
+}
+
+.btn-wrap {
+	text-align: right;
+}
+
 .dash {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap:15px
+	gap: 15px
 }
+
 .card-content {
-			display: grid;
-			grid-template-columns: 120px 1fr;
-			margin-top: 5px;
-			align-items: start;
-		}
+	display: grid;
+	grid-template-columns: 120px 1fr;
+	margin-top: 5px;
+	align-items: start;
+}
 
-		.card-image {
-			width: 100%;
-			height: 100px;
-			object-fit: cover;
-			border-radius: 8px;
-		}
+.card-image {
+	width: 100%;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 8px;
+}
 
-		.card-details {
-			display: grid;
-			grid-template-columns: 1fr auto;
-			gap: 15px;
-			align-items: start;
-		}
+.card-details {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 15px;
+	align-items: start;
+}
 
-		.card-info h3 {
-			margin: 0 0 8px 0;
-			color: #FF6F61;
-			font-size: 18px;
-			font-weight: 600;
-		}
+.card-info h3 {
+	margin: 0 0 8px 0;
+	color: #FF6F61;
+	font-size: 18px;
+	font-weight: 600;
+}
 
-		.card-price {
-			color: #e91e63;
-			font-size: 16px;
-			font-weight: bold;
-			margin: 5px 0;
-		}
+.card-price {
+	color: #e91e63;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 5px 0;
+}
 
-		.card-address {
-			color: #666;
-			font-size: 14px;
-			margin: 5px 0;
-		}
+.card-address {
+	color: #666;
+	font-size: 14px;
+	margin: 5px 0;
+}
 
-		.card-description {
-			color: #777;
-			font-size: 13px;
-			line-height: 1.4;
-			margin: 8px 0;
-		}
+.card-description {
+	color: #777;
+	font-size: 13px;
+	line-height: 1.4;
+	margin: 8px 0;
+}
 
-		.card-controls {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			min-width: 150px;
-		}
+.card-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 150px;
+}
 
-		.control-row {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			font-size: 14px;
-		}
+.control-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+}
 
-		.control-row input[type="checkbox"] {
-			width: 16px;
-			height: 16px;
-		}
+.control-row input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+}
 
-		.amount-input {
-			width: 80px;
-			padding: 4px 8px;
-			border: 1px solid #ddd;
-			border-radius: 4px;
-			font-size: 12px;
-		}
+.amount-input {
+	width: 80px;
+	padding: 4px 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 12px;
+}
 
-		/*Budget.html*/		
-		.budget-card {
-			   	display: flex;
-			   	flex-wrap: wrap;
-			   	/* 세로 가운데 정렬 */
-				margin-bottom: 10px;
-			   	/* 간격 */
-			   	background-color: rgba(255, 255, 255, 0.85);
-			   	border: 1px solid #ffd2cc;
-			   	padding: 30px;
-			   	width: 600px;
-			   	color: #5a3a36;
-			   	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
-			   	border-radius: 10px;
-			   	transition: transform 0.3s ease;
+/*Budget.html*/
+.budget-card {
+	display: flex;
+	flex-wrap: wrap;
+	/* 세로 가운데 정렬 */
+	margin-bottom: 10px;
+	/* 간격 */
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 1px solid #ffd2cc;
+	padding: 30px;
+	width: 600px;
+	color: #5a3a36;
+	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	border-radius: 10px;
+	transition: transform 0.3s ease;
 
-			   }
+}
 
-			   .btn {
-			   	background: rgb(217, 137, 243);
-			   	color: white;
-			   	border: none;
-			   	padding: 8px 16px;
-			   	border-radius: 6px;
-			   	cursor: pointer;
-			   	font-size: 12px;
-			   	transition: background 0.3s ease;
-			   }
+.btn {
+	background: rgb(217, 137, 243);
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.3s ease;
+}
 
-			   .btn:hover {
-			   	background: rgb(128, 128, 255);
-			   }
+.btn:hover {
+	background: rgb(128, 128, 255);
+}
 
-		
-		
 
-		.budget-table {
-		    width: 100%;
-		    border-collapse: collapse;
-		    margin-bottom: 20px;
-		}
- 
-		.budget-table td {
-		    border: 1px solid #ddd;
-		    padding: 10px;
-		    text-align: left;
-		}
 
-		.budget-table th {
-		    background-color: #f8f8f8;
-		    font-weight: bold;
-		}
 
-		.budget-table input {
-		    width: 80%;
-		    padding: 5px;
-		    text-align: right;
-		}
+.budget-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
 
-		.btn-wrap {
-		    text-align: right;
-		}
+.budget-table td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: left;
+}
+
+.budget-table th {
+	background-color: #f8f8f8;
+	font-weight: bold;
+}
+
+.budget-table input {
+	width: 80%;
+	padding: 5px;
+	text-align: right;
+}
+
+.btn-wrap {
+	text-align: right;
+}
 
 
 
 /* 반응형 */
-@media (max-width: 1080px){
-  #wpintro .grid{ grid-template-columns: repeat(2, minmax(200px,1fr)); }
-}
-@media (max-width: 640px){
-  #wpintro.page{ grid-template-columns: 1fr; }
-  #wpintro .grid{ grid-template-columns: 1fr; }
-  #wpintro .page-header{ flex-direction:column; align-items:flex-start; }
+@media (max-width: 1080px) {
+	#wpintro .grid {
+		grid-template-columns: repeat(2, minmax(200px, 1fr));
+	}
 }
 
+@media (max-width: 640px) {
+	#wpintro.page {
+		grid-template-columns: 1fr;
+	}
 
+	#wpintro .grid {
+		grid-template-columns: 1fr;
+	}
 
+	#wpintro .page-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
