@@ -16,7 +16,10 @@ private Long dress;
 private Long makeup;
 public Long getAmount() {
 	// TODO Auto-generated method stub
-	return null;
+	
+	long result = weddingHall+studio+dress+makeup;
+	
+	return result;
 }
 
 	/*

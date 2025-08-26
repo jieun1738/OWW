@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <title layout:fragment="title">WeddingProductCompare</title>
+  <link rel="stylesheet" th:href="@{/css/WeddingProductCompare.css}">
+</head>
+<body>
+<section layout:fragment="content">
+  <div class="page" id="wppcompare">
+    <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingProductCompare', progress=${progressPercent})}"></div>
+
+    <main class="content">
+      <header class="page-header">
+        <div>
+          <h1 class="title section-title"><i class='bx bx-git-compare'></i>상품 비교</h1>
+          <p class="desc">최대 4개까지 나란히 비교합니다.</p>
+        </div>
+        <div class="quick-actions">
+          <form th:action="@{/planner/compare/product/reset}" method="post">
+            <button class="btn" type="submit"><i class='bx bx-trash'></i> 비교함 비우기</button>
+          </form>
+          <a class="btn brand" th:href="@{/planner/diy}"><i class='bx bx-wrench'></i> DIY로 돌아가기</a>
+        </div>
+      </header>
+
+      <div class="table-wrap" th:if="${products != null and !#lists.isEmpty(products)}">
+        <table class="cmp">
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th th:each="p : ${products}">
+                <div class="th-prod">
+                  <div class="thumb" th:style="|background-image:url(${#strings.containsIgnoreCase(p.img,'http') ? p.img : @{/img/{img}(img=${p.img})}})|"></div>
+                  <div class="name" th:text="${p.productName}">상품명</div>
+                  <form th:action="@{/planner/compare/product/remove}" method="post">
+                    <input type="hidden" name="productNo" th:value="${p.productNo}">
+                    <button class="btn-s" type="submit"><i class='bx bx-x'></i> 제거</button>
+                  </form>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>카테고리</th>
+              <td th:each="p : ${products}" th:text="${p.category == 0 ? '웨딩홀' : (p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))}">-</td>
+            </tr>
+            <tr>
+              <th>가격</th>
+              <td th:each="p : ${products}" th:text="${#numbers.formatInteger(p.cost,3,'COMMA') + '원'}">0원</td>
+            </tr>
+            <tr>
+              <th>주소</th>
+              <td th:each="p : ${products}" th:text="${p.address}">주소</td>
+            </tr>
+            <tr>
+              <th>설명</th>
+              <td th:each="p : ${products}" th:text="${p.description}">설명</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty" th:if="${products == null or #lists.isEmpty(products)}">
+        <i class='bx bx-info-circle'></i> 비교함이 비어 있습니다. DIY 목록에서 “비교” 버튼으로 담아보세요.
+      </div>
+    </main>
+  </div>
+</section>
+</body>
+</html>

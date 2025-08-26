@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>소비정보 조회</title>
+	<link th:href="@{/css/design.css}" rel="stylesheet" />
+	<link th:href="@{/css/WeddingDIY.css}" rel="stylesheet" />
+</head>
+<body>
+	<th:block layout:fragment="header" th:insert="~{@{/fragments/header}}"></th:block>
+	<th:block layout:fragment="nav" th:insert="~{@{/fragments/nav}}"></th:block>
+	
+	<!-- ========== Left Global Menu ========== -->
+	<aside class="leftnav" aria-label="글로벌 메뉴">
+		<div class="content">
+			<img src="/img/user.png" alt="사용자 프로필" width="20px" height="20px" /><br>
+			<span th:text="${totalBudget.user_email}">사용자 이메일</span>
+			<div class="progress-container">
+				<div class="progress-bar" th:style="'width:' + ${contract_progress}+'%'"></div>
+			</div>
+		</div>
+		<div class="sidebar">
+			<h2>메뉴</h2>
+			
+			<a class="ln-item" href="/wedding-plan" aria-label="나의 웨딩플랜 보기">
+				<span>my 웨딩플랜</span><span class="ln-dot"></span>
+			</a><br>
+			<a class="ln-item" href="/budget-setting" aria-label="예산 설정하기">
+				<span>예산설정</span><span class="ln-dot"></span>
+			</a><br>
+			<a class="ln-item" href="/consumption-info" aria-label="소비정보 조회하기">
+				<span>소비정보 조회</span><span class="ln-dot"></span>
+			</a><br>
+			<a class="ln-item" href="/savings" aria-label="차곡차곡 금고 관리">
+				<span>차곡차곡 금고</span><span class="ln-dot"></span>
+			</a><br>
+			<a class="ln-item" href="/payment-history" aria-label="미니스토어 결제내역 보기">
+				<span>미니스토어 결제 내역</span><span class="ln-dot"></span>
+			</a>
+		</div>
+	</aside>
+	
+	<main class="main">
+	<h2>소비 정보 조회</h2>
+	
+	<h3>전체 정보 요약 분석</h3>
+	<div class="">
+	<progress  value="${paidAmount}" max="${Amount}"></progress><!-- progress bar -->
+	<span>총 예산: </span><span>${Amount}</span><br>
+	<span>사용금액: </span><span>${paidAmount}</span><br>
+	<span>잔여금액: </span><span>${Amount - paidAmount}</span><br>
+	</div>
+
+	<h3>항목별 지출 정보</h3>
+	<div>
+	웨딩홀:<progress  value="${planprogress.pay_hall}" max="${budgetform.weddingHall}"></progress>
+	스튜디오:<progress  value="${planprogress.pay_stud}" max="${budgetform.studio}"></progress>
+	드레스:<progress  value="${planprogress.pay_dres}" max="${budgetform.dress}"></progress>
+	메이크업:<progress  value="${planprogress.pay_make}" max="${budgetform.makeup}"></progress>	
+	</div>
+	<h3>소비 패턴 분석</h3>
+	
+	
+	</main>
+</body>
+</html>
