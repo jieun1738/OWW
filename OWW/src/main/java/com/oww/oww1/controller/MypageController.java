@@ -16,13 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oww.oww1.OwwApplication;
-import com.oww.oww1.VO.BudgetForm;
-import com.oww.oww1.VO.BudgetVO;
 import com.oww.oww1.VO.PaymentDTO;
 import com.oww.oww1.VO.PlanProgressVO;
 import com.oww.oww1.VO.ProductVO;
-import com.oww.oww1.mapper.MypageMapper;
-import com.oww.oww1.service.BudgetService;
 import com.oww.oww1.service.DashboardService;
 
 
@@ -34,13 +30,22 @@ public class MypageController {
 	@Autowired
 	DashboardService dashservice;
 	
-	@Autowired
-	BudgetService budgetservice;
 
     MypageController(OwwApplication owwApplication) {
         this.owwApplication = owwApplication;
     }
 
+    @GetMapping("/budgetSetting")
+    public String goBudgetSetting(Model model) {
+    	String user_email = "user2@example.com";
+		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
+		int sumBudget=dashservice.sumBudget(user_email);
+		model.addAttribute("sumBudget", sumBudget);	
+    	return "Budget";
+    }
+    
+    
+    
 	@GetMapping("/mypage")
 	public String goMypage(Model model) {
 		String user_email = "user2@example.com";
@@ -109,24 +114,6 @@ public class MypageController {
 		return "MyWeddingPlan";
 		
 	}
-	
-	/*
-	 * @GetMapping("/saveprogress.do") public String goSave_progress(@ModelAttribute
-	 * PlanProgressVO ppgvo, Model model) { String user_email = "user1@example.com";
-	 * System.out.println("입력받은 내용:"+ppgvo.getPay_hall());
-	 * ppgvo.setContract_hall(ppgvo.getContract_hall_ch() ? "Y" : "N");
-	 * ppgvo.setContract_stud(ppgvo.getContract_stud_ch() ? "Y" : "N");
-	 * ppgvo.setContract_dres(ppgvo.getContract_dres_ch() ? "Y" : "N");
-	 * ppgvo.setContract_make(ppgvo.getContract_make_ch() ? "Y" : "N");
-	 * ppgvo.setPlan_no(budservice.getPlan(user_email).getPlan_no());
-	 * budservice.setProgress(ppgvo);
-	 * 
-	 * System.out.println(ppgvo.getContract_hall());
-	 * System.out.println(ppgvo.getContract_hall_ch());
-	 * 
-	 * System.out.println("저장중"); System.out.println(ppgvo.getPay_hall()); return
-	 * "redirect:/mypage"; }
-	 */
 	
 	@PostMapping("payment/success")
 	public String paymentSuccess(@RequestBody PaymentDTO payment) {
@@ -204,26 +191,5 @@ public class MypageController {
 	    return result;
 	}
 
-	@GetMapping("/ConsumptionInfo")
-	public String getConsumption(Model model) {
-		
-		String user_email = "user2@example.com";
-		int plan_no = dashservice.getPlan(user_email).getPlan_no();
-		BudgetForm budgetform = budgetservice.getBudget(user_email);
-		PlanProgressVO planprogress = dashservice.getPlanProgress(plan_no);
-		
-		long Amount = budgetform.getAmount();
-		long paidAmount = planprogress.sumAllpay();
-		
-		
-		model.addAttribute("Amount",Amount);
-		model.addAttribute("paidAmount", paidAmount);
-		model.addAttribute("planprogress",planprogress);
-		model.addAttribute("budgetform",budgetform);
-		
-		return "ConsumptionInfo";
-		
-	}
-	
 	
 }

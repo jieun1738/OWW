@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" href="/css/page.css" />
+<title>Own Wedding Wallet</title>
+</head>
+<body>
+
+	<header>
+		<h1 class="logo">Own Wedding Wallet</h1>
+	</header>
+
+	<nav>
+		<div class="nav-item">
+			<a href="/banking/main" class="nav-link">뱅킹서비스</a>
+			<div class="dropdown">
+				<a href="/banking/createAccount">계좌생성</a> 
+				<a href="/banking/transfer_1">이체</a>
+				<a href="/banking/safebox">세이프박스</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#wedding" class="nav-link">웨딩플래너</a>
+			<div class="dropdown">
+				<a href="#">추천테마</a> <a href="#">DIY</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#loan" class="nav-link">대출</a>
+			<div class="dropdown">
+				<a href="#">대출상품</a> <a href="#">대출상환</a>
+			</div>
+		</div>
+		<div class="nav-item">
+			<a href="#mypage" class="nav-link">마이페이지</a>
+		</div>
+	</nav>
+
+	<section class="service-cards">
+		<article class="service-card">
+			<div class="service-card-center">
+				<h3>이체가 완료되었습니다</h3>
+				<br><br><br><br>
+				<button class="transfer-btn" type="button" onclick="location.href='/banking/main'">확인</button>
+				<br>
+			</div>
+		</article>
+	</section>
+
+	<footer>&copy; 2025 Wedding Planner Co. All rights reserved.</footer>
+	<script src="/js/auth-buttons.js"></script>
+</body>
+</html>

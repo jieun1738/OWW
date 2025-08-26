@@ -23,13 +23,6 @@ public class PlanProgressVO {
     Boolean contract_make_ch, pay_make_ch;
   
     
-    public long sumAllpay() {
-    	long result = pay_hall+pay_stud +pay_dres+pay_make;
-		return result;
-    	
-    }
-    
-    
     public Boolean getContract_hall_ch() {
 		return contract_hall_ch;
 	}
