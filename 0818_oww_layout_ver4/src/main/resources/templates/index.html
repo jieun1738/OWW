@@ -1,75 +1,72 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
-<head>
-  <title layout:fragment="title">메인</title>
-</head>
+<link rel="stylesheet" href="/css/index.css">
+<script defer src="/js/index.js"></script>
+
+
 <body>
-<section layout:fragment="content">
-  <!-- 여기에 페이지 본문만 작성 -->
-  <div class="container">
-<!-- Hero Swiper Section -->
-<section class="swiper hero-swiper">
-	<div class="swiper-wrapper">
-		<div class="swiper-slide hero"
-			style="background-image: url('/img/wedding-1.jpg')">
-			<div class="hero-content">
-				<h2>당신만을 위한 럭셔리 웨딩 플랜</h2>
-				<p>섬세한 맞춤 설계와 품격 있는 구성으로 인생 최고의 날을 디자인합니다.</p>
-			</div>
-		</div>
-		<div class="swiper-slide hero"
-			style="background-image: url('/img/wedding-2.jpg')">
-			<div class="hero-content">
-				<h2>맞춤형 예산 설계</h2>
-				<p>당신의 예산에 맞춘 효율적인 웨딩 준비를 도와드립니다.</p>
-			</div>
-		</div>
-		<div class="swiper-slide hero"
-			style="background-image: url('/img/wedding-3.jpg')">
-			<div class="hero-content">
-				<h2>전문가의 추천 패키지</h2>
-				<p>스타일별 추천을 통해 쉽고 빠르게 결정할 수 있어요.</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="cards">
-	<div class="card">
-		<h3>뱅킹 서비스</h3>
-		<p>이체와 거래내역, 그리고 편리한 세이프박스로 결혼자금을 안정적으로 관리하세요.</p>
-	</div>
-	<div class="card">
-		<h3>맞춤형 웨딩 패키지</h3>
-		<p>원하는 스타일과 구성으로 당신만의 웨딩을 완성할 수 있는 다양한 패키지를 제공합니다.</p>
-	</div>
-	<div class="card">
-		<h3>대출</h3>
-		<p>여러 은행의 대출 상품을 한눈에 비교하고, 최적의 조건으로 결혼 준비를 도와드립니다.</p>
-	</div>
-	<div class="card">
-		<h3>마이페이지</h3>
-		<p>예산 상태, 결제 이력, 관심 패키지 등을 한눈에 확인할 수 있는 나만의 웨딩 관리 공간입니다.</p>
-	</div>
-</section>
-</div>
-
-<script>
-  var swiper = new Swiper(".hero-swiper", {
-    autoplay: {
-      delay: 4000,
-      disableOnInteraction: false
-    },
-    loop: true,
-    on: {
-      click: function () {
-        swiper.slideNext();
-      }
-    }
-  });
-</script>
-</section>
+  <header class="main-header">
+    <div class="header-wrapper">
+      <div class="main-logo">OWW</div>
+      <nav>
+        <ul class="main-menu">
+          <li><a href="#section-2">About</a></li>
+          <li><a href="#section-5">Bank</a></li>
+          <li><a href="#section-7">Wedding Plan</a></li>
+          <li><a href="#section-9">Loan</a></li>
+          <li><a href="#main-footer">Mypage</a></li>
+          <li><a href="#"><span class="fa fa-shopping-cart"></span></a></li>
+          <li><a href="#"><span class="fa fa-search"></span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <section id="section-1">
+    <div class="content-slider">
+      <input type="radio" id="banner1" class="sec-1-input" name="banner" checked>
+      <input type="radio" id="banner2" class="sec-1-input" name="banner">
+      <input type="radio" id="banner3" class="sec-1-input" name="banner">
+      <input type="radio" id="banner4" class="sec-1-input" name="banner">
+      <div class="slider">
+        <div id="top-banner-1" class="banner">
+          <div class="banner-inner-wrapper">
+            <h2>Own Wedding Wallet</h2>
+            <h1>Welcome<br>OWW</h1>
+            <div class="line"></div>
+            <div class="learn-more-button"><a href="#section-2">뱅킹 서비스</a></div>
+          </div>
+        </div>
+        <div id="top-banner-2" class="banner">
+          <div class="banner-inner-wrapper">
+            <h2>Personal Plan</h2>
+            <h1>맞춤형<br>웨딩 패키지</h1>
+            <div class="line"></div>
+            <div class="learn-more-button"><a href="#section-4">웨딩 설계</a></div>
+          </div>
+        </div>
+        <div id="top-banner-3" class="banner">
+          <div class="banner-inner-wrapper">
+            <h2>Loan</h2>
+            <h1>맞춤형<br>대출 상품</h1>
+            <div class="line"></div>
+            <div class="learn-more-button"><a href="#section-6">맞춤 대출</a></div>
+          </div>
+        </div>
+        <div id="top-banner-4" class="banner">
+          <div class="banner-inner-wrapper">
+            <h2>Private Space</h2>
+            <h1>마이페이지<br>MyPage</h1>
+            <div class="line"></div>
+            <div class="learn-more-button"><a href="#main-footer">Mypage</a></div>
+          </div>
+        </div>
+      </div>
+      <nav>
+        <div class="controls">
+          <label for="banner1"><span class="progressbar"><span class="progressbar-fill"></span></span><span>01</span> Banking</label>
+          <label for="banner2"><span class="progressbar"><span class="progressbar-fill"></span></span><span>02</span> Wedding</label>
+          <label for="banner3"><span class="progressbar"><span class="progressbar-fill"></span></span><span>03</span> Loan</label>
+          <label for="banner4"><span class="progressbar"><span class="progressbar-fill"></span></span><span>04</span> Mypage</label>
+        </div>
+      </nav>
+    </div>
+  </section>
 </body>
-</html>
