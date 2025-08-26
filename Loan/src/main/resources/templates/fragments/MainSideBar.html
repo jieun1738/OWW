@@ -30,20 +30,26 @@
 
 
     <!-- 내비게이션 -->
-    <div class="ln-title" style="margin-top:10px;">메뉴</div>
-    <nav class="ln-list">
-     
-      <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'LoanMain')}? ' active' : ''"
-         th:href="@{/loanmain}">
-        <i class='bx bx-book-open'></i><span>대출상품 소개</span>
-      </a>
-
-      <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'LoanComparison')}? ' active' : ''"
-         th:href="@{/loancomparison}">
-        <i class='bx bx-git-compare'></i><span>상품 비교</span>
-      </a>
+	<div class="ln-title" style="margin-top:10px;">메뉴</div>
+	<nav class="ln-list">
+	
+		<a class="ln-item" th:classappend="${#strings.containsIgnoreCase(active,'LoanMain')}? ' active' : ''"
+			th:href="@{/loanmain}">
+			<i class='bx bx-book-open'></i><span>대출상품 소개</span>
+		</a>
+	
+		<a class="ln-item" th:classappend="${#strings.containsIgnoreCase(active,'LoanComparison')}? ' active' : ''"
+			th:href="@{/loancomparison}">
+			<i class='bx bx-git-compare'></i><span>상품 비교</span>
+		</a>
+		<a class="ln-item" th:classappend="${#strings.containsIgnoreCase(active,'Repayment')}? ' active' : ''"
+			th:href="@{/repayment}">
+			<i class='bx bx-git-compare'></i><span>대출 상환</span>
+		</a>
+		<a class="ln-item" th:classappend="${#strings.containsIgnoreCase(active,'CostCalculate')}? ' active' : ''"
+			th:href="@{/costcalculate}">
+			<i class='bx bx-git-compare'></i><span>생활비·여유자금 계산기</span>
+		</a>
 
       
     </nav>

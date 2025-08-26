@@ -25,6 +25,7 @@
 					
 		<div class="card-detail">
     	<h1 class="title" th:text="|💰${loandetails.loanName}💰|">상품명</h1>
+		<img th:src="@{|/img/loan/${loandetails.loanName}.png|}" alt="대출상품 이미지"/>
     
     <p><strong>상세 설명:</strong><br> <span th:text="${loandetails.LoanExplanation}"> 설명</span></p>
     <p><strong>대출 한도:</strong><br><span th:text="${loandetails.LoanLimit}">-</span> 원</p>
