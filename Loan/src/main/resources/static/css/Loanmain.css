@@ -56,8 +56,9 @@
 	gap: 10px;
 	grid-template-columns: 150px 1fr 100px;  /* 3열 */
 	grid-template-rows: auto auto auto;   /* 3행 */
+	background:var(--card);
 	border: 1px solid var(--line);	
-    border-radius:16px; background:var(--card);
+    border-radius:16px; 	
     box-shadow:var(--shadow); padding:16px;
 	padding: 16px;
 	
@@ -107,7 +108,7 @@ grid-row: 1; grid-column: 2;
   cursor: pointer;          
   font-size: 12px;           
 }
-
+/*-----------상품비교-----------*/
 .selectProduct {
 	display: flex;
 	flex-direction: column;
@@ -174,6 +175,7 @@ grid-row: 1; grid-column: 2;
 	margin: 0;
 	text-align: left;
   }
+  /*------상세보기-----------*/
 .card-detail {
 	display: flex;
 	flex-direction: column;
@@ -211,6 +213,90 @@ grid-row: 1; grid-column: 2;
 .card-detail h1 {
 	text-align: center;
 }
+
+.card-complete {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+	width: 80%;
+	height: 300px;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	padding: 16px;
+	gap: 90px;
+}
+
+.card-complete h1{
+	margin-top: 70px;
+}
+.card-complete .btn-wrap{ 
+	display: flex;  
+	gap: 10px;
+	flex-direction: row; /* 가로 배치 */
+	justify-content: center; /* 가로 방향 가운데 정렬 */
+	align-items: center; /* 세로 방향 가운데 정렬 */
+}
+/*-----------계산기----------*/
+.calculator-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 80%;
+	margin-top: 10px;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	padding: 16px;
+	gap: 10px;
+}
+
+.calculator-card table {
+	table-layout: auto;
+  	width: 100%;
+	margin-top:50px;
+  	border-collapse: collapse;
+  }
+  
+.calculator-card .wrap{
+    	display: inline-block;	
+		/*white-space: nowrap; */
+    } 
+
+
+.calculator-card .item {
+  	border: 1px solid #ddd;
+  	padding: 10px;
+  	text-align: center;
+  }
+.calculator-card td {
+    	border: 1px solid #ddd;
+    	padding: 10px;
+    }
+
+.calculator-card th {
+  	background-color:  #F1CBE5;
+  	font-weight: bold;
+  }
+
+.calculator-card .input {
+  	padding: 5px;
+  	text-align: left;
+  }
+.calculator-card h4 {
+	background: #e9d5ff;
+	border: 1px solid var(--line);	
+	border-radius:16px; 	
+	box-shadow:var(--shadow); padding:16px;
+	padding: 16px;
+}
+.calculator-card .btn-cell{
+	text-align: right;
+}
+  
 /* 반응형 */
 @media (max-width: 1080px){
   #wpintro .grid{ grid-template-columns: repeat(2, minmax(200px,1fr)); }

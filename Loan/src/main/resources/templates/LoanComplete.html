@@ -11,25 +11,25 @@
 	<section layout:fragment="content">
 		<div class="page">
 			<!-- ✅ 사이드바: 기존 프래그먼트 그대로 사용 (중복 선언 금지) -->
-			<div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}"></div>
+			<div
+				th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}">
+			</div>
 			<div class="cards">
 				<!-- Main Content -->
 				<main class="content">
-					<div class="card">
-<div class="success-container">
-    <h1>대출이 성공적으로 완료되었습니다!</h1>
-	<div class="btn-wrap">
-    <div class="success-buttons">
-        <form th:action="@{/loanmain}">
-            <button type="submit" class="btn">메인으로</button>
-        </form>
-        <form th:action="@{/repayment}">
-            <button type="submit" class="btn">대출 상환 페이지로</button>
-        </form>
-    </div>
-	</div>
-</div>
-</div>
+					<div class="card-complete">
+
+						<h1>대출 가입이 성공적으로 완료되었습니다!</h1>
+						<div class="btn-wrap">
+								<form th:action="@{/loanmain}">
+									<button type="submit" class="btn">메인으로</button>
+								</form>
+								<form th:action="@{/repayment}">
+									<button type="submit" class="btn">대출 상환 페이지로</button>
+								</form>
+						</div>
+					</div>
+			
 				</main>
 			</div>
 		</div>
