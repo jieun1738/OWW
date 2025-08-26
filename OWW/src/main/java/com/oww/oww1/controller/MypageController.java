@@ -16,13 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oww.oww1.OwwApplication;
-import com.oww.oww1.VO.BudgetForm;
-import com.oww.oww1.VO.BudgetVO;
 import com.oww.oww1.VO.PaymentDTO;
 import com.oww.oww1.VO.PlanProgressVO;
 import com.oww.oww1.VO.ProductVO;
-import com.oww.oww1.mapper.MypageMapper;
-import com.oww.oww1.service.BudgetService;
 import com.oww.oww1.service.DashboardService;
 
 
@@ -34,8 +30,6 @@ public class MypageController {
 	@Autowired
 	DashboardService dashservice;
 	
-	@Autowired
-	BudgetService budgetservice;
 
     MypageController(OwwApplication owwApplication) {
         this.owwApplication = owwApplication;
@@ -204,26 +198,5 @@ public class MypageController {
 	    return result;
 	}
 
-	@GetMapping("/ConsumptionInfo")
-	public String getConsumption(Model model) {
-		
-		String user_email = "user2@example.com";
-		int plan_no = dashservice.getPlan(user_email).getPlan_no();
-		BudgetForm budgetform = budgetservice.getBudget(user_email);
-		PlanProgressVO planprogress = dashservice.getPlanProgress(plan_no);
-		
-		long Amount = budgetform.getAmount();
-		long paidAmount = planprogress.sumAllpay();
-		
-		
-		model.addAttribute("Amount",Amount);
-		model.addAttribute("paidAmount", paidAmount);
-		model.addAttribute("planprogress",planprogress);
-		model.addAttribute("budgetform",budgetform);
-		
-		return "ConsumptionInfo";
-		
-	}
-	
 	
 }
