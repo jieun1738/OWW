@@ -29,7 +29,7 @@
     "loanLimit": 20000000,
     "loanPeriod": 12,
     "loanRepaymentType": 0,
-    "interestRate": 2.5
+    "interestRate": 2.3
   },
   {
     "loanName": "주택 보조 일반 대출",
@@ -37,7 +37,7 @@
     "loanLimit": 100000000,
     "loanPeriod": 60,
     "loanRepaymentType": 1,
-    "interestRate": 2.5
+    "interestRate": 2.7
   },
   {
     "loanName": "신혼 예식비 지원 대출",

@@ -38,4 +38,7 @@ public interface LoanService {
 	
 	int getloanapprove(String useremail);
 
+
+	List<LoanProductVO> getAllLoanProducts() throws StreamReadException, DatabindException, IOException;
+
 }

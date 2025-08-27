@@ -11,8 +11,6 @@ public class UserLoanVO {
 	private int Approval;
 	private double InterestRate;
 	private int paidmonthlyamount;
-	
-	
 	public String getUserEmail() {
 		return UserEmail;
 	}

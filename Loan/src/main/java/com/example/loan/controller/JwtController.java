@@ -3,6 +3,7 @@ package com.example.loan.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.loan.service.LoanService;
 import com.example.loan.util.jwtutil;
+import com.example.loan.vo.LoanProductVO;
 import com.example.loan.vo.UserLoanVO;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -36,8 +38,11 @@ public class JwtController {
 	
     @GetMapping("/loanmain")
     public String getUserInfo(HttpServletRequest request,Model model) throws StreamReadException, DatabindException, IOException {
-		ArrayList<String> products = loanservice.getloanmain();
-		model.addAttribute("products", products);
+		
+	    List<LoanProductVO> details = loanservice.getAllLoanProducts();
+	    model.addAttribute("details", details);
+		
+		//토큰 받기
         String token = null;
 
         // 1. 쿠키에서 jwt-token 찾기
@@ -67,6 +72,8 @@ public class JwtController {
            
         }
         
+        
+     
         //테스트용 임시
 		String useremail = "testmail@gmail.com";
 		UserLoanVO userloan = loanservice.getuserloan(useremail);

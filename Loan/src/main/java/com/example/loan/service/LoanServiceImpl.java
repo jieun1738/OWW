@@ -36,7 +36,7 @@ public class LoanServiceImpl implements LoanService {
 	 * 
 	 * }
 	 */
-	private List<LoanProductVO> getAllLoanProducts() throws StreamReadException, DatabindException, IOException{
+	public List<LoanProductVO> getAllLoanProducts() throws StreamReadException, DatabindException, IOException{
         return objectMapper.readValue(
                 new File(filePath),
                 new TypeReference<List<LoanProductVO>>() {}
@@ -44,7 +44,7 @@ public class LoanServiceImpl implements LoanService {
     }
 	
 	@Override
-	public ArrayList<String> getloanmain() throws StreamReadException, DatabindException, IOException {
+	public ArrayList<String> getloanmain() throws StreamReadException, DatabindException, IOException {//상품 이름 가져오기
 		 List<LoanProductVO> allProducts = getAllLoanProducts();
 	        ArrayList<String> productNames = new ArrayList<>();
 
