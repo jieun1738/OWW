@@ -138,6 +138,8 @@ public class LoanController {
 		String useremail = "testmail@gmail.com";
 		int approve = loanservice.getloanapprove(useremail);
 		long monthlyinstallments = loanservice.sumMonthlyInstallment(useremail);
+		approve = 1;
+		
 		if(approve == 0) {
 			model.addAttribute("infoMessage", "상환할 대출이 없습니다.");
 			return "Repayment";
