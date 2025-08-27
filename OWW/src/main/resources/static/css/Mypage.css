@@ -3,6 +3,7 @@
 	--ink: #111827;
 	--sub: #6b7280;
 	--brand: #7c3aed;
+	--brand-weak: #f3e8ff;
 	--card: #ffffff;
 	--muted: #f9fafb;
 	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
@@ -80,7 +81,7 @@
 	padding: 30px 10px;
 	border-radius: 8px;
 	flex-direction: column;
-	align-items: center;
+	align-items: left;
 
 }
 
@@ -272,36 +273,6 @@
 	background: rgb(128, 128, 255);
 }
 
-.budget-container {
-	width: 60%;
-	margin: 20px auto;
-	font-family: Arial, sans-serif;
-}
-
-.budget-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-bottom: 20px;
-}
-
-.budget-table th,
-.budget-table td {
-	border: 1px solid #ddd;
-	padding: 10px;
-	text-align: center;
-}
-
-.budget-table th {
-	background-color: #f8f8f8;
-	font-weight: bold;
-}
-
-.budget-table input {
-	width: 80%;
-	padding: 5px;
-	text-align: right;
-}
-
 .btn-wrap {
 	text-align: right;
 }
@@ -309,7 +280,7 @@
 .dash {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: left;
 	gap: 15px
 }
 
@@ -388,22 +359,20 @@
 	font-size: 12px;
 }
 
-/*Budget.html*/
+/*--------Budget.html-------------*/
 .budget-card {
-	display: flex;
-	flex-wrap: wrap;
-	/* 세로 가운데 정렬 */
-	margin-bottom: 10px;
-	/* 간격 */
+	display: flex;	
+	flex-direction: column;
+	align-items: center;
+	width: 80%;
+	margin: 10px;
 	background-color: rgba(255, 255, 255, 0.85);
 	border: 1px solid #ffd2cc;
-	padding: 30px;
-	width: 600px;
+	padding: 16px;
 	color: #5a3a36;
 	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
 	border-radius: 10px;
 	transition: transform 0.3s ease;
-
 }
 
 .btn {
@@ -421,15 +390,24 @@
 	background: rgb(128, 128, 255);
 }
 
-
-
-
-.budget-table {
+.budget-card table {
+	/*table-layout: auto;*/
+	margin-top:50px;
+	margin-bottom: 20px;
 	width: 100%;
 	border-collapse: collapse;
-	margin-bottom: 20px;
 }
-
+.budget-card .item {
+  	border: 1px solid #ddd;
+  	padding: 10px;
+  	text-align: center;
+  }
+.budget-card .total{
+	background-color:var(--brand-weak);
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: right;
+}
 .budget-table td {
 	border: 1px solid #ddd;
 	padding: 10px;
@@ -437,19 +415,40 @@
 }
 
 .budget-table th {
-	background-color: #f8f8f8;
+	background-color: #ffd2cc;
+	border: 1px solid #ddd;
 	font-weight: bold;
 }
 
 .budget-table input {
 	width: 80%;
 	padding: 5px;
-	text-align: right;
+	text-align: left;
 }
 
 .btn-wrap {
 	text-align: right;
 }
+
+
+
+
+.calculator-card td {
+    	border: 1px solid #ddd;
+    	padding: 10px;
+    }
+
+.calculator-card h4 {
+	background: #e9d5ff;
+	border: 1px solid var(--line);	
+	border-radius:16px; 	
+	box-shadow:var(--shadow); padding:16px;
+	padding: 16px;
+}
+.calculator-card .btn-cell{
+	text-align: right;
+}
+
 
 
 
