@@ -44,58 +44,58 @@
 						            <tbody>
 						                <tr>
 						                    <td class="item">웨딩홀</td>
-						                    <td><input type="number" name="hall" th:value="${totalBudget.hall}" /></td>
+						                    <td><input type="number" name="hall" th:value="${totalBudget.hall}"/> 원</td>
 						                </tr>
 						                <tr>
 						                    <td class="item">스튜디오</td>
-						                    <td><input type="number" name="studio" th:value="${totalBudget.studio}" /></td>
+						                    <td><input type="number" name="studio" th:value="${totalBudget.studio}"/> 원</td>
 						                </tr>
 						                <tr>
 						                    <td class="item">드레스</td>
-						                    <td><input type="number" name="dress" th:value="${totalBudget.dress}" /></td>
+						                    <td><input type="number" name="dress" th:value="${totalBudget.dress}"/> 원</td>
 						                </tr>
 						                <tr>
 						                    <td class="item">메이크업</td>
-						                    <td><input type="number" name="makeup" th:value="${totalBudget.makeup}" /></td>
+						                    <td><input type="number" name="makeup" th:value="${totalBudget.makeup}"/> 원</td>
 						                </tr>
 										<!-- 추가항목 값이 0이 아니면 출력 -->
 										<tr th:if="${totalBudget.dvd != 0}">
 										    <td class="item">본식 DVD/스냅</td>
-										   	<td><input type="number" name="dvd" th:value="${totalBudget.dvd}"></td>
+										   	<td><input type="number" name="dvd" th:value="${totalBudget.dvd}"/> 원</td>
 										</tr>
 
 										<tr th:if="${totalBudget.makeup_parents != 0}">
-										    <td class="item">혼주 메이크업</t>
-										    <td><input type="number" name="makeup_parents" th:value="${totalBudget.makeup_parents}"></td>
+										    <td class="item">혼주 메이크업</td>
+										    <td><input type="number" name="makeup_parents" th:value="${totalBudget.makeup_parents}"/> 원</td>
 										</tr>
 										<tr th:if="${totalBudget.ring != 0}">
 										    <td class="item">웨딩링</td>
-										    <td><input type="number" name="ring" th:value="${totalBudget.ring}"></td>
+										    <td><input type="number" name="ring" th:value="${totalBudget.ring}"/> 원</td>
 										</tr>
 										<tr th:if="${totalBudget.hair != 0}">
 										    <td class="item">헤어변형</td>
-										    <td><input type="number" name="hair" th:value="${totalBudget.hair}"></td>
+										    <td><input type="number" name="hair" th:value="${totalBudget.hair}"/> 원</td>
 										</tr>
 										<tr th:if="${totalBudget.skincare != 0}">
 											<td class="item">스킨케어</td>
-											<td><input type="number" name="skincare" th:value="${totalBudget.skincare}"></td>
+											<td><input type="number" name="skincare" th:value="${totalBudget.skincare}"/> 원</td>
 										</tr>
 										<tr th:if="${totalBudget.hanbok != 0}">
 											<td class="item">한복</td>
-											<td><input type="number" name="hanbok" th:value="${totalBudget.hanbok}"></td>
+											<td><input type="number" name="hanbok" th:value="${totalBudget.hanbok}"/> 원</td>
 										</tr>
 										<tr th:if="${totalBudget.honeymoon != 0}">
 											<td class="item">신혼여행</td>
-											<td><input type="number" name="honeymoon" th:value="${totalBudget.honeymoon}"></td>
+											<td><input type="number" name="honeymoon" th:value="${totalBudget.honeymoon}"/> 원</td>
 										</tr>
 										<tr th:if="${totalBudget.invitation != 0}">
 											<td class="item">청첩장</td>
-											<td><input type="number" name="invitation" th:value="${totalBudget.invitation}"></td>
+											<td><input type="number" name="invitation" th:value="${totalBudget.invitation}"/> 원</td>
 										</tr>
 																			
-										<tr>
+										<tr class="extraRow">
 										    <td class="item">
-												<select id="extraOption" name="extraOption">
+												<select class="extraOption" name="extraOption[]">
 												    <option value="">-- 추가항목 --</option>
 												    <option value="dvd" th:disabled="${totalBudget.dvd != 0}">본식 DVD/스냅</option>
 												    <option value="makeup_parents" th:disabled="${totalBudget.makeup_parents != 0}">혼주 메이크업</option>
@@ -106,15 +106,14 @@
 												    <option value="honeymoon" th:disabled="${totalBudget.honeymoon != 0}">신혼여행</option>
 												    <option value="invitation" th:disabled="${totalBudget.invitation != 0}">청첩장</option>
 												</select>
-										    </td>
-										
-											<td id="extraInputRow">
-											    <input type="number" id="extraInputInput" name="extraValue" placeholder="금액 입력" style="display:none;" />
+										    </td>										
+											<td>
+											    <input type="number" class="extraInput" name="extraValue[]" placeholder="금액 입력" style="display:none;" /> 원
 											</td>
 										</tr>
-						                <tr>
-						                    <td><strong>총 예산</strong></td>
-						                    <td><span th:text="${sumBudget}">0</span> 원</td>
+						                <tr id="totalRow">
+						                    <td class="item"><strong>총 예산</strong></td>
+						                    <td class="total"><span th:text="${sumBudget}">0</span> 원</td>
 						                </tr>
 						            </tbody>
 						        </table>

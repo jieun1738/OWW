@@ -42,6 +42,10 @@ public class MypageController {
 		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
 		int sumBudget=dashservice.sumBudget(user_email);
 		model.addAttribute("sumBudget", sumBudget);	
+		int plan_no=dashservice.getPlan(user_email).getPlan_no();
+		int contract_y_count = dashservice.getContractProgess(plan_no);
+		System.out.println(contract_y_count);
+		model.addAttribute("contract_progress",(contract_y_count*100/4));
     	return "Budget";
     }
     
