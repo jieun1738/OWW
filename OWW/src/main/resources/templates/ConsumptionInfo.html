@@ -5,13 +5,64 @@
 <title>소비정보 조회</title>
 	<link th:href="@{/css/design.css}" rel="stylesheet" />
 	<link th:href="@{/css/WeddingDIY.css}" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('chart').getContext('2d');
+
+    const hall   = /*[[${planprogress.pay_hall}]]*/ 0;
+    const studio = /*[[${planprogress.pay_stud}]]*/ 0;
+    const dress  = /*[[${planprogress.pay_dres}]]*/ 0;
+    const makeup = /*[[${planprogress.pay_make}]]*/ 0;
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['웨딩홀', '스튜디오', '드레스', '메이크업'],
+            datasets: [{
+                data: [hall, studio, dress, makeup],
+                backgroundColor: [
+                    'rgba(0, 102, 255, 0.5)',
+                    'rgba(0, 204, 102, 0.5)',
+                    'rgba(255, 153, 0, 0.5)',
+                    'rgba(255, 51, 102, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(0, 102, 255, 1)',
+                    'rgba(0, 204, 102, 1)',
+                    'rgba(255, 153, 0, 1)',
+                    'rgba(255, 51, 102, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+        	responsive: false,  // 반응형 해제
+            plugins: {
+                title: {
+                    display: true,
+                    text: '항목별 지출 현황'
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+});
+</script>
+
+
 </head>
+
+
 <body>
 	<th:block layout:fragment="header" th:insert="~{@{/fragments/header}}"></th:block>
 	<th:block layout:fragment="nav" th:insert="~{@{/fragments/nav}}"></th:block>
 	
 	<!-- ========== Left Global Menu ========== -->
-	<aside class="leftnav" aria-label="글로벌 메뉴">
+	<!-- <aside class="leftnav" aria-label="글로벌 메뉴">
 		<div class="content">
 			<img src="/img/user.png" alt="사용자 프로필" width="20px" height="20px" /><br>
 			<span th:text="${totalBudget.user_email}">사용자 이메일</span>
@@ -39,28 +90,32 @@
 			</a>
 		</div>
 	</aside>
-	
+	 -->
 	<main class="main">
 	<h2>소비 정보 조회</h2>
 	
 	<h3>전체 정보 요약 분석</h3>
 	<div>
-	<progress  value="${paidAmount}" max="${Amount}"></progress><!-- progress bar -->
-	<span>총 예산: </span><span>${Amount}</span><br>
-	<span>사용금액: </span><span>${paidAmount}</span><br>
-	<span>잔여금액: </span><span>${Amount - paidAmount}</span><br>
+	<progress th:value="${paidAmount}" th:max="${Amount}"></progress><!-- progress bar --><br>
+	<span>총 예산: </span><span th:text="${Amount}"></span><br>
+	<span>사용금액: </span><span th:text="${paidAmount}"></span><br>
+	<span>잔여금액: </span><span th:text="${Amount - paidAmount}"></span><br>
 	</div>
 
 	<h3>항목별 지출 정보</h3>
 	<div>
-	웨딩홀:<progress  value="${planprogress.pay_hall}" max="${budgetform.weddingHall}"></progress>
-	스튜디오:<progress  value="${planprogress.pay_stud}" max="${budgetform.studio}"></progress>
-	드레스:<progress  value="${planprogress.pay_dres}" max="${budgetform.dress}"></progress>
-	메이크업:<progress  value="${planprogress.pay_make}" max="${budgetform.makeup}"></progress>
+	웨딩홀:<progress th:value="${planprogress.pay_hall}" th:max="${budgetVO.hall}"></progress><br>
+	스튜디오:<progress th:value="${planprogress.pay_stud}" th:max="${budgetVO.studio}"></progress><br>
+	드레스:<progress th:value="${planprogress.pay_dres}" th:max="${budgetVO.dress}"></progress><br>
+	메이크업:<progress th:value="${planprogress.pay_make}" th:max="${budgetVO.makeup}"></progress><br>
+
 	</div>
 	<h3>소비 패턴 분석</h3>
-	
-	
+			<!-- 차트 콘텐츠 -->
+		<div class="chart-container">
+			<canvas id="chart" width="400" height="400" ></canvas>
+		</div>
+		
 	</main>
 </body>
 </html>
