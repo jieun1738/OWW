@@ -199,19 +199,49 @@ public class MypageController {
 	@GetMapping("/ConsumptionInfo")
 	public String getConsumption(Model model) {
 		
+		
 		String user_email = "user2@example.com";
 		int plan_no = dashservice.getPlan(user_email).getPlan_no();
 		BudgetVO budgetVO = dashservice.getBudget(user_email);
 		PlanProgressVO planprogress = dashservice.getPlanProgress(plan_no);
+
+		// 사이드바 진행율용
+		int sumBudget = budgetVO.getAmount();
+		model.addAttribute("sumBudget", sumBudget);
+		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
+
+		int contract_y_count = dashservice.getContractProgess(plan_no);
+		model.addAttribute("contract_progress", (contract_y_count * 100 / 4));
 		
-		long Amount = budgetVO.getAmount();
-		long paidAmount = planprogress.sumAllpay();
-		
-		
+		//전체항목 지출
+		int Amount = budgetVO.getAmount();
+		int paidAmount = planprogress.sumAllpay();
+		double totalProgresspct = ((double)paidAmount/Amount)*100.0;
+		double totalProgress = Math.round(totalProgresspct * 100.0) / 100.0;
+
 		model.addAttribute("Amount",Amount);
 		model.addAttribute("paidAmount", paidAmount);
-		model.addAttribute("planprogress",planprogress);
+		model.addAttribute("totalProgress", totalProgress );
+		
+		//항목별 지출
+		double hallProgresspct= ((double)planprogress.getPay_hall()/budgetVO.getHall())*100.0;
+		double hallProgress = Math.round(hallProgresspct * 100.0) / 100.0;		
+		model.addAttribute("hallProgress",hallProgress);
+		
+		double studioProgresspct= ((double)planprogress.getPay_stud()/budgetVO.getStudio())*100.0;
+		double studioProgress = Math.round(studioProgresspct * 100.0) / 100.0;		
+		model.addAttribute("studioProgress",studioProgress);
+		
+		double dressProgresspct= ((double)planprogress.getPay_dres()/budgetVO.getDress())*100.0;
+		double dressProgress = Math.round(dressProgresspct * 100.0) / 100.0;		
+		model.addAttribute("dressProgress",dressProgress);
+		
+		double makeupProgresspct= ((double)planprogress.getPay_make()/budgetVO.getMakeup())*100.0;
+		double makeupProgress = Math.round(makeupProgresspct * 100.0) / 100.0;		
+		model.addAttribute("makeupProgress",makeupProgress);
+		
 		model.addAttribute("budgetVO",budgetVO);
+		model.addAttribute("planprogress", planprogress);
 		
 		return "ConsumptionInfo";
 		

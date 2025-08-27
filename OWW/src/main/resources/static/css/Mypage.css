@@ -166,8 +166,8 @@
 	border-radius: 20px;
 	width: 60%;
 	height: 25px;
+	overflow: visible;
 	margin: 5px 0;
-	overflow: hidden;
 	display: flex;
 	align-items: center;
 	/* 세로 중앙 정렬 */
@@ -429,24 +429,136 @@
 .btn-wrap {
 	text-align: right;
 }
+/*--------consumption------------*/
+.consum-card {
+	display: grid;
+	grid-template-columns: 300px 300px;  /* 3열 */
+	grid-template-rows: auto auto auto auto;   /* 3행 */
+	width: 80%;
+	margin-top: 0px;
+	align-items: center;
+	margin-bottom: 10px;
+	/* 간격 */
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 1px solid #ffd2cc;
+	padding: 30px;
+	width: 600px;
+	color: #5a3a36;
+	box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+	border-radius: 10px;
+	transition: transform 0.3s ease;
 
-
-
-
-.calculator-card td {
-    	border: 1px solid #ddd;
-    	padding: 10px;
-    }
-
-.calculator-card h4 {
-	background: #e9d5ff;
-	border: 1px solid var(--line);	
-	border-radius:16px; 	
-	box-shadow:var(--shadow); padding:16px;
-	padding: 16px;
 }
-.calculator-card .btn-cell{
-	text-align: right;
+
+.consum-card .total{
+	grid-row:1;  
+	grid-column:  1 /span 2; /* 1~2열 합치기 */
+	width: 100%;
+	margin-left:20px;	
+}
+.total .total-progress{
+	width: 90%;
+	padding: 16px;
+	border: 1px solid #5a3a36;
+	object-fit: cover;
+	border-radius: 3px;
+}
+.total-progress .progress-container {
+	position: relative;
+	background: rgb(244, 220, 252);
+	border-radius: 20px;
+	width: 90%;
+	height: 25px;
+	overflow: visible;
+	margin: 5px 0;
+	display: flex;
+	align-items: center;
+	/* 세로 중앙 정렬 */
+	padding-left: 4px;
+}
+
+.total-progress .progress-bar {
+	background: linear-gradient(90deg, rgb(64, 0, 128), rgb(186, 121, 225));
+	height: 60%;
+	border-radius: 20px;
+	transition: width 0.3s ease;
+}
+
+
+.consum-card .item-consum{
+	grid-row: 2;  
+	grid-column:  1; /* 1~2열 합치기 */
+	display: flex;
+	align-self: start;
+	width:100%;
+	margin-top:0;
+	justify-content: center;
+	flex-direction: column;
+}
+.consum-card .item-consum h3 {
+	color: #5a3a36;
+	font-size: 20px;
+	text-align: center;
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
+.item-consum .wrap{
+  	display: flex;    
+  	gap: 3px;
+  	justify-content: flex-start;	
+}
+.item-consum .wrap h3 {
+	width:30%;
+	color: #5a3a36;
+	font-size: 12px;
+	text-align: left;
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
+.item-consum .progress-container {
+	position: relative;
+	background: rgb(244, 220, 252);
+	border-radius: 20px;
+	width: 60%;
+	height: 25px;
+	overflow: visible;
+	margin: 5px 0;
+	display: flex;
+	align-items: center;
+	/* 세로 중앙 정렬 */
+	padding: 4px;
+}
+.progress-container span {
+	position: absolute; 
+	 top: 50%;
+	 transform: translateY(-50%);
+	 font-size: 14px;
+	 font-weight: bold;
+	 color: rgb(64, 0, 128);
+	 white-space: nowrap;
+}
+.item-consum .progress-bar {
+	background: linear-gradient(90deg, rgb(64, 0, 128), rgb(186, 121, 225));
+	height: 60%;
+	border-radius: 20px;
+	transition: width 0.3s ease;
+}
+.consum-card .pattern {
+	grid-row: 2;
+	grid-column: 2;
+	width: 100%;
+	margin-top: 0;
+	align-items: center;
+	display: flex;
+	align-self: start;
+	justify-content: center;
+	flex-direction: column;
+}.consum-card .pattern h3 {
+	color: #5a3a36;
+	font-size: 20px;
+	text-align: center;
+	margin-bottom: 5px;
+	margin-left: 5px;
 }
 
 

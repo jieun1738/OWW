@@ -27,37 +27,37 @@
 	<div class="budget">
 		<h5 class="mini-title">예산 설정 정보</h5>
 		    <ul class="mini-list">
-		      <li><h4 th:text="|웨딩홀: ${totalBudget.hall}|">웨딩홀:-</h4></li>
-		      <li><h4 th:text="|스튜디오: ${totalBudget.studio}|">스튜디오:-</h4></li>
-		      <li><h4 th:text="|드레스: ${totalBudget.dress}|">드레스:-</h4></li>
-		      <li><h4 th:text="|메이크업: ${totalBudget.makeup}|">메이크업:-</h4></li>			 
+		      <li><h4 th:text="|웨딩홀: ${totalBudget.hall} 원|">웨딩홀: - 원</h4></li>
+		      <li><h4 th:text="|스튜디오: ${totalBudget.studio} 원|">스튜디오: - 원</h4></li>
+		      <li><h4 th:text="|드레스: ${totalBudget.dress} 원|">드레스: - 원</h4></li>
+		      <li><h4 th:text="|메이크업: ${totalBudget.makeup} 원|">메이크업: - 원</h4></li>			 
 		      </ul>
-			  <h6 th:text="|총 예산: ${sumBudget}|">총 예산:-</h6>
+			  <h6 th:text="|총 예산: ${sumBudget} 원|">총 예산: - 원</h6>
 		</div>
 
     <!-- 내비게이션 -->
     <div class="ln-title" style="margin-top:10px;">메뉴</div>
     <nav class="ln-list">
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'Mypage')}? ' active' : ''"
+         th:classappend="${#strings.containsIgnoreCase(active,'MyWeddingPlan')}? ' active' : ''"
          th:href="@{/mypage}">
         <i class='bx bx-home-heart'></i><span>my 웨딩플랜</span>
       </a>
 
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'Mypage')}? ' active' : ''"
+         th:classappend="${#strings.containsIgnoreCase(active,'Budget')}? ' active' : ''"
          th:href="@{/budgetSetting}">
         <i class='bx bx-book-open'></i><span>예산 설정</span>
       </a>
 
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'Mypage')}? ' active' : ''"
-         th:href="@{/planner/category}">
+         th:classappend="${#strings.containsIgnoreCase(active,'ConsumptionInfo')}? ' active' : ''"
+         th:href="@{/ConsumptionInfo}">
         <i class='bx bx-category'></i><span>소비 정보</span>
       </a>
 
       <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingDIY')}? ' active' : ''"
+         th:classappend="${#strings.containsIgnoreCase(active,'SafeBox')}? ' active' : ''"
          th:href="@{/safebox}">
         <i class='bx bx-wrench'></i><span>차곡차곡 금고</span>
       </a>
