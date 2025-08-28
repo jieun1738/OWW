@@ -11,6 +11,8 @@
 	<link rel="stylesheet" th:href="@{/css/Mypage.css}">
 	<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 	<script src="/js/payment.js" defer></script>
+	<script src="/js/checkbox_progressbar_db.js" defer></script>
+	<script src="/js/checkbox_control.js" defer></script>
 	
 	<style>
 		
@@ -33,17 +35,16 @@
 				<div class="progress-item">
 					<h4>결혼 준비 진행율</h4>
 					<div class="progress-container">
-						<div id="progress-bar" class="progress-bar" th:style="'width:' + ${contract_progress}+'%'">
-							<span th:text="${contract_progress} + '%'"></span>
-						</div>
+						<div id="progress-bar" class="progress-bar" th:style="'width:' + ${contract_progress}+'%'">						
+						</div><span th:text="${contract_progress} + '%'" th:style="'left: calc(' + ${contract_progress} + '% + 7px)'"></span>
 					</div>
 				</div>
 				<div class="progress-item">
 					<h4>예산 사용율</h4>
 					<div class="progress-container">
 						<div class="progress-bar" th:style="'width:' + ${paid_progress}+'%'">
-							<span th:text="${paid_progress} + '%'"></span>
-						</div>
+							
+						</div><span th:text="${paid_progress} + '%'" th:style="'left: calc(' + ${paid_progress} + '% + 7px)'"></span>
 					</div>
 				</div>
 			</div>
@@ -236,6 +237,5 @@
 				</section>
 
 </body>
-<script src="/js/checkbox_progressbar_db.js"></script>
-<script src="/js/checkbox_control.js"></script>
+
 </html>
