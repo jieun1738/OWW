@@ -1,26 +1,120 @@
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
- "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.oww.oww1.mapper.PlanMapper">
 
-  <!-- 최종 확정 저장 (plan_no는 트리거로 자동 부여) -->
-  <insert id="insertPlan" parameterType="com.oww.oww1.VO.PlanVO">
-    INSERT INTO plan (user_email, package_no, hall, studio, dress, makeup)
-    VALUES (#{user_email}, #{package_no}, #{hall}, #{studio}, #{dress}, #{makeup})
+  <!-- PlanVO는 카멜 필드(planNo, userEmail, packageNo, hall, studio, dress, makeup) -->
+  <resultMap id="PlanMap" type="com.oww.oww1.VO.PlanVO">
+    <id     property="planNo"    column="PLAN_NO"/>
+    <result property="userEmail" column="USER_EMAIL"/>
+    <result property="packageNo" column="PACKAGE_NO"/>
+    <result property="hall"      column="HALL"/>
+    <result property="studio"    column="STUDIO"/>
+    <result property="dress"     column="DRESS"/>
+    <result property="makeup"    column="MAKEUP"/>
+  </resultMap>
+
+  <!-- 사용자별 플랜 목록 -->
+  <select id="findPlansByUser" parameterType="string" resultMap="PlanMap">
+    SELECT
+      PLAN_NO, USER_EMAIL,
+      NVL(PACKAGE_NO, 0) AS PACKAGE_NO,
+      NVL(HALL,   0)     AS HALL,
+      NVL(STUDIO, 0)     AS STUDIO,
+      NVL(DRESS,  0)     AS DRESS,
+      NVL(MAKEUP, 0)     AS MAKEUP
+    FROM PLAN
+    WHERE USER_EMAIL = #{userEmail}
+    ORDER BY PLAN_NO DESC
+  </select>
+
+  <!-- 플랜에 포함된 상품 4종(Hall/Studio/Dress/Makeup) 모두 조회: ProductVO(카멜)로 반환 -->
+  <select id="findProductsByPlanNo" parameterType="int" resultType="com.oww.oww1.VO.ProductVO">
+    SELECT
+      p.product_no      AS productNo,
+      p.product_name    AS productName,
+      p.category        AS category,
+      NVL(p.cost,0)     AS cost,
+      p.address         AS address,
+      p.description     AS description,
+      p.img             AS img
+    FROM plan pl
+    JOIN product p ON p.product_no = pl.hall
+    WHERE pl.plan_no = #{planNo}
+      AND pl.hall IS NOT NULL
+
+    UNION ALL
+
+    SELECT
+      p.product_no      AS productNo,
+      p.product_name    AS productName,
+      p.category        AS category,
+      NVL(p.cost,0)     AS cost,
+      p.address         AS address,
+      p.description     AS description,
+      p.img             AS img
+    FROM plan pl
+    JOIN product p ON p.product_no = pl.studio
+    WHERE pl.plan_no = #{planNo}
+      AND pl.studio IS NOT NULL
+
+    UNION ALL
+
+    SELECT
+      p.product_no      AS productNo,
+      p.product_name    AS productName,
+      p.category        AS category,
+      NVL(p.cost,0)     AS cost,
+      p.address         AS address,
+      p.description     AS description,
+      p.img             AS img
+    FROM plan pl
+    JOIN product p ON p.product_no = pl.dress
+    WHERE pl.plan_no = #{planNo}
+      AND pl.dress IS NOT NULL
+
+    UNION ALL
+
+    SELECT
+      p.product_no      AS productNo,
+      p.product_name    AS productName,
+      p.category        AS category,
+      NVL(p.cost,0)     AS cost,
+      p.address         AS address,
+      p.description     AS description,
+      p.img             AS img
+    FROM plan pl
+    JOIN product p ON p.product_no = pl.makeup
+    WHERE pl.plan_no = #{planNo}
+      AND pl.makeup IS NOT NULL
+  </select>
+
+  <!-- DIY 저장: package_no는 9999로 표기(임시 패키지 개념), 0은 NULL 변환 -->
+  <insert id="insertPlanDIY" parameterType="com.oww.oww1.VO.PlanVO">
+    INSERT INTO PLAN (USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP)
+    VALUES (
+      #{userEmail},
+      9999,
+      NULLIF(#{hall},   0),
+      NULLIF(#{studio}, 0),
+      NULLIF(#{dress},  0),
+      NULLIF(#{makeup}, 0)
+    )
   </insert>
 
-  <!-- 사용자별 확정 목록 -->
-  <select id="findByUser" resultType="com.oww.oww1.VO.PlanVO">
-    SELECT
-      plan_no,
-      user_email,
-      package_no,
-      hall,
-      studio,
-      dress,
-      makeup
-    FROM plan
-    WHERE user_email = #{userEmail}
-    ORDER BY plan_no DESC
-  </select>
+  <!-- 패키지 선택 저장: packageNo 사용(카멜), 0은 NULL 변환 -->
+  <insert id="insertPlanPKG" parameterType="com.oww.oww1.VO.PlanVO">
+    INSERT INTO PLAN (USER_EMAIL, PACKAGE_NO, HALL, STUDIO, DRESS, MAKEUP)
+    VALUES (
+      #{userEmail},
+      #{packageNo},
+      NULLIF(#{hall},   0),
+      NULLIF(#{studio}, 0),
+      NULLIF(#{dress},  0),
+      NULLIF(#{makeup}, 0)
+    )
+  </insert>
 
 </mapper>

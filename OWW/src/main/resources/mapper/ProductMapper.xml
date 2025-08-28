@@ -1,25 +1,82 @@
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
- "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.oww.oww1.mapper.ProductMapper">
 
-  <!-- 카테고리별 상품 목록 -->
-  <select id="findByCategory" resultType="com.oww.oww1.VO.ProductVO">
+  <!-- 카멜 VO(ProductVO)로 단순 매핑하기 위해 SELECT에 카멜 별칭 사용 -->
+  <!-- findAll -->
+  <select id="findAll" resultType="com.oww.oww1.VO.ProductVO">
     SELECT
-      product_no,
-      product_name,
-      category,
-      cost,
-      address,
-      description,
-      img
+      product_no      AS productNo,
+      product_name    AS productName,
+      category        AS category,
+      cost            AS cost,
+      address         AS address,
+      description     AS description,
+      img             AS img
     FROM product
-    WHERE category = #{category}
-    ORDER BY product_no
+    WHERE
+      (#{q,jdbcType=VARCHAR} IS NULL OR
+        ( LOWER(product_name) LIKE '%' || LOWER(#{q}) || '%'
+          OR LOWER(address)   LIKE '%' || LOWER(#{q}) || '%'
+          OR LOWER(description) LIKE '%' || LOWER(#{q}) || '%'
+        )
+      )
+      AND (#{exPattern,jdbcType=VARCHAR} IS NULL OR
+        ( NOT REGEXP_LIKE(LOWER(product_name), #{exPattern})
+          AND NOT REGEXP_LIKE(LOWER(address),   #{exPattern})
+          AND NOT REGEXP_LIKE(LOWER(description), #{exPattern})
+        )
+      )
+    ORDER BY
+      CASE WHEN #{sort,jdbcType=VARCHAR} = 'cost_asc'  THEN cost END ASC,
+      CASE WHEN #{sort,jdbcType=VARCHAR} = 'cost_desc' THEN cost END DESC,
+      product_no ASC
   </select>
 
-  <!-- 단건 조회 -->
+  <!-- 카테고리별 -->
+  <select id="findByCategory" resultType="com.oww.oww1.VO.ProductVO">
+    SELECT
+      product_no      AS productNo,
+      product_name    AS productName,
+      category        AS category,
+      cost            AS cost,
+      address         AS address,
+      description     AS description,
+      img             AS img
+    FROM product
+    WHERE
+      category = #{cat}
+      AND (#{q,jdbcType=VARCHAR} IS NULL OR
+        ( LOWER(product_name) LIKE '%' || LOWER(#{q}) || '%'
+          OR LOWER(address)   LIKE '%' || LOWER(#{q}) || '%'
+          OR LOWER(description) LIKE '%' || LOWER(#{q}) || '%'
+        )
+      )
+      AND (#{exPattern,jdbcType=VARCHAR} IS NULL OR
+        ( NOT REGEXP_LIKE(LOWER(product_name), #{exPattern})
+          AND NOT REGEXP_LIKE(LOWER(address),   #{exPattern})
+          AND NOT REGEXP_LIKE(LOWER(description), #{exPattern})
+        )
+      )
+    ORDER BY
+      CASE WHEN #{sort,jdbcType=VARCHAR} = 'cost_asc'  THEN cost END ASC,
+      CASE WHEN #{sort,jdbcType=VARCHAR} = 'cost_desc' THEN cost END DESC,
+      product_no ASC
+  </select>
+
+  <!-- 단건 -->
   <select id="findByNo" resultType="com.oww.oww1.VO.ProductVO">
-    SELECT product_no, product_name, category, cost, address, description, img
+    SELECT
+      product_no      AS productNo,
+      product_name    AS productName,
+      category        AS category,
+      cost            AS cost,
+      address         AS address,
+      description     AS description,
+      img             AS img
     FROM product
     WHERE product_no = #{productNo}
   </select>
