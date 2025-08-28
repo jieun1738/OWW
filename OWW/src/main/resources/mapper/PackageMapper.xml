@@ -1,72 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
- "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.oww.oww1.mapper.PackageMapper">
 
-  <!-- 패키지 목록(조인) : 파생표시필드 포함 / 가격 강조(원가/할인가) -->
-  <select id="listPackagesWithParts" resultType="com.oww.oww1.VO.PackageVO">
+  <!-- 패키지 카드 조회: PackageCardVO(카멜)로 반환 -->
+  <select id="search" parameterType="map" resultType="com.oww.oww1.VO.PackageCardVO">
     SELECT
-      p.package_no,
-      p.type,
-      p.hall,
-      p.studio,
-      p.dress,
-      p.makeup,
-      NVL(p.discount,0) AS discount,
+      p.package_no        AS packageNo,
+      p.type              AS type,
+      NVL(p.discount,0)   AS discount,
 
-      h.product_name AS hall_name,
-      h.cost         AS hall_cost,
-      h.img          AS hall_img,
+      h.product_no        AS hallNo,
+      h.product_name      AS hallName,
+      h.address           AS hallAddress,
+      h.cost              AS hallCost,
+      h.img               AS hallImg,
 
-      s.product_name AS studio_name,
-      s.cost         AS studio_cost,
+      s.product_no        AS studioNo,
+      s.product_name      AS studioName,
+      s.cost              AS studioCost,
 
-      d.product_name AS dress_name,
-      d.cost         AS dress_cost,
+      d.product_no        AS dressNo,
+      d.product_name      AS dressName,
+      d.cost              AS dressCost,
 
-      m.product_name AS makeup_name,
-      m.cost         AS makeup_cost,
+      m.product_no        AS makeupNo,
+      m.product_name      AS makeupName,
+      m.cost              AS makeupCost,
 
-      (h.cost + s.cost + d.cost + m.cost) AS total_price,
-      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS final_price
+      (h.cost + s.cost + d.cost + m.cost)                                          AS totalPrice,
+      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS finalPrice
     FROM package p
-    JOIN product h ON p.hall   = h.product_no
-    JOIN product s ON p.studio = s.product_no
-    JOIN product d ON p.dress  = d.product_no
-    JOIN product m ON p.makeup = m.product_no
-    ORDER BY p.package_no
+      JOIN product h ON p.hall   = h.product_no
+      JOIN product s ON p.studio = s.product_no
+      JOIN product d ON p.dress  = d.product_no
+      JOIN product m ON p.makeup = m.product_no
+    WHERE 1=1
+    <if test="type != null">
+      AND p.type = #{type}
+    </if>
+    <if test="q != null and q != ''">
+      AND (
+        LOWER(h.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%' OR
+        LOWER(s.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%' OR
+        LOWER(d.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%' OR
+        LOWER(m.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%'
+      )
+    </if>
+    <if test="region != null and region != ''">
+      AND LOWER(h.address) LIKE '%'||LOWER(#{region,jdbcType=VARCHAR})||'%'
+    </if>
+    <if test="minPrice != null">
+      AND ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) &gt;= #{minPrice, jdbcType=NUMERIC}
+    </if>
+    <if test="maxPrice != null">
+      AND ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) &lt;= #{maxPrice, jdbcType=NUMERIC}
+    </if>
+    <choose>
+      <when test="sort == 'priceAsc'">  ORDER BY finalPrice ASC,  p.package_no ASC </when>
+      <when test="sort == 'priceDesc'"> ORDER BY finalPrice DESC, p.package_no ASC </when>
+      <otherwise>                       ORDER BY p.package_no ASC </otherwise>
+    </choose>
   </select>
 
-  <!-- 패키지 상세(조인) -->
-  <select id="findPackageWithParts" resultType="com.oww.oww1.VO.PackageVO">
+  <select id="findOne" parameterType="int" resultType="com.oww.oww1.VO.PackageCardVO">
     SELECT
-      p.package_no,
-      p.type,
-      p.hall,
-      p.studio,
-      p.dress,
-      p.makeup,
-      NVL(p.discount,0) AS discount,
+      p.package_no        AS packageNo,
+      p.type              AS type,
+      NVL(p.discount,0)   AS discount,
 
-      h.product_name AS hall_name,
-      h.cost         AS hall_cost,
-      h.img          AS hall_img,
+      h.product_no        AS hallNo,
+      h.product_name      AS hallName,
+      h.address           AS hallAddress,
+      h.cost              AS hallCost,
+      h.img               AS hallImg,
 
-      s.product_name AS studio_name,
-      s.cost         AS studio_cost,
+      s.product_no        AS studioNo,
+      s.product_name      AS studioName,
+      s.cost              AS studioCost,
 
-      d.product_name AS dress_name,
-      d.cost         AS dress_cost,
+      d.product_no        AS dressNo,
+      d.product_name      AS dressName,
+      d.cost              AS dressCost,
 
-      m.product_name AS makeup_name,
-      m.cost         AS makeup_cost,
+      m.product_no        AS makeupNo,
+      m.product_name      AS makeupName,
+      m.cost              AS makeupCost,
 
-      (h.cost + s.cost + d.cost + m.cost) AS total_price,
-      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS final_price
+      (h.cost + s.cost + d.cost + m.cost)                                          AS totalPrice,
+      ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS finalPrice
     FROM package p
-    JOIN product h ON p.hall   = h.product_no
-    JOIN product s ON p.studio = s.product_no
-    JOIN product d ON p.dress  = d.product_no
-    JOIN product m ON p.makeup = m.product_no
+      JOIN product h ON p.hall   = h.product_no
+      JOIN product s ON p.studio = s.product_no
+      JOIN product d ON p.dress  = d.product_no
+      JOIN product m ON p.makeup = m.product_no
     WHERE p.package_no = #{packageNo}
   </select>
 

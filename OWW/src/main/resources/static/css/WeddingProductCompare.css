@@ -1,122 +1,147 @@
-:root {
-	--line: #e5e7eb;
-	--ink: #111827;
-	--sub: #6b7280;
-	--brand: #7c3aed;
-	--card: #fff;
-	--muted: #f9fafb;
-	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
-	--r: 16px;
+/* 전부 #cmpbar 네임스페이스로 한정해서 기존 스타일 침범 X */
+#cmpbar {
+	position: fixed;
+	left: 16px;
+	right: 16px;
+	bottom: 12px;
+	z-index: 2000;
+	pointer-events: none; /* 바깥 클릭 통과 */
 }
 
-#wppcompare.page {
-	display: grid;
-	grid-template-columns: 280px minmax(0, 1fr);
-	gap: 24px;
-	align-items: start;
+#cmpbar .cmp-wrap {
+	pointer-events: auto; /* 내부만 클릭 */
+	background: #ffffff;
+	border: 1px solid #e7e2dd;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, .12);
+	border-radius: 16px;
+	padding: 10px 12px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
 }
 
-#wppcompare .content {
-	padding: 8px 16px 32px;
+#cmpbar .cmp-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 	min-width: 0;
+	flex: 1;
 }
 
-#wppcompare .title {
-	margin: 0 0 6px;
-	font-size: 28px;
-	font-weight: 800;
-	letter-spacing: -.3px;
-}
-
-#wppcompare .desc {
-	margin: 0 0 14px;
-	color: var(--sub);
-}
-
-#wppcompare .btn {
-	appearance: none;
-	border: 1px solid var(--line);
-	background: var(--card);
-	color: var(--ink);
-	border-radius: 12px;
-	padding: 10px 14px;
-	font-weight: 700;
-	text-decoration: none;
+#cmpbar .cmp-title {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
+	font-weight: 800;
+	color: #7c3aed; /* brand */
+	white-space: nowrap;
 }
 
-#wppcompare .btn.brand {
-	background: var(--brand);
+#cmpbar .cmp-chips {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+#cmpbar .cmp-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	border-radius: 999px;
+	background: #f4ede6;
+	border: 1px solid #e7e2dd;
+	font-size: 12px;
+	font-weight: 700;
+	color: #2b2b2b;
+}
+
+#cmpbar .cmp-chip .x {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	border: 1px solid #e7e2dd;
+	background: #fff;
+	text-decoration: none;
+}
+
+#cmpbar .cmp-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+#cmpbar .cmp-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	border-radius: 12px;
+	font-weight: 800;
+	text-decoration: none;
+	border: 1px solid #e7e2dd;
+	background: #fff;
+	color: #2b2b2b;
+}
+
+#cmpbar .cmp-btn.primary {
+	background: #7c3aed;
 	color: #fff;
 	border-color: transparent;
 }
 
-#wppcompare .btn-s {
-	border: 1px solid var(--line);
-	background: #fff;
-	padding: 6px 10px;
-	border-radius: 10px;
-	cursor: pointer;
-}
-
-#wppcompare .table-wrap {
-	overflow: auto;
-	border: 1px solid var(--line);
-	border-radius: 16px;
-	background: linear-gradient(180deg, var(--muted), transparent);
-	box-shadow: var(--shadow);
-}
-
-#wppcompare table.cmp {
-	width: 100%;
-	border-collapse: separate;
-	border-spacing: 0;
-}
-
-#wppcompare th, #wppcompare td {
-	border-bottom: 1px solid var(--line);
-	padding: 12px;
-	vertical-align: top;
+#cmpbar .cmp-btn.ghost {
 	background: #fff;
 }
 
-#wppcompare thead th {
-	position: sticky;
-	top: 0;
-	background: #f8fafc;
-	z-index: 1;
-}
-
-#wppcompare thead th:first-child {
-	min-width: 160px;
-}
-
-#wppcompare .th-prod {
-	display: flex;
-	flex-direction: column;
+/* 비교 결과 페이지 간단 테이블 스타일 */
+.page .cmp-table {
+	display: grid;
 	gap: 8px;
-	align-items: flex-start;
 }
 
-#wppcompare .thumb {
-	width: 120px;
-	height: 80px;
-	border-radius: 10px;
-	background: #e5e7eb;
-	background-size: cover;
-	background-position: center;
+.page .cmp-header, .page .cmp-row {
+	display: grid;
+	grid-template-columns: 140px repeat(4, 1fr);
+	gap: 8px;
 }
 
-#wppcompare .name {
+.page .cmp-header .c, .page .cmp-row .c {
+	background: #fff;
+	border: 1px solid #e7e2dd;
+	border-radius: 12px;
+	padding: 10px;
+}
+
+.page .cmp-header .c {
 	font-weight: 800;
 }
 
-#wppcompare .empty {
-	padding: 28px;
-	border: 1px dashed var(--line);
+.page .cmp-row .key {
+	font-weight: 700;
+	color: #6b7280;
+}
+
+.page .cmp-header .pname {
+	font-weight: 800;
+}
+
+.page .cmp-header .addr {
+	color: #6b7280;
+	font-size: 12px;
+}
+
+.page .noimg {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 140px;
+	border: 1px dashed #e7e2dd;
 	border-radius: 12px;
-	color: var(--sub);
-	background: #fff;
+	color: #6b7280;
 }

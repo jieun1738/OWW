@@ -2,15 +2,26 @@ package com.oww.oww1.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.oww.oww1.VO.ConfirmView;
 import com.oww.oww1.VO.PlanVO;
+import com.oww.oww1.VO.ProductVO;
 
-/** PLAN 확정 저장/조회 매퍼 */
-@Mapper
 public interface PlanMapper {
-    void insertPlan(PlanVO vo);
 
-    List<PlanVO> findByUser(@Param("userEmail") String userEmail);
+    List<PlanVO> findPlansByUser(@Param("userEmail") String userEmail);
+
+    List<ProductVO> findProductsByPlanNo(@Param("planNo") int planNo);
+    
+    ConfirmView selectLatestConfirmed(@Param("userEmail") String userEmail);
+
+    int insertPlanDIY(@Param("userEmail") String userEmail,
+                      @Param("hall") int hall,
+                      @Param("studio") int studio,
+                      @Param("dress") int dress,
+                      @Param("makeup") int makeup);
+
+    int insertPlanFromPackage(@Param("userEmail") String userEmail,
+                              @Param("packageNo") int packageNo);
 }
