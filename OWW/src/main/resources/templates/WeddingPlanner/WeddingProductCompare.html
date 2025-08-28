@@ -1,73 +1,61 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
-<head>
-  <title layout:fragment="title">WeddingProductCompare</title>
-  <link rel="stylesheet" th:href="@{/css/WeddingProductCompare.css}">
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-<section layout:fragment="content">
-  <div class="page" id="wppcompare">
-    <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingPlanner/WeddingProductCompare', progress=${progressPercent})}"></div>
 
-    <main class="content">
-      <header class="page-header">
-        <div>
-          <h1 class="title section-title"><i class='bx bx-git-compare'></i>상품 비교</h1>
-          <p class="desc">최대 4개까지 나란히 비교합니다.</p>
-        </div>
-        <div class="quick-actions">
-          <form th:action="@{/planner/compare/product/reset}" method="post">
-            <button class="btn" type="submit"><i class='bx bx-trash'></i> 비교함 비우기</button>
-          </form>
-          <a class="btn brand" th:href="@{/planner/diy}"><i class='bx bx-wrench'></i> DIY로 돌아가기</a>
-        </div>
-      </header>
+<!-- ==================== 하단 떠있는 비교바 (Fragment) ==================== -->
+<div th:fragment="compareBar(compareList)">
+  <div id="cmpbar"
+       th:if="${compareList != null and !#lists.isEmpty(compareList)}"
+       aria-live="polite"
+       style="position:fixed; left:0; right:0; bottom:16px; z-index:60;">
+    <div class="cmp-wrap"
+         style="max-width:1200px; margin:0 auto; background:#fff; border:1px solid #e7e2dd; border-radius:14px; box-shadow:0 10px 20px rgba(17,24,39,.08); padding:10px 14px; display:flex; align-items:center; gap:10px;">
+      <!-- 좌측: 선택 목록 -->
+      <div class="cmp-left" style="display:flex; align-items:center; gap:10px; flex:1 1 auto; min-width:0;">
+        <span class="cmp-title" style="font-weight:800; white-space:nowrap;">
+          <i class='bx bx-git-compare' aria-hidden="true" style="margin-right:6px;"></i>
+          선택한 비교 상품 :
+        </span>
 
-      <div class="table-wrap" th:if="${products != null and !#lists.isEmpty(products)}">
-        <table class="cmp">
-          <thead>
-            <tr>
-              <th>항목</th>
-              <th th:each="p : ${products}">
-                <div class="th-prod">
-                  <div class="thumb" th:style="|background-image:url(${#strings.containsIgnoreCase(p.img,'http') ? p.img : @{/img/{img}(img=${p.img})}})|"></div>
-                  <div class="name" th:text="${p.productName}">상품명</div>
-                  <form th:action="@{/planner/compare/product/remove}" method="post">
-                    <input type="hidden" name="productNo" th:value="${p.productNo}">
-                    <button class="btn-s" type="submit"><i class='bx bx-x'></i> 제거</button>
-                  </form>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>카테고리</th>
-              <td th:each="p : ${products}" th:text="${p.category == 0 ? '웨딩홀' : (p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))}">-</td>
-            </tr>
-            <tr>
-              <th>가격</th>
-              <td th:each="p : ${products}" th:text="${#numbers.formatInteger(p.cost,3,'COMMA') + '원'}">0원</td>
-            </tr>
-            <tr>
-              <th>주소</th>
-              <td th:each="p : ${products}" th:text="${p.address}">주소</td>
-            </tr>
-            <tr>
-              <th>설명</th>
-              <td th:each="p : ${products}" th:text="${p.description}">설명</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="cmp-chips" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="cmp-chip"
+                th:each="p : ${compareList}"
+                style="display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid #e7e2dd; border-radius:999px; background:#f4ede6; font-weight:700; font-size:12px;">
+            <span class="name" th:text="${p.productName}" style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">상품명</span>
+            <a class="x"
+               th:href="@{/planner/compare/remove(productNo=${p.productNo})}"
+               aria-label="제거"
+               style="display:inline-flex; align-items:center; text-decoration:none; color:#7a7a7a;">
+              <i class='bx bx-x' aria-hidden="true"></i>
+            </a>
+          </span>
+        </div>
       </div>
 
-      <div class="empty" th:if="${products == null or #lists.isEmpty(products)}">
-        <i class='bx bx-info-circle'></i> 비교함이 비어 있습니다. DIY 목록에서 “비교” 버튼으로 담아보세요.
+      <!-- 우측: 액션 -->
+      <div class="cmp-actions" style="display:flex; gap:8px;">
+        <a class="cmp-btn ghost"
+           th:href="@{/planner/compare/clear}"
+           style="display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:12px; border:1px solid #e7e2dd; text-decoration:none; color:#2b2b2b; font-weight:700;">
+          <i class='bx bx-trash' aria-hidden="true"></i> 비우기
+        </a>
+        <!-- DIY 하단 비교표 표시 -->
+        <a class="cmp-btn primary"
+           th:href="@{/planner/WeddingDIY(
+                        cmp=1,
+                        all=${all},
+                        cat=${cat},
+                        q=${q},
+                        ex=${ex},
+                        sort=${sort}
+                      )}"
+           style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:12px; background:#7c3aed; color:#fff; text-decoration:none; font-weight:800;">
+          <i class='bx bx-spreadsheet' aria-hidden="true"></i> 비교하기
+        </a>
       </div>
-    </main>
+    </div>
   </div>
-</section>
+</div>
+
 </body>
 </html>

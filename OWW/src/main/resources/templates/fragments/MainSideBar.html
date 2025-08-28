@@ -9,18 +9,7 @@
       <div class="icon-box brand --xl" title="User"><i class='bx bx-user-circle'></i></div>
       <div class="ln-user">
         <div class="ln-hello" th:text="${(user != null && user.userName != null) ? user.userName + ' 님' : '반가워요!'}">반가워요!</div>
-        <div class="ln-mail" th:text="${(user != null && user.userEmail != null) ? user.userEmail : ''}">user@example.com</div>
-      </div>
-    </div>
-
-    <!-- 진행도 -->
-    <div class="ln-progress">
-      <div class="ln-title-row">
-        <div class="ln-title"><i class='bx bx-target-lock'></i> 진행도</div>
-        <div class="ln-pct" th:text="${progress != null ? progress + '%' : '0%'}">0%</div>
-      </div>
-      <div class="ln-bar">
-        <div class="ln-fill" th:style="${'width:' + (progress != null ? progress : 0) + '%'}"></div>
+        <div class="ln-mail" th:text="${(user != null && user.userEmail != null) ? user.userEmail : ''}"></div>
       </div>
     </div>
 
@@ -50,44 +39,32 @@
     <nav class="ln-list">
       <a class="ln-item"
          th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlannerInfo')}? ' active' : ''"
-         th:href="@{/planner/info}">
+         th:href="@{/WeddingPlanner/WeddingPlannerInfo}">
         <i class='bx bx-home-heart'></i><span>웨딩플래너</span>
       </a>
 
       <a class="ln-item"
          th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlannerIntro')}? ' active' : ''"
-         th:href="@{/planner/intro}">
+         th:href="@{/WeddingPlanner/WeddingPlannerIntro}">
         <i class='bx bx-book-open'></i><span>웨딩플래너 소개</span>
       </a>
 
       <a class="ln-item"
          th:classappend="${#strings.containsIgnoreCase(active,'WeddingCategory')}? ' active' : ''"
-         th:href="@{/planner/category}">
+         th:href="@{/planner/WeddingCategory}">
         <i class='bx bx-category'></i><span>테마별 패키지</span>
       </a>
 
       <a class="ln-item"
          th:classappend="${#strings.containsIgnoreCase(active,'WeddingDIY')}? ' active' : ''"
-         th:href="@{/planner/diy}">
+         th:href="@{/planner/WeddingDIY}">
         <i class='bx bx-wrench'></i><span>사용자 DIY</span>
       </a>
 
       <a class="ln-item"
          th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlanList')}? ' active' : ''"
-         th:href="@{/planner/plan/list}">
-        <i class='bx bx-collection'></i><span>플랜 보관함</span>
-      </a>
-
-      <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingProductCompare')}? ' active' : ''"
-         th:href="@{/planner/compare/product}">
-        <i class='bx bx-git-compare'></i><span>상품 비교</span>
-      </a>
-
-      <a class="ln-item"
-         th:classappend="${#strings.containsIgnoreCase(active,'WeddingPlanCompare')}? ' active' : ''"
-         th:href="@{/planner/compare/plan}">
-        <i class='bx bx-slider-alt'></i><span>플랜 비교</span>
+         th:href="@{/planner/WeddingPlanList}">
+        <i class='bx bx-collection'></i><span>임시 플랜 보관함</span>
       </a>
     </nav>
 

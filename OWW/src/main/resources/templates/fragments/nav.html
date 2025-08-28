@@ -19,27 +19,16 @@
 			</div>
 
 			<div class="site-nav__item">
-				<a th:href="@{/planner/info}" class="site-nav__link"
+				<a th:href="@{/WeddingPlanner/WeddingPlannerInfo}" class="site-nav__link"
 					th:classappend="${active}=='WeddingPlanner' ? ' is-active'"><i
 					class='bx bx-home-heart'></i> 웨딩플래너</a>
 				<div class="site-nav__dropdown">
-					<a th:href="@{/planner/intro}"><i class='bx bx-book-open'></i>
-						웨딩플래너 소개</a> <a th:href="@{/planner/category}"><i
-						class='bx bx-category'></i> 테마별 패키지</a> <a th:href="@{/planner/diy}"><i
-						class='bx bx-wrench'></i> 사용자 DIY</a> <a
-						th:href="@{/planner/plan/list}"><i class='bx bx-collection'></i>
-						플랜 보관함</a>
-					<div class="site-nav__dropdownFooter">
-						<img th:src="@{/img/wings-diamond.svg}" alt="menu badge" />
-					</div>
-				</div>
-			</div>
-
-			<div class="site-nav__item">
-				<a th:href="@{/diy}" class="site-nav__link"
-					th:classappend="${active}=='diy' ? ' is-active'">DIY</a>
-				<div class="site-nav__dropdown">
-					<a href="#">DIY 소개</a> <a href="#">예식편집</a>
+					<a th:href="@{/WeddingPlanner/WeddingPlannerIntro}">
+					<i class='bx bx-book-open'></i>웨딩플래너 소개</a> 
+					<a th:href="@{/planner/WeddingCategory}"><i class='bx bx-category'>
+					</i> 테마별 패키지</a> 
+					<a th:href="@{/planner/WeddingDIY}"><i class='bx bx-wrench'></i> 사용자 DIY</a> 
+					<a th:href="@{/planner/WeddingPlanList}"><i class='bx bx-collection'></i>플랜 보관함</a>
 					<div class="site-nav__dropdownFooter">
 						<img th:src="@{/img/wings-diamond.svg}" alt="menu badge" />
 					</div>
