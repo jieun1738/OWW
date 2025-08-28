@@ -139,7 +139,6 @@
 	border-radius: 10px;
 	transition: transform 0.3s ease;
 }
-
 .progress-item {
 	display: flex;
 	flex: 1 1 100%;
@@ -162,6 +161,7 @@
 }
 
 .progress-container {
+	position: relative;
 	background: rgb(244, 220, 252);
 	border-radius: 20px;
 	width: 60%;
@@ -171,7 +171,7 @@
 	display: flex;
 	align-items: center;
 	/* 세로 중앙 정렬 */
-	padding-left: 4px;
+	padding: 4px;
 }
 
 .progress-bar {
@@ -258,7 +258,7 @@
 	text-decoration: underline;
 }
 
-.payBtn {
+.total_btn, .payBtn {
 	background: rgb(217, 137, 243);
 	color: white;
 	border: none;
@@ -269,7 +269,7 @@
 	transition: background 0.3s ease;
 }
 
-.payBtn:hover {
+.total_btn:hover, .payBtn:hover {
 	background: rgb(128, 128, 255);
 }
 

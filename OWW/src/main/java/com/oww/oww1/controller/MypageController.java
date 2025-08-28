@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oww.oww1.OwwApplication;
@@ -46,7 +47,7 @@ public class MypageController {
 		int contract_y_count = dashservice.getContractProgess(plan_no);
 		System.out.println(contract_y_count);
 		model.addAttribute("contract_progress",(contract_y_count*100/4));
-    	return "Budget";
+    	return "Mypage/Budget";
     }
     
     
@@ -68,6 +69,7 @@ public class MypageController {
 			switch (imsi.getCategory()) {
 			case 0:
 				model.addAttribute("hallInfo", imsi);
+				System.out.println("이미지 경로: "+imsi.getImg());
 				break;
 			case 1:
 				model.addAttribute("studioInfo", imsi);
@@ -116,7 +118,7 @@ public class MypageController {
 		int paid_total_amount = dashservice.getPaidProgess(plan_no);
 		System.out.println(paid_total_amount);
 		model.addAttribute("paid_progress",(paid_total_amount*100/sumBudget));
-		return "MyWeddingPlan";
+		return "Mypage/MyWeddingPlan";
 		
 	}
 	
@@ -196,6 +198,29 @@ public class MypageController {
 	    return result;
 	}
 
+	@PostMapping("/saveBudget")
+	public String saveBudgettoDB(@ModelAttribute BudgetVO budget, 
+			@RequestParam(value = "extraOption[]", required = false) List<String> extraOptions,
+	        @RequestParam(value = "extraValue[]", required = false) List<Integer> extraValues) {
+		
+		for(int i =0 ; i < extraOptions.size() ; i++) {
+			///////////////값 확인해서 set 해주기
+		
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		return "redirect:/budgetSetting";
+	}
+	
+	
+	
 	@GetMapping("/ConsumptionInfo")
 	public String getConsumption(Model model) {
 		
@@ -243,7 +268,7 @@ public class MypageController {
 		model.addAttribute("budgetVO",budgetVO);
 		model.addAttribute("planprogress", planprogress);
 		
-		return "ConsumptionInfo";
+		return "Mypage/ConsumptionInfo";
 		
 	}
 	
