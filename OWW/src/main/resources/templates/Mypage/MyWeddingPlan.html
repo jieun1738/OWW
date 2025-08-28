@@ -35,16 +35,15 @@
 				<div class="progress-item">
 					<h4>결혼 준비 진행율</h4>
 					<div class="progress-container">
-						<div id="progress-bar" class="progress-bar" th:style="'width:' + ${contract_progress}+'%'">						
-						</div><span th:text="${contract_progress} + '%'" th:style="'left: calc(' + ${contract_progress} + '% + 7px)'"></span>
+						<div id="progress-bar" class="progress-bar" th:style="|width:${contract_progress}%|">						
+						</div><span th:text="${contract_progress} + '%'" th:style="|left: calc(${contract_progress}% + 7px)|"></span>
 					</div>
 				</div>
 				<div class="progress-item">
 					<h4>예산 사용율</h4>
 					<div class="progress-container">
-						<div class="progress-bar" th:style="'width:' + ${paid_progress}+'%'">
-							
-						</div><span th:text="${paid_progress} + '%'" th:style="'left: calc(' + ${paid_progress} + '% + 7px)'"></span>
+						<div class="progress-bar" th:style="|width:${paid_progress}%|">						
+						</div><span th:text="${paid_progress} + '%'" th:style="|left: calc(${paid_progress}% + 7px)|"></span>
 					</div>
 				</div>
 			</div>
@@ -59,7 +58,7 @@
 						<input type="hidden" name="product_name" th:value="'전체 플랜 결제'">
 						<input type="hidden" name="category" th:value="4">
 						<input type="hidden" name="discount" th:value="${discount}">
-						<button type="button" class="payBtn">전체 항목 결제하기</button>
+						<button type="button" class="total_btn">전체 항목 결제하기</button>
 
 					</div>
 				</form>
@@ -71,7 +70,7 @@
 
 					<div class="card-content">
 						
-							<img th:src="@{'/img/' + ${hallInfo.img}}" alt="웨딩홀 이미지" class="card-image" />
+							<img th:src="@{${hallInfo.img}}" alt="웨딩홀 이미지" class="card-image" />
 							<div class="card-details">
 								<div class="card-info">
 									<h3 th:text="${hallInfo.product_name}">웨딩홀명</h3>
@@ -90,7 +89,7 @@
 										<input type="checkbox" class="check_box" name="pay_hall" id="pay_hall"
 											th:field="*{planprog.pay_hall_ch}" />
 										<label for="hall_paid">결제완료</label>
-										<span th:text="${planprog.pay_hall}" class="underline-width"></span>
+										<span th:text="${planprog.pay_hall}" id="payamount_hall" class="underline-width"></span>
 										<form class="pay">
 											<input type="hidden" name="cost" th:value="${hallInfo.cost}">
 											<input type="hidden" name="product_name"
@@ -99,7 +98,7 @@
 											<button type="button" class="payBtn">항목 결제하기</button>
 										</form>
 									</div>
-									<button type="button" class="btn" onclick="location.href='planner/WeddingDIY'">
+									<button type="button" class="btn" th:onclick="|location.href='@{/planner/diy}'|">
 										다른 업체 보러가기
 									</button>
 									</div>
@@ -112,7 +111,7 @@
 				<!-- 스튜디오 카드 -->
 				<article class="card-dash">
 					<div class="card-content">
-							<img th:src="@{'/img/' + ${studioInfo.img}}" alt="스튜디오 이미지" class="card-image" />
+							<img th:src="@{${studioInfo.img}}" alt="스튜디오 이미지" class="card-image" />
 							<div class="card-details">
 								<div class="card-info">
 									<h3 th:text="${studioInfo.product_name}">스튜디오명</h3>
@@ -131,7 +130,7 @@
 										<input type="checkbox" class="check_box" name="pay_stud" id="pay_stud"
 											th:field="*{planprog.pay_stud_ch}" />
 										<label for="studio_paid">결제완료</label>
-										<span th:text="${planprog.pay_stud}" class="underline-width"></span>
+										<span th:text="${planprog.pay_stud}" id="payamount_stud" class="underline-width"></span>
 										<form class="pay">
 											<input type="hidden" name="cost" th:value="${studioInfo.cost}">
 											<input type="hidden" name="product_name"
@@ -140,7 +139,7 @@
 											<button type="button" class="payBtn">항목 결제하기</button>
 										</form>
 									</div>
-									<button type="button" class="btn" onclick="location.href='planner/WeddingDIY'">
+									<button type="button" class="btn"  th:onclick="|location.href='@{/planner/diy}'|">
 										다른 업체 보러가기
 									</button>
 								</div>
@@ -152,7 +151,7 @@
 				<!-- 드레스 카드 -->
 				<article class="card-dash">
 					<div class="card-content">
-							<img th:src="@{'/img/' + ${dressInfo.img}}" alt="드레스 이미지" class="card-image" />
+							<img th:src="@{${dressInfo.img}}" alt="드레스 이미지" class="card-image" />
 							<div class="card-details">
 								<div class="card-info">
 									<h3 th:text="${dressInfo.product_name}">드레스명</h3>
@@ -171,7 +170,7 @@
 										<input type="checkbox" name="pay_dres" id="pay_dres"
 											th:field="*{planprog.pay_dres_ch}" />
 										<label for="dress_paid">결제완료</label>
-										<span th:text="${planprog.pay_dres}" class="underline-width"></span>
+										<span th:text="${planprog.pay_dres}" id="payamount_dres" class="underline-width"></span>
 										<form class="pay">
 											<input type="hidden" name="cost" th:value="${dressInfo.cost}">
 											<input type="hidden" name="product_name"
@@ -180,7 +179,7 @@
 											<button type="button" class="payBtn">항목 결제하기</button>
 										</form>
 									</div>
-									<button type="button" class="btn" onclick="location.href='planner/WeddingDIY'">
+									<button type="button" class="btn" th:onclick="|location.href='@{/planner/diy}'|">
 										다른 업체 보러가기
 									</button>
 								</div>
@@ -194,7 +193,7 @@
 				<article class="card-dash">
 					<div class="card-content">
 						
-							<img th:src="@{'/img/' + ${makeupInfo.img}}" alt="메이크업 이미지" class="card-image" />
+							<img th:src="@{${makeupInfo.img}}" alt="메이크업 이미지" class="card-image" />
 							<div class="card-details">
 								<div class="card-info">
 									<h3 th:text="${makeupInfo.product_name}">메이크업샵명</h3>
@@ -213,7 +212,7 @@
 										<input type="checkbox" class="check_box" name="pay_make" id="pay_make"
 											th:field="*{planprog.pay_make_ch}" />
 										<label for="makeup_paid">결제완료</label>
-										<span th:text="${planprog.pay_make}" class="underline-width"></span>
+										<span th:text="${planprog.pay_make}" id="payamount_make" class="underline-width"></span>
 										<form class="pay">
 											<input type="hidden" name="cost" th:value="${makeupInfo.cost}">
 											<input type="hidden" name="product_name"
@@ -222,7 +221,7 @@
 											<button type="button" class="payBtn">항목 결제하기</button>
 										</form>
 									</div>
-									<button type="button" class="btn" onclick="location.href='planner/WeddingDIY'">
+									<button type="button" class="btn" th:onclick="|location.href='@{/planner/diy}'|">
 										다른 업체 보러가기
 									</button>
 								</div>

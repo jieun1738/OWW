@@ -1,4 +1,4 @@
-const payButtons = document.querySelectorAll('.payBtn');
+const payButtons = document.querySelectorAll('.total_btn, .payBtn');
 
 	payButtons.forEach(btn => {
 	    btn.addEventListener('click', () => {
@@ -7,7 +7,9 @@ const payButtons = document.querySelectorAll('.payBtn');
 	        const itemName = form.querySelector('input[name="product_name"]').value;
 	        const amount = form.querySelector('input[name="cost"]').value;
 			const category = form.querySelector('input[name="category"]').value;
-			const discount = form.querySelector('input[name="discount"]').value;
+			const discountInput = form.querySelector('input[name="discount"]');
+			const discount = discountInput ? discountInput.value : 0; // 없으면 0
+			
 	        const IMP = window.IMP;
 	        IMP.init('imp87271311');
 
