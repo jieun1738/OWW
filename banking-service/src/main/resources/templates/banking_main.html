@@ -239,6 +239,9 @@
 							</div>
 						</div>
 						<div class="service-card-right">
+						<a
+								th:href="${@environment.getProperty('app.gateway-base-url')} + '/banking/safebox/main'"
+								class="banking-btn">금고로 이동</a>
 							<a
 								th:href="${@environment.getProperty('app.gateway-base-url')} + '/banking/safebox/history'"
 								class="banking-btn auth-btn" data-url="/api/check-jwt">내역조회</a>
