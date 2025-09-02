@@ -182,6 +182,21 @@
 	color: var(--ink);
 }
 /*마이페이지에서 사용하는 부분*/
+.budget {
+	display : flex;
+	flex-direction : column;
+	justify-content : center;
+	margin : 5px 30px;
+	width : 70%;
+	height : 200px;
+	gap : 2px;
+	background : var (--brand-weak);
+	border : 1px solid var(--line);
+	border-radius : var(--r);
+	box-shadow: var(--shadow);
+	padding : 5px;
+	color : var(--ink);
+}
 
 /* ===============================
    LeftNav 버튼 스타일 보강 (드롭인)
@@ -212,10 +227,33 @@
   min-height: 42px;
 }
 
+.budget h5 {
+	text-align : center;
+	
+	fontsize : 15px;
+	color : var(--brand);
+}
+
 .ln-item i.bx {
   font-size: 18px;
   opacity: .9;
   transition: transform .12s ease, opacity .12s ease;
+}
+
+.budget h6 {
+	text-align : center;
+	font-size : 14px;
+}
+.budget .mini-list {
+	width : 90%;
+	text-align : left;
+	font-size : 12px;
+}
+
+.budget h4,
+.budget h5,
+.budget h6 {
+	margin : 2px 0;  /* 위아래 여백 줄임 */
 }
 
 /* hover */
