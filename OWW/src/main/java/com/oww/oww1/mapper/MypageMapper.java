@@ -36,5 +36,9 @@ public interface MypageMapper {
 	
 	public int updateContract(@Param("contract_category") String contract_category,
 		    @Param("YorN") String YorN, @Param("plan_no") int  plan_no);
+
+	public int setBudget(BudgetVO newBudget);
+
+	public int updateBudget(BudgetVO newBudget);
 	
 }

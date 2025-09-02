@@ -1,63 +1,37 @@
 <!doctype html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>차곡차곡 금고</title>
-
-  <link rel="stylesheet" href="/css/safe_box.css">
+  <title layout:fragment="title">myPage | 차곡차곡 금고</title>
+  <link rel="stylesheet" th:href="@{/css/Mypage.css}">
+<!--  <link rel="stylesheet" href="/css/safe_box.css">-->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+	<section layout:fragment="content">
+			<div class="page">
 
-  <!-- 상단바 -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <button class="btn-ghost">로그</button>
-      <a href="#" class="link">로그아웃</a>
-    </div>
-  </header>
+				<!-- 좌측 사이드바 -->
+				<div
+					th:replace="~{fragments/MypageSideBar :: sidebar(user=${user}, active='safe_box', progress=${contract_progress}, totalBudget=${totalBudget}, sumBudget=${sumBudget})}">
+				</div>
 
-  <div class="page">
-    <!-- 사이드 -->
-    <aside class="sidebar">
-      <div class="profile">
-        <div class="avatar">👤</div>
-        <div class="grade">금융회원 등급</div>
-      <div class="name" th:text="${(user != null and user.name != null) ? user.name : '이수연'}">이수연</div>
-
-      </div>
-
-      <div class="divider"></div>
-
-      <nav class="mymenu">
-        <a class="item">예산 설정 정보</a>
-
-        <div class="mini-card">
-          <div class="mini-title">예산 설정 정보</div>
-          <ul class="mini-list">
-            <li>월예산: 2,000,000원</li>
-            <li>식비: 300,000원</li>
-            <li>교통: 100,000원</li>
-            <li>저축: 300,000원</li>
-          </ul>
-        </div>
-
-        <a class="item">예산원표 조회</a>
-        <a class="item">예산상세</a>
-        <a class="item">소비내역 조회</a>
-        <a class="item">세이프 박스</a>
-        <a class="item active">차곡차곡 금고</a>
-        <a class="item">미니금고 입출내역</a>
-      </nav>
-    </aside>
-
-    <!-- 본문 -->
-    <main class="content">
-      <h1 class="page-title">차곡차곡 금고</h1>
+				<div class="cards">
+					<!-- 우측 본문 -->
+					<main class="content">
+						<header class="page-header">
+							<div>
+								<h1 class="title">차곡차곡 금고</h1>
+								<p class="desc">저금 현황을 확인하세요</p>
+							</div>
+						</header>
 
       <!-- 카드: 목표 달성율 -->
-      <section class="card">
+      <div class="card">
         <div class="card-title">목표 달성율</div>
 
         <div class="progress">
@@ -84,7 +58,7 @@
 			</span>
           </div>
         </div>
-      </section>
+      </div>
 
       <!-- 카드: 통계 + 그래프 -->
       <section class="card">

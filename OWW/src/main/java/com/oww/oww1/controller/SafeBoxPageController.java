@@ -2,15 +2,21 @@ package com.oww.oww1.controller;
 
 import java.security.Principal;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.oww.oww1.VO.BudgetForm;
+import com.oww.oww1.VO.BudgetVO;
 import com.oww.oww1.VO.GoalDto;
+import com.oww.oww1.VO.PlanProgressVO;
+import com.oww.oww1.VO.ProductVO;
 import com.oww.oww1.service.BudgetService;
+import com.oww.oww1.service.DashboardService;
 import com.oww.oww1.service.SafeBoxService;
 
 @Controller
@@ -31,7 +37,10 @@ public class SafeBoxPageController {
     public String mypageRoot() {
 		return "redirect:/mypage";/* /safe_box */
     }
-
+    
+	@Autowired
+	DashboardService dashservice;
+	
     @GetMapping({"/safe_box", "/safe_box/", "/safe-box", "/safe-box/"})
     public String safeBoxPage(Principal principal, Model model) {
         String email = resolveEmail(principal);
@@ -55,13 +64,27 @@ public class SafeBoxPageController {
                     safeSum(budget.getDress()) +
                     safeSum(budget.getMakeup());
         }
+        
 
+		String user_email = "user2@example.com";
+		int plan_no = dashservice.getPlan(user_email).getPlan_no();
+		BudgetVO budgetVO = dashservice.getBudget(user_email);
+		PlanProgressVO planprogress = dashservice.getPlanProgress(plan_no);
+
+		// 사이드바 진행율용
+		int sumBudget = budgetVO.getAmount();
+		model.addAttribute("sumBudget", sumBudget);
+		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
+
+		int contract_y_count = dashservice.getContractProgess(plan_no);
+		model.addAttribute("contract_progress", (contract_y_count * 100 / 4));
+		
         model.addAttribute("user", email);
         model.addAttribute("budget", budget);
         model.addAttribute("total", total);
         model.addAttribute("totalFmt", won.format(total) + "원");
 
-        return "safe/safe_box";
+        return "Mypage/safe_box";
     }
 
     private String resolveEmail(Principal principal) {

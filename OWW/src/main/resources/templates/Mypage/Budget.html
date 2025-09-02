@@ -119,9 +119,13 @@
 						        </table>
 
 						        <div class="btn-wrap">
+									<input type="hidden" name="user_email" value="user2@example.com">
 						            <button type="submit" class="btn">저장하기</button>
 						        </div>
 						    </form>
+							<div th:if="${msg}" class="alert">
+							    <p th:text="${msg}"></p>
+							</div>
 						</div>
 							
 						</div>
