@@ -258,6 +258,47 @@
   background: rgba(255,255,255,.9);
 }
 
+
+/*-----------마이페이지 사이드바 사용 용도-----지우지 말것!!!!!!!!!!!*/
+.budget {
+	background-color: var(--brand-weak);
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 14px;
+	border-radius: 14px;
+	border: 1px solid var(--line);
+	margin: 10px 8px;
+	gap:0px;
+}
+
+.budget .mini-title{
+	color:var(--ink);
+	font-size: 18px;
+	margin: 5px 0;
+}
+.budget .mini-list {
+	margin: 0;
+	padding: 0;
+}
+
+.budget h4{
+	color:var(--sub);
+	font-size: 12px;
+	margin: 4px 0;
+}
+.budget h6{
+	color:#111827;
+	font-size: 16px;
+	margin: 10px 0 0 0;
+}
+
+
+
+
+
 /* 작은 화면 살짝 컴팩트 */
 @media (max-width: 1200px) {
   .ln-item { padding: 11px 12px; min-height: 40px; }

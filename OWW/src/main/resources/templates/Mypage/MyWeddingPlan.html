@@ -11,7 +11,8 @@
 	<link rel="stylesheet" th:href="@{/css/Mypage.css}">
 	<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 	<script src="/js/payment.js" defer></script>
-	
+	<script src="/js/checkbox_control.js" defer></script>
+	<script src="/js/checkbox_progressbar_db.js" defer></script>
 	<style>
 		
 	</style>
@@ -126,7 +127,7 @@
 									<div class="stud">
 									<div class="control-row">
 										<input type="checkbox" name="contract_stud_ch" id="contract_stud_ch"
-											th:field="*{planprog.contract_stud_ch}" />
+											th:field="*{planprog.contract_stud_ch}" onchange="updateContract(this)"/>
 										<label for="studio_contract">계약완료</label>
 									</div>
 									<div class="control-row">
@@ -208,7 +209,7 @@
 									<div class="make">
 									<div class="control-row">
 										<input type="checkbox" name="contract_make_ch" id="contract_make_ch"
-											th:field="*{planprog.contract_make_ch}" />
+											th:field="*{planprog.contract_make_ch}" onchange="updateContract(this)"/>
 										<label for="makeup_contract">계약완료</label>
 									</div>
 									<div class="control-row">
@@ -237,8 +238,7 @@
 				</div>
 				</div>
 				</section>
-
+				
 </body>
-<script src="/js/checkbox_progressbar_db.js"></script>
-<script src="/js/checkbox_control.js"></script>
+
 </html>

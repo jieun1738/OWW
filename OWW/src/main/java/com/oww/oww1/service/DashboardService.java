@@ -64,4 +64,14 @@ public class DashboardService {
 	   public int updateContract(String contract_category, String YorN, int plan_no) {
 		   return mypageMapper.updateContract(contract_category, YorN, plan_no);
 	   }
+
+	   public int setBudget(BudgetVO newBudget) {
+		   return mypageMapper.setBudget(newBudget);
+		
+	   }
+
+	   public int updateBudget(BudgetVO newBudget) {
+		   return mypageMapper.updateBudget(newBudget);
+			
+	   }
 }

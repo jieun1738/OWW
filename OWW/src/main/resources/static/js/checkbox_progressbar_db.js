@@ -3,6 +3,9 @@ function updateContract(checkbox) {
 	const baseName = checkboxId.replace(/_ch$/, '');
     const checked = checkbox.checked;
 
+	console.log("✅ updateContract 실행됨", checkbox.id, baseName,checkbox.checked);
+	
+	
     fetch('/mypage/updateContract', {
         method: 'POST',
         headers: {
@@ -15,7 +18,9 @@ function updateContract(checkbox) {
         if(data.success){
 			const progressBar = document.getElementById('progress-bar');
             progressBar.style.width = data.progress + '%';
-            progressBar.innerText = data.progress + '%';
+			const progressText = progressBar.parentElement.querySelector('span');
+			progressText.style.left = `calc(${data.progress}% + 7px)`;
+			progressText.innerText = data.progress + '%';
         } else {
             alert('저장 실패: ' + data.error);
             checkbox.checked = !checked;

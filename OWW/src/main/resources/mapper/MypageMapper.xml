@@ -9,6 +9,31 @@
         SELECT * FROM budget WHERE USER_EMAIL = #{user_email} 
     </select>
     
+    <insert id="setBudget">
+		INSERT INTO budget (user_email, hall, studio, dress, makeup, dvd, makeup_parents, ring, hair, skincare, hanbok, honeymoon, invitation)
+		VALUES (#{user_email}, #{hall}, #{studio}, #{dress}, #{makeup}, #{dvd}, #{makeup_parents}, #{ring}, #{hair}, #{skincare}, #{hanbok}, #{honeymoon}, #{invitation})
+	</insert>  
+	
+	<update id="updateBudget">
+		UPDATE budget
+		SET
+    		hall = #{hall},
+    		studio = #{studio},
+    		dress = #{dress},
+    		makeup = #{makeup},
+    		dvd = #{dvd},
+    		makeup_parents = #{makeup_parents},
+   		 	ring = #{ring},
+    		hair = #{hair},
+    		skincare = #{skincare},
+    		hanbok = #{hanbok},
+    		honeymoon = #{honeymoon},
+    		invitation = #{invitation}
+		WHERE
+    		user_email = #{user_email}
+	
+	</update>  
+
      <select id="getPlanProgress" resultType="PlanProgressVO">
         SELECT * FROM plan_progress WHERE PLAN_NO = #{plan_no} 
     </select>

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.oww.oww1.OwwApplication;
 import com.oww.oww1.VO.BudgetVO;
@@ -37,18 +38,6 @@ public class MypageController {
         this.owwApplication = owwApplication;
     }
 
-    @GetMapping("/budgetSetting")
-    public String goBudgetSetting(Model model) {
-    	String user_email = "user2@example.com";
-		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
-		int sumBudget=dashservice.sumBudget(user_email);
-		model.addAttribute("sumBudget", sumBudget);	
-		int plan_no=dashservice.getPlan(user_email).getPlan_no();
-		int contract_y_count = dashservice.getContractProgess(plan_no);
-		System.out.println(contract_y_count);
-		model.addAttribute("contract_progress",(contract_y_count*100/4));
-    	return "Mypage/Budget";
-    }
     
     
     
@@ -197,24 +186,90 @@ public class MypageController {
 	    }
 	    return result;
 	}
+	
+	
+
+    @GetMapping("/budgetSetting")
+    public String goBudgetSetting(Model model, @ModelAttribute("msg") String msg) {
+    	String user_email = "user2@example.com";
+		model.addAttribute("totalBudget", dashservice.getBudget(user_email));
+		int sumBudget=dashservice.sumBudget(user_email);
+		model.addAttribute("sumBudget", sumBudget);	
+		int plan_no=dashservice.getPlan(user_email).getPlan_no();
+		int contract_y_count = dashservice.getContractProgess(plan_no);
+		System.out.println(contract_y_count);
+		model.addAttribute("contract_progress",(contract_y_count*100/4));
+		
+		if(msg != null) {
+	        model.addAttribute("msg", msg);
+	    }
+		
+		
+    	return "Mypage/Budget";
+    }
+	
 
 	@PostMapping("/saveBudget")
-	public String saveBudgettoDB(@ModelAttribute BudgetVO budget, 
+	public String saveBudgettoDB(@ModelAttribute BudgetVO newBudget, 
 			@RequestParam(value = "extraOption[]", required = false) List<String> extraOptions,
-	        @RequestParam(value = "extraValue[]", required = false) List<Integer> extraValues) {
+	        @RequestParam(value = "extraValue[]", required = false) List<Integer> extraValues, RedirectAttributes redirectAttributes) {
+		
+		if (extraOptions != null && !extraOptions.isEmpty()) {
+		
 		
 		for(int i =0 ; i < extraOptions.size() ; i++) {
-			///////////////값 확인해서 set 해주기
+		     
+			String optionName = extraOptions.get(i); // 항목 이름
+			if(optionName.equals(""))
+	        	  break;
+	        int optionValue = extraValues.get(i); // 해당 항목의 금액
+	        System.out.println("추가항목: "+optionName+"/ 예산액: "+optionValue);
+
+	            switch (optionName) {
+	                case "dvd":
+	                	newBudget.setDvd(optionValue);
+	                    break;
+	                case "makeup_parents":
+	                	newBudget.setMakeup_parents(optionValue);
+	                    break;
+	                case "ring":
+	                	newBudget.setRing(optionValue);
+	                    break;
+	                case "hair":
+	                	newBudget.setHair(optionValue);
+	                    break;
+	                case "skincare":
+	                	newBudget.setSkincare(optionValue);
+	                    break;
+	                case "hanbok":
+	                	newBudget.setHanbok(optionValue);
+	                    break;
+	                case "honeymoon":
+	                	newBudget.setHoneymoon(optionValue);
+	                    break;
+	                case "invitation":
+	                	newBudget.setInvitation(optionValue);
+	                    break;
+	            }
+	        }
+	    }
+
+	    System.out.println("저장될 최종 BudgetVO: " + newBudget.toString());
+	    String user_email=newBudget.getUser_email();
+		BudgetVO originBudget = dashservice.getBudget(user_email);
+		int result;
 		
-			
-		}
+		if(originBudget==null)
+			result = dashservice.setBudget(newBudget);
+		else
+			result = dashservice.updateBudget(newBudget);
+		 
 		
-		
-		
-		
-		
-		
-		
+		if (result > 0) {
+		        redirectAttributes.addFlashAttribute("msg", "예산이 성공적으로 저장되었습니다!");
+		    } else {
+		        redirectAttributes.addFlashAttribute("msg", "저장 실패! 다시 시도해주세요.");
+		    }
 		
 		return "redirect:/budgetSetting";
 	}
