@@ -90,60 +90,83 @@ public class BankingSecurityConfig {
      * ✅ JWT 쿠키/Authorization 헤더 직접 파싱 전용 필터
      */
     public static class JwtAuthenticationFilter extends OncePerRequestFilter {
-        private final BankingJwtUtil jwtUtil;
-        private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    	   private final BankingJwtUtil jwtUtil;
+    	   private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-        public JwtAuthenticationFilter(BankingJwtUtil jwtUtil) {
-            this.jwtUtil = jwtUtil;
-        }
+    	   public JwtAuthenticationFilter(BankingJwtUtil jwtUtil) {
+    	       this.jwtUtil = jwtUtil;
+    	   }
 
-        @Override
-        protected void doFilterInternal(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        FilterChain filterChain) throws ServletException, IOException {
+    	   @Override
+    	   protected void doFilterInternal(HttpServletRequest request,
+    	                                   HttpServletResponse response,
+    	                                   FilterChain filterChain) throws ServletException, IOException {
 
-            log.debug("🔍 JwtAuthenticationFilter 진입: {}", request.getRequestURI());
+    	       System.out.println("=== Banking JWT Filter 진입: " + request.getRequestURI());
+    	       System.out.println("요청 방식: " + request.getMethod());
 
-            String token = null;
+    	       String token = null;
 
-            // 1. Authorization 헤더
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                token = authHeader.substring(7);
-            }
+    	       // 1. Authorization 헤더 확인
+    	       String authHeader = request.getHeader("Authorization");
+    	       System.out.println("Authorization 헤더: " + authHeader);
+    	       
+    	       if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    	           token = authHeader.substring(7);
+    	           System.out.println("Bearer 토큰 추출 성공, 길이: " + token.length());
+    	       }
 
-            // 2. 쿠키에서 jwt-token 조회
-            if (token == null && request.getCookies() != null) {
-                for (Cookie cookie : request.getCookies()) {
-                    if ("jwt-token".equals(cookie.getName())) {
-                        token = cookie.getValue();
-                        break;
-                    }
-                }
-            }
+    	       // 2. 쿠키에서 jwt-token 조회
+    	       if (token == null && request.getCookies() != null) {
+    	           System.out.println("Authorization 헤더에 토큰 없음, 쿠키 확인 중...");
+    	           for (Cookie cookie : request.getCookies()) {
+    	               System.out.println("쿠키 발견: " + cookie.getName() + " = " + cookie.getValue());
+    	               if ("jwt-token".equals(cookie.getName())) {
+    	                   token = cookie.getValue();
+    	                   System.out.println("쿠키에서 JWT 토큰 추출 성공");
+    	                   break;
+    	               }
+    	           }
+    	       }
 
-            if (token != null) {
-                try {
-                    if (jwtUtil.validateToken(token)) {
-                        String role = jwtUtil.extractRole(token);
-                        if (role == null) role = "USER";
-                        String username = jwtUtil.getUsernameFromToken(token);
+    	       if (token != null) {
+    	           System.out.println("토큰 검증 시작...");
+    	           try {
+    	               if (jwtUtil.validateToken(token)) {
+    	                   System.out.println("토큰 검증 성공!");
+    	                   
+    	                   String role = jwtUtil.extractRole(token);
+    	                   String username = jwtUtil.getUsernameFromToken(token);
+    	                   
+    	                   System.out.println("추출된 사용자명: " + username);
+    	                   System.out.println("추출된 역할: " + role);
+    	                   
+    	                   if (role == null) role = "USER";
 
-                        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                            SimpleGrantedAuthority authority =
-                                    new SimpleGrantedAuthority(role.startsWith("ROLE_") ? role : "ROLE_" + role);
-                            UsernamePasswordAuthenticationToken authToken =
-                                    new UsernamePasswordAuthenticationToken(username, null,
-                                            Collections.singletonList(authority));
-                            SecurityContextHolder.getContext().setAuthentication(authToken);
-                        }
-                    }
-                } catch (Exception e) {
-                    log.error("❌ JWT 토큰 처리 중 오류: {}", e.getMessage());
-                }
-            }
+    	                   if (SecurityContextHolder.getContext().getAuthentication() == null) {
+    	                       SimpleGrantedAuthority authority =
+    	                               new SimpleGrantedAuthority(role.startsWith("ROLE_") ? role : "ROLE_" + role);
+    	                       UsernamePasswordAuthenticationToken authToken =
+    	                               new UsernamePasswordAuthenticationToken(username, null,
+    	                                       Collections.singletonList(authority));
+    	                       SecurityContextHolder.getContext().setAuthentication(authToken);
+    	                       System.out.println("인증 컨텍스트 설정 완료");
+    	                   } else {
+    	                       System.out.println("이미 인증된 사용자");
+    	                   }
+    	               } else {
+    	                   System.out.println("토큰 검증 실패!");
+    	               }
+    	           } catch (Exception e) {
+    	               System.out.println("JWT 토큰 처리 중 오류: " + e.getMessage());
+    	               e.printStackTrace();
+    	           }
+    	       } else {
+    	           System.out.println("토큰이 없음 - 인증되지 않은 요청");
+    	       }
 
-            filterChain.doFilter(request, response);
-        }
-    }
+    	       System.out.println("필터 처리 완료, 다음 필터로 진행");
+    	       filterChain.doFilter(request, response);
+    	   }
+    	}
 }

@@ -122,7 +122,7 @@ public class BankingController {
     /**
      * 계좌 생성 페이지 (JWT 기반)
      */
-    @GetMapping("/banking/createAccount")
+    @GetMapping("/createAccount")
     public String createAccount(Model model, HttpServletRequest request) {
         System.out.println("계좌 생성 페이지 호출됨 (JWT 기반)");
 
@@ -160,7 +160,7 @@ public class BankingController {
     /**
      * 이메일 인증번호 발송 (JWT 기반)
      */
-    @PostMapping("/banking/account/send-verification")
+    @PostMapping("/account/send-verification")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> sendEmailVerification(
             @RequestParam("email") String email,
@@ -211,7 +211,7 @@ public class BankingController {
     /**
      * 이메일 인증번호 확인 (JWT 기반)
      */
-    @PostMapping("/banking/account/verify-email")
+    @PostMapping("/account/verify-email")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> verifyEmailCode(
             @RequestParam("email") String email,
@@ -255,7 +255,7 @@ public class BankingController {
     /**
      * 계좌 생성 (JWT 기반)
      */
-    @PostMapping("/banking/account/create")
+    @PostMapping("/account/create")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> createAccount(
             @RequestParam("name") String name,
@@ -301,7 +301,7 @@ public class BankingController {
     /**
      * 계좌 생성 성공 페이지 (JWT 기반)
      */
-    @GetMapping("/banking/account/success")
+    @GetMapping("/account/success")
     public String accountSuccess(Model model, HttpServletRequest request) {
         
         try {
@@ -335,7 +335,7 @@ public class BankingController {
     /**
      * Banking 메인 페이지 (JWT 기반)
      */
-    @GetMapping("/banking/main")
+    @GetMapping("/main")
     public String bankingMain(Model model, HttpServletRequest request) {
         
         try {

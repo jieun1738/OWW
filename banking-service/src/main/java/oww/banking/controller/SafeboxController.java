@@ -29,7 +29,7 @@ import oww.banking.vo.SafeboxVO;
 import jakarta.servlet.http.Cookie;
 
 @Controller
-@RequestMapping("/banking/safebox")
+@RequestMapping("/safebox")
 public class SafeboxController {
 
     @Autowired

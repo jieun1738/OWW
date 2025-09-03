@@ -33,7 +33,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Controller
-@RequestMapping("/banking")
 public class TransferController {
 
     @Autowired
