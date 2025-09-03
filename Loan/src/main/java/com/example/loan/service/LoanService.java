@@ -12,8 +12,12 @@ import com.fasterxml.jackson.databind.DatabindException;
 public interface LoanService {
 
 
-	ArrayList<String> getloanmain() throws StreamReadException, DatabindException, IOException;
+	/*
+	 * ArrayList<String> getloanmain() throws StreamReadException,
+	 * DatabindException, IOException;
+	 */
 	
+	ArrayList<LoanProductVO> getloanmain() throws StreamReadException, DatabindException, IOException;
 	
 	LoanProductVO getloandetail(String loanName) throws StreamReadException, DatabindException, IOException;
 

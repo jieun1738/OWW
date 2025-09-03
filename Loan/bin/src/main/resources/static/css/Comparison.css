@@ -1,0 +1,119 @@
+@charset "UTF-8";
+/* 검색 폼 */
+.search-form {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* 상품 선택 버튼 목록 */
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+/* 비교 영역 */
+.comparison-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.comparison-card {
+  border: 1px solid #333;
+  padding: 16px;
+  border-radius: 8px;
+  width: 300px;
+  background-color: #fff;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1px solid #ffd2cc;
+  padding: 20px;
+  width: 280px;
+  text-align: center;
+  color: #5a3a36;
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  color: #FF6F61;
+  margin-bottom: 10px;
+}
+
+.card .btn {
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: none;
+  background-color: #ff6f61;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.card .btn:hover {
+  transform: scale(1.05);
+  background-color: #ff4c42;
+}
+
+
+/* 버튼 */
+
+/* 버튼 */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: #ff6f61; /* LoanMain 카드 색과 동일 */
+  color: white;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  background-color: #ff4c42; /* hover 시 조금 진하게 */
+}
+
+.btn.primary {
+  background-color: #ff6f61;
+}
+
+.btn.primary:hover {
+  background-color: #ff4c42;
+}
+
+.btn.danger {
+  background-color: #ef4444;
+}
+
+.btn.danger:hover {
+  background-color: #dc2626;
+}
+
+.btn.small {
+  padding: 6px 12px;
+  font-size: 13px;
+}

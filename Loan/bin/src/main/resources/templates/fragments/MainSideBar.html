@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- sidebar(user, active, progress) 시그니처 유지 -->
+<div th:fragment="sidebar (user, active, progress)">
+  <aside class="leftnav" aria-label="웨딩플래너 사이드바">
+    <!-- 상단 사용자 박스 -->
+    <div class="ln-header">
+      <div class="icon-box brand --xl" title="User"><i class='bx bx-user-circle'></i></div>
+      <div class="ln-user">
+        <div class="ln-hello" th:text="${(user != null && user.userName != null) ? user.userName + ' 님' : '반가워요!'}">반가워요!</div>
+        <div class="ln-mail" th:text="${(user != null && user.userEmail != null) ? user.userEmail : ''}">user@example.com</div>
+      </div>
+    </div>
+
+    <!-- 진행도 -->
+    <div class="ln-progress">
+      <div class="ln-title-row">
+        <div class="ln-title"><i class='bx bx-target-lock'></i> 대출 상환율</div>
+<div class="ln-pct"
+     th:text="${(userloan?.LoanCurrentAmount ?: 0) * 100 / (userloan?.LoanAmount ?: 1) + '%'}">0%</div>
+
+      </div>
+      <div class="ln-bar">
+
+<div class="ln-fill"
+     th:style="${'width:' + ((userloan?.LoanCurrentAmount ?: 0) * 100 / (userloan?.LoanAmount ?: 1)) + '%'}"></div>
+      </div>
+    </div>
+
+
+    <!-- 내비게이션 -->
+    <div class="ln-title" style="margin-top:10px;">메뉴</div>
+    <nav class="ln-list">
+     
+      <a class="ln-item"
+         th:classappend="${#strings.containsIgnoreCase(active,'LoanMain')}? ' active' : ''"
+         th:href="@{/loanmain}">
+        <i class='bx bx-book-open'></i><span>대출상품 소개</span>
+      </a>
+
+      <a class="ln-item"
+         th:classappend="${#strings.containsIgnoreCase(active,'LoanComparison')}? ' active' : ''"
+         th:href="@{/loancomparison}">
+        <i class='bx bx-git-compare'></i><span>상품 비교</span>
+      </a>
+
+      
+    </nav>
+
+    <!-- 도움말 -->
+    <div class="ln-help">
+      <div class="icon-box --sm"><i class='bx bx-info-circle'></i></div>
+      <div class="t">로그인 필요 시 접근 차단 후 로그인 페이지로 유도됩니다.</div>
+    </div>
+  </aside>
+</div>
+</body>
+</html>

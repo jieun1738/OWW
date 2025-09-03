@@ -1,0 +1,64 @@
+@charset "UTF-8";/* 카드 스타일 */
+.card {
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid #ffd2cc;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+    color: #5a3a36;
+    margin-bottom: 24px;
+}
+
+/* 제목 */
+.card .title {
+    font-weight: 800;
+    color: #FF6F61;
+    margin-bottom: 12px;
+}
+
+/* 입력폼 */
+.loan-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-field {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-field:focus {
+    border-color: #ff6f61;
+    box-shadow: 0 0 4px rgba(255, 111, 97, 0.3);
+}
+
+/* 버튼 */
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: #ff6f61;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    background-color: #ff4c42;
+}
+
+.btn.primary {
+    background-color: #ff6f61;
+}
+
+.btn.primary:hover {
+    background-color: #ff4c42;
+}

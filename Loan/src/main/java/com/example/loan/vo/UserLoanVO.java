@@ -1,6 +1,8 @@
 package com.example.loan.vo;
 
 public class UserLoanVO {
+	
+	
 	private String UserEmail;
 	private String LoanName;
 	private int LoanAmount;
@@ -11,12 +13,12 @@ public class UserLoanVO {
 	private int Approval;
 	private double InterestRate;
 	private int paidmonthlyamount;
-	public String getUserEmail() {
-		return UserEmail;
-	}
-	public void setUserEmail(String userEmail) {
-		UserEmail = userEmail;
-	}
+
+	
+	 public String getUserEmail() { return UserEmail; } public void
+	 setUserEmail(String userEmail) { UserEmail = userEmail; }
+	 
+	
 	public String getLoanName() {
 		return LoanName;
 	}

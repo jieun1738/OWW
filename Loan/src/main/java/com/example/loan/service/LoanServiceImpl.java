@@ -43,16 +43,21 @@ public class LoanServiceImpl implements LoanService {
         );
     }
 	
+	/*
+	 * @Override public ArrayList<String> getloanmain() throws StreamReadException,
+	 * DatabindException, IOException {//상품 이름 가져오기 List<LoanProductVO> allProducts
+	 * = getAllLoanProducts(); ArrayList<String> productNames = new ArrayList<>();
+	 * 
+	 * for (LoanProductVO product : allProducts) {
+	 * productNames.add(product.getLoanName()); }
+	 * 
+	 * return productNames; }
+	 */
+	
 	@Override
-	public ArrayList<String> getloanmain() throws StreamReadException, DatabindException, IOException {//상품 이름 가져오기
-		 List<LoanProductVO> allProducts = getAllLoanProducts();
-	        ArrayList<String> productNames = new ArrayList<>();
-
-	        for (LoanProductVO product : allProducts) {
-	            productNames.add(product.getLoanName());
-	        }
-
-	        return productNames;
+	public ArrayList<LoanProductVO> getloanmain() throws StreamReadException, DatabindException, IOException {
+	    List<LoanProductVO> allProducts = getAllLoanProducts();
+	    return new ArrayList<>(allProducts);  // 전체 객체 반환
 	}
 	
 	/*

@@ -23,12 +23,14 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)  
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable) 
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(exchanges -> exchanges
-                        // ✅ 정적 리소스 허용
-                        .pathMatchers("/", "/index.html", "/css/**", "/js/**", "/img/**").permitAll()
+                        // ✅ 정적 리소스 허용 (모든 서비스 공통)
+                        .pathMatchers("/", "/index.html").permitAll()
+                        .pathMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
+                        .pathMatchers("/static/**").permitAll()
                         
                         // ✅ 인증 관련 경로 허용
                         .pathMatchers("/auth/**", "/login/**", "/oauth2/**").permitAll()
@@ -39,8 +41,8 @@ public class SecurityConfig {
                         // ✅ Banking 경로 허용 (JWT 필터에서 인증 처리)
                         .pathMatchers("/banking/**", "/api/banking/**").permitAll()
                         
-                        // ✅ MyPage 경로 허용 (JWT 필터에서 인증 처리)
-                        .pathMatchers("/api/mypage/**").permitAll()
+                        // ✅ Loan 경로 허용
+                        .pathMatchers("/loan/**").permitAll()
                         
                         // 나머지는 인증 필요
                         .anyExchange().authenticated()
@@ -60,10 +62,14 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-    // Gateway의 index.html만 제공 (main.css도 Gateway에서)
+    
     @Bean
     public RouterFunction<ServerResponse> staticResourceRouter() {
-        return RouterFunctions.resources("/**", new ClassPathResource("static/"));
+        return RouterFunctions.resources("/css/**", new ClassPathResource("static/css/"))
+            .and(RouterFunctions.resources("/js/**", new ClassPathResource("static/js/")))
+            .and(RouterFunctions.resources("/img/**", new ClassPathResource("static/img/")))
+            .and(RouterFunctions.resources("/favicon.ico", new ClassPathResource("static/favicon.ico")))
+            .and(RouterFunctions.resources("/static/**", new ClassPathResource("static/")));
     }
+
 }

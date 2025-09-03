@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>대출 상환</title>
+  <link rel="stylesheet" type="text/css" href="/css/repayment.css">
+</head>
+<body>
+	
+<!-- 안내 메시지 -->
+<div th:if="${infoMessage}" class="info-message">
+    <p th:text="${infoMessage}"></p>
+</div>
+
+<!-- 대출 정보 카드 -->
+<div th:if="${infoMessage == null}">
+    <div class="loan-card">
+        <h1 th:text="${userloan.loanName}"></h1>
+        <p>대출 금액: <span th:text="${userloan.LoanAmount}"></span></p>
+        <p>대출 기간(개월): <span th:text="${userloan.LoanPeriod}"></span></p>
+        <p>상환 방식: 
+            <span th:switch="${userloan.LoanRepaymentType}">
+                <span th:case="0">원리금 균등상환</span>
+                <span th:case="1">원금균등상환</span>
+                <span th:case="*">-</span>
+            </span>
+        </p>
+        <p>이자율(%): <span th:text="${userloan.InterestRate}"></span></p>
+
+        <progress id="progress" 
+                  th:value="${userloan.LoanCurrentAmount}" 
+                  min="0" 
+                  th:max="${userloan.LoanAmount}">
+        </progress>
+
+        <p>월 납입금: <span th:text="${monthlyinstallment}"></span></p>	
+        <p>이번달에 납입한 금액: <span th:text="${userloan.paidmonthlyamount}"></span></p>
+
+        <form action="/repaymentloan" id="repayment">
+            <label for="paidamount">납부할 금액 입력</label><br>
+            <input type="text" name="paidamount" id="paidamount"  
+                   th:value="${monthlyinstallment - userloan.paidmonthlyamount}">
+           <button type="submit"
+        th:disabled="${(monthlyinstallment - userloan.paidmonthlyamount) <= 0}">
+    상환하기
+</button>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+const form = document.getElementById('repayment');
+if (form) {
+    form.addEventListener('submit', function(event){
+        const paidamountStr = document.getElementById("paidamount").value.trim();
+
+        if (paidamountStr === '') {
+            alert('상환 금액을 입력하세요.');
+            event.preventDefault();
+            return;
+        }
+
+        if (!/^\d+(\.\d+)?$/.test(paidamountStr)) {
+            alert('숫자만 입력 가능합니다.');
+            event.preventDefault();
+            return;
+        }
+
+        const paidamountNum = Number(paidamountStr);
+
+        if (isNaN(paidamountNum) || paidamountNum <= 0) {
+            alert('상환 금액은 0보다 커야 합니다.');
+            event.preventDefault();
+            return;
+        }
+
+        // 서버 전송 전 추가 체크 가능
+/*
+        if (paidamountNum > currentaccount) {
+            alert('상환 금액은 계좌 잔액 ' + currentaccount + '원을 초과할 수 없습니다.');
+            event.preventDefault();
+            return;
+        }
+
+        if (paidamountNum > (monthlyinstallment - paidThisMonth)) {
+            alert('상환 금액이 이번달 납입해야 할 남은 금액을 초과할 수 없습니다.');
+            event.preventDefault();
+            return;
+        }
+        */
+    });
+}
+
+
+</script>
+
+</body>
+</html>

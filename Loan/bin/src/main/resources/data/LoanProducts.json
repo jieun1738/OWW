@@ -1,0 +1,66 @@
+[
+  {
+    "loanName": "신혼부부 주거안정 대출",
+    "loanExplanation": "신혼부부의 주거 마련을 위한 저금리 대출 상품입니다. 최대 1억 원까지 대출 가능하며, 원리금균등상환 방식으로 안정적인 상환이 가능합니다.",
+    "loanLimit": 100000000,
+    "loanPeriod": 36,
+    "loanRepaymentType": 0,
+    "interestRate": 2.5
+  },
+  {
+    "loanName": "직장인 안심 대출",
+    "loanExplanation": "직장인을 위한 안정적인 상환 조건의 대출 상품입니다. 신용 등급이 양호한 분께 저금리로 제공됩니다.",
+    "loanLimit": 50000000,
+    "loanPeriod": 24,
+    "loanRepaymentType": 0,
+    "interestRate": 2.8
+  },
+  {
+    "loanName": "자유 상환 플랜",
+    "loanExplanation": "고정 수입이 불규칙한 고객을 위해 유연한 원금균등상환을 지원하는 상품입니다.",
+    "loanLimit": 30000000,
+    "loanPeriod": 36,
+    "loanRepaymentType": 1,
+    "interestRate": 2.5
+  },
+  {
+    "loanName": "생활안정 마이크로 대출",
+    "loanExplanation": "단기 생활자금이 필요한 고객을 위한 소액 대출 상품으로, 간단한 절차로 신청 가능합니다.",
+    "loanLimit": 20000000,
+    "loanPeriod": 12,
+    "loanRepaymentType": 0,
+    "interestRate": 2.3
+  },
+  {
+    "loanName": "주택 보조 일반 대출",
+    "loanExplanation": "주택 마련이나 이사 비용 등에 활용 가능한 범용 대출 상품으로, 장기 상환이 가능합니다.",
+    "loanLimit": 100000000,
+    "loanPeriod": 60,
+    "loanRepaymentType": 1,
+    "interestRate": 2.7
+  },
+  {
+    "loanName": "신혼 예식비 지원 대출",
+    "loanExplanation": "결혼 준비로 인한 예식장, 스튜디오, 웨딩 촬영 등 비용을 지원하는 전용 대출 상품입니다.",
+    "loanLimit": 50000000,
+    "loanPeriod": 24,
+    "loanRepaymentType": 0,
+    "interestRate": 2.5
+  },
+  {
+    "loanName": "신혼여행 경비 지원 대출",
+    "loanExplanation": "해외 및 국내 신혼여행을 위한 항공권, 숙박, 여행 경비를 지원하는 대출 상품입니다.",
+    "loanLimit": 20000000,
+    "loanPeriod": 12,
+    "loanRepaymentType": 0,
+    "interestRate": 2.5
+  },
+  {
+    "loanName": "육아 준비비 지원 대출",
+    "loanExplanation": "출산 전·후의 양육비용(분만, 산후조리, 유아용품 등)을 위한 신혼부부 대상 대출 상품입니다.",
+    "loanLimit": 70000000,
+    "loanPeriod": 36,
+    "loanRepaymentType": 1,
+    "interestRate": 2.5
+  }
+]

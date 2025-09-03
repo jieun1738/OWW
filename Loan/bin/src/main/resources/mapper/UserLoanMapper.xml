@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.loan.mapper.UserLoanMapper">
+
+<insert id="insertUserLoan" parameterType="com.example.loan.vo.UserLoanVO">
+    INSERT INTO UserLoan 
+        (UserEmail, LoanName, LoanAmount, LoanCurrentAmount,paidmonthlyamount ,LoanPeriod,LoanCurrentPeriod,LoanRepaymentType,CurrentMonth,InterestRate,Approval)
+    VALUES 
+        (#{UserEmail}, #{LoanName}, #{LoanAmount},0,0,#{LoanPeriod},1,#{LoanRepaymentType},1,#{InterestRate},0)
+</insert>
+
+<select id="getUserLoan" resultType="com.example.loan.vo.UserLoanVO">
+	SELECT *
+	FROM UserLoan
+	WHERE UserEmail=#{UserEmail}
+</select>
+
+<update id="repaymentLoan" parameterType="com.example.loan.vo.UserLoanVO">
+	Update UserLoan
+	SET LoanCurrentAmount = #{param2}, paidmonthlyamount = #{param3}
+	WHERE UserEmail=#{param1}
+</update>
+
+<update id="updatePeriod">
+	Update UserLoan
+	SET LoanCurrentPeriod = LoanCurrentPeriod+1
+	WHERE UserEmail=#{UserEmail}	
+</update>
+
+<delete id="endRepayment" parameterType="String">
+	DELETE FROM UserLoan
+	WHERE UserEmail=#{UserEmail}
+</delete>
+
+<update id="resetpaidmonthlyamount">
+	Update UserLoan
+	SET paidmonthlyamount = 0
+</update>
+
+<select id="getloanexist" resultType="int" parameterType="String">
+    SELECT COUNT(*) 
+    FROM USERLOAN 
+    WHERE USEREMAIL = #{userEmail}
+</select>
+
+    <select id="getloanapprove" parameterType="String" resultType="int">
+        SELECT APPROVAL
+        FROM USERLOAN
+        WHERE USEREMAIL = #{userEmail}
+    </select>
+    <select id="getcurrentAmount" parameterType="string" resultType="int">
+        SELECT loancurrentamount
+        FROM USERLOAN
+        WHERE USEREMAIL = #{userEmail}
+    </select>
+<select id="getpaidmonthlyamount">
+	SELECT paidmonthlyamount
+	From USERLOAN
+     WHERE USEREMAIL = #{userEmail}
+</select>
+
+</mapper>
+

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+  <meta charset="UTF-8">
+  <title layout:fragment="title">대출상품 비교 | OWW</title>
+   <link rel="stylesheet" th:href="@{/css/Loanmain.css}">
+</head>
+<body>
+	<section layout:fragment="content">
+		
+		<div class="page">
+			<!-- ✅ 사이드바: 기존 프래그먼트 그대로 사용 (중복 선언 금지) -->
+			<div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}"></div>
+					
+			<div class="cards">
+			    <!-- Main Content -->
+			    <main class="content">
+						<!-- 헤더 -->
+						<header class="page-header">
+							<div>
+							   <h1 class="title">대출 비교</h1>
+							    <p class="desc">OWW 대출상품을 비교해보세요</p>
+							</div>
+							<!-- 검색폼 -->
+							 <form action="/searchloan" method="get" class="search-form">
+								 <input type="text" name="search" placeholder="대출 상품명 검색" />
+								 <input type="hidden" name="lastUrl" value="LoanComparison">
+								 <button type="submit" class="btn primary">검색</button>
+							</form>
+						</header>
+ 
+  <!-- 상품 선택 버튼 목록 -->
+  <div class="selectProduct">
+	<h3>아래 상품을 선택하여 비교해보세요😉</h3>
+  <div class="product-list">
+    <form th:each="product : ${products}" th:action="@{/loancomparisonADD}" method="get">
+      <input type="hidden" name="loanName" th:value="${product}" />
+      <button type="submit" th:text="${product}" class="btn-detail"></button>
+    </form> 
+  </div>
+  </div>
+  
+
+  <!-- 비교 결과 영역 -->
+  <div class="comparison-container">
+
+  <!-- 상품 1 -->
+  <div class="comparison-card">
+	<div class="wrap">
+    <h2>1️⃣</h2>
+      <h3><span th:text="${session.loandetails1 != null} ? ${session.loandetails1.loanName} : '선택된 상품 없음'">
+        선택된 상품 없음
+      </span></h3></div>
+    <br>
+    <p><strong>상세 설명: </strong><br><span th:text="${session.loandetails1 != null} ? ${session.loandetails1.LoanExplanation} : '-'">-</span></h4>
+	<br>
+	<p><strong>대출 한도: </strong><br><span th:text="${session.loandetails1 != null} ? ${session.loandetails1.LoanLimit} : '-'">-</span> 원</p>
+		<p><strong>대출 기간(개월): </strong><br><span th:text="${session.loandetails1 != null} ? ${session.loandetails1.LoanPeriod} : '-'">-</span> 개월</p>
+		
+		<p><strong>상환 방식: </strong>
+      <span th:switch="${session.loandetails1 != null} ? ${session.loandetails1.LoanRepaymentType} : -1">
+        <span th:case="0">원리금 균등상환</span>
+        <span th:case="1">원금균등상환</span>
+        <span th:case="*">-</span>
+      </span>
+    
+	  </p>
+    <h3>이자율(%): <span th:text="${session.loandetails1 != null} ? ${session.loandetails1.InterestRate} : '-'">-</span> %</h3>
+	<br>
+	<div class="btn-wrap">
+    <form th:if="${session.loandetails1 != null}" th:action="@{/loandetail}" method="get">
+      <input type="hidden" name="loanName" th:value="${session.loandetails1.loanName}" />
+      <button type="submit" class="btn">선택</button>
+    </form>
+	<br>
+    <form th:if="${session.loandetails1 != null}" th:action="@{/loancomparisonDEL1}" method="post">
+      <button type="submit" class="btn">취소</button>
+    </form>
+	</div>
+  </div>
+
+  <!-- 상품 2 -->
+  <div class="comparison-card">
+	<div class="wrap">
+    <h2>2️⃣</h2>
+      <h3><span th:text="${session.loandetails2 != null} ? ${session.loandetails2.loanName} : '선택된 상품 없음'">
+        선택된 상품 없음
+      </span><h3>
+	</div>
+	<br>
+    <p><strong>상세 설명: </strong><br><span th:text="${session.loandetails2 != null} ? ${session.loandetails2.LoanExplanation} : '-'">-</span></p>
+    <p><strong>대출 한도: </strong><br><span th:text="${session.loandetails2 != null} ? ${session.loandetails2.LoanLimit} : '-'">-</span> 원</p>
+    <p><strong>대출 기간(개월): </strong><br><span th:text="${session.loandetails2 != null} ? ${session.loandetails2.LoanPeriod} : '-'">-</span> 개월</p>
+    <p><strong>상환 방식: </strong>  
+      <span th:switch="${session.loandetails2 != null} ? ${session.loandetails2.LoanRepaymentType} : -1">
+        <span th:case="0">원리금 균등상환</span>
+        <span th:case="1">원금균등상환</span>
+        <span th:case="*">-</span>
+      </span>
+    </p>
+    <h3><strong>이자율(%): </strong><span th:text="${session.loandetails2 != null} ? ${session.loandetails2.InterestRate} : '-'">-</span> %</p>
+		<br>
+		<div class="btn-wrap">
+    <form th:if="${session.loandetails2 != null}" th:action="@{/loandetail}" method="get">
+      <input type="hidden" name="loanName" th:value="${session.loandetails2.loanName}" />
+      <button type="submit" class="btn">선택</button>
+    </form>
+	<br>
+    <form th:if="${session.loandetails2 != null}" th:action="@{/loancomparisonDEL2}" method="post">
+      <button type="submit" class="btn danger">취소</button>
+    </form>
+</div>
+  </div>
+
+</div>
+  </div>
+		</div>
+	</section>
+  
+</body>
+</html>

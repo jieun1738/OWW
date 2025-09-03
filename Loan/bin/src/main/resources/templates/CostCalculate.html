@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>생활비 계산기</title>
+<link rel="stylesheet" href="/css/costcalculator.css">
+<link rel="stylesheet" href="/css/design.css">
+</head>
+<body>
+
+<form action="/costcalculateresult">
+    <div class="calculator-card">
+        <h1>생활비 계산기</h1>
+        <p>
+            월 소득 : <input type="text" name="earnings">
+        </p>
+        <p>
+            월 납입금: 
+            <input type="text" name="monthlyinstallment" id="monthlyinstallment" th:value="${monthlyinstallment}" readonly>
+            <input type="checkbox" id="editInstallment"> 수정
+        </p>
+        <p>
+            생활비: <input type="text" name="cost">
+        </p>
+        <button type="submit">계산</button>
+    </div>
+</form>
+
+<h4 class="result">여유 자금: <span th:text="${restcost != null} ? ${restcost} : ' '"> </span></h4>
+
+<form action="/safebox" style="text-align: center;">
+    <button type="submit">저금하러 가기</button>
+</form>
+
+<script>
+    const checkbox = document.getElementById('editInstallment');
+    const input = document.getElementById('monthlyinstallment');
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            input.removeAttribute('readonly');
+            input.focus();
+        } else {
+            input.setAttribute('readonly', true);
+        }
+    });
+</script>
+
+</body>
+</html>
