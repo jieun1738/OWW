@@ -74,12 +74,15 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
 
                 // Banking Service로 전달할 헤더 설정
                 ServerWebExchange mutatedExchange = exchange.mutate()
-                        .request(r -> r.header("Authorization", "Bearer " + jwtToken) // JWT 토큰 그대로 전달
-                                .header("x-user-no", userNo != null ? userNo : "")
-                                .header("x-username", username != null ? username : "")
-                                .header("x-user-role", role != null ? ("ROLE_" + role) : "ROLE_USER")
-                                .header("x-user-email-hash", userEmailHash != null ? userEmailHash : "")) // 해시값 전달
-                        .build();
+                	    .request(r -> r
+                	        .header("Authorization", "Bearer " + jwtToken) // JWT 헤더 전달
+                	        .header("x-user-no", userNo != null ? userNo : "")
+                	        .header("x-username", username != null ? username : "")
+                	        .header("x-user-role", role != null ? ("ROLE_" + role) : "ROLE_USER")
+                	        .header("x-user-email-hash", userEmailHash != null ? userEmailHash : "")
+                	    )
+                	    .build();
+
 
                 System.out.println("[JWT Filter] 헤더 추가 완료 - Banking Service로 JWT + 해시 전달");
                 System.out.println("   - Authorization: Bearer ***");
