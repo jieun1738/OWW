@@ -22,9 +22,9 @@
           <p class="desc">패키지 탐색 · DIY 커스터마이징 · 나의 플랜 보관함을 한 곳에서.</p>
         </div>
         <div class="quick-actions">
-          <a class="btn" th:href="@{/WeddingPlanner/WeddingDIY}">DIY 시작</a>
+          <a class="btn" th:href="@{/planner/WeddingDIY}">DIY 시작</a>
           <a class="btn" th:href="@{/api/plan}">플랜 보관함</a>
-          <a class="btn brand" th:href="@{/WeddingPlanner/WeddingThemePackages}">테마별 패키지</a>
+          <a class="btn brand" th:href="@{/planner/WeddingCategory}">테마별 패키지</a>
         </div>
       </header>
 
@@ -35,23 +35,23 @@
           <p class="hero-desc">테마별 패키지를 고르거나, DIY로 직접 구성해 보세요. 저장한 플랜은 언제든지 다시 수정/비교할 수 있습니다.</p>
           <div class="meta">마지막 업데이트: <span th:text="${lastUpdated}">2025-08-14</span></div>
           <div class="cta-row">
-            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">지금 DIY 시작</a>
-            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">웨딩플래너 소개</a>
+            <a class="btn brand" th:href="@{/planner/WeddingDIY}">지금 DIY 시작</a>
+            <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerIntro}">웨딩플래너 소개</a>
           </div>
         </div>
 
         <div>
           <div class="stats">
             <div class="stat">
-              <div class="k" th:text="${packageCount}">0</div>
+              <div class="k" >점검 중입니다.</div>
               <div class="l">등록된 테마 패키지</div>
             </div>
             <div class="stat">
-              <div class="k" th:text="${diyCount}">0</div>
+              <div class="k" >점검 중입니다.</div>
               <div class="l">DIY 템플릿</div>
             </div>
             <div class="stat">
-              <div class="k" th:text="${savedPlanCount}">0</div>
+              <div class="k" >점검 중입니다.</div>
               <div class="l">나의 보관된 플랜</div>
             </div>
           </div>
@@ -66,7 +66,7 @@
           <h3>테마별 패키지</h3>
           <p>무드/예산/지역 기준으로 빠르게 고르는 맞춤 패키지.</p>
           <div class="actions">
-            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingThemePackages}">패키지 탐색</a>
+            <a class="btn brand" th:href="@{/planner/WeddingCategory}">패키지 탐색</a>
             <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">선정 기준</a>
           </div>
         </article>
@@ -77,7 +77,7 @@
           <h3>사용자 DIY</h3>
           <p>스튜디오·드레스·메이크업부터 부가 항목까지 직접 구성.</p>
           <div class="actions">
-            <a class="btn brand" th:href="@{/WeddingPlanner/WeddingDIY}">DIY 시작</a>
+            <a class="btn brand" th:href="@{/planner/WeddingDIY}">DIY 시작</a>
             <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">가이드</a>
           </div>
         </article>
@@ -88,7 +88,7 @@
           <h3>플랜 보관함</h3>
           <p>저장한 플랜을 다시 열어 비교·수정하고 최종안을 확정하세요.</p>
           <div class="actions">
-            <a class="btn brand" th:href="@{/api/plan}">보관함 열기</a>
+            <a class="btn brand" th:href="@{/planner/WeddingPlanList}">보관함 열기</a>
             <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">보관 규칙</a>
           </div>
         </article>

@@ -1,187 +1,191 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">테마별 패키지 | OWW</title>
-  <link rel="stylesheet" th:href="@{/css/weddingplanner-packages.css}">
-  <link rel="stylesheet" th:href="@{/css/boxicons.min.css}">
+<title layout:fragment="title">테마별 패키지 | OWW</title>
 </head>
 <body>
-<section layout:fragment="content">
-  <div class="page" id="wppkg">
-    <!-- 사이드바 -->
-    <div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingCategory', progress=${progressPercent}, productCompareCount=${productCompareCount})}"></div>
+	<section layout:fragment="content">
+		<div class="page" id="wppkg">
+			<!-- 사이드바 -->
+			<div
+				th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='WeddingCategory', progress=${progressPercent}, productCompareCount=${productCompareCount})}"></div>
 
-    <!-- 메인 -->
-    <main class="content">
-      <header class="page-header">
-        <div>
-          <h1 class="title">테마별 패키지</h1>
-          <p class="desc">무드 · 예산 · 지역 조건으로 맞춤 패키지를 빠르게 찾습니다.</p>
-        </div>
-        <div class="actions">
-          <a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">대시보드</a>
-          <a class="btn" th:href="@{/planner/WeddingPlanList}">플랜 보관함</a>
-          <a class="btn brand" th:href="@{/planner/WeddingDIY}">DIY 시작</a>
-        </div>
-      </header>
+			<!-- 메인 -->
+			<main class="content">
+				<header class="page-header">
+					<div>
+						<h1 class="title">테마별 패키지</h1>
+						<p class="desc">무드 · 예산 · 지역 조건으로 맞춤 패키지를 빠르게 찾습니다.</p>
+					</div>
+					<div class="actions">
+						<a class="btn" th:href="@{/WeddingPlanner/WeddingPlannerInfo}">대시보드</a>
+						<a class="btn" th:href="@{/planner/WeddingPlanList}">플랜 보관함</a> <a
+							class="btn brand" th:href="@{/planner/WeddingDIY}">DIY 시작</a>
+					</div>
+				</header>
 
-      <!-- 필터 -->
-      <form class="filters" method="get" th:action="@{/planner/WeddingCategory}">
-        <input type="hidden" name="sort" th:value="${sort}">
-        <div class="field-group">
-          <label class="label">무드(패키지 유형)</label>
-          <div class="chip-row">
-            <a th:href="@{/planner/WeddingCategory(t=0, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
-               th:class="${t == 0 ? 'chip on' : 'chip'}">가성비</a>
-            <a th:href="@{/planner/WeddingCategory(t=1, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
-               th:class="${t == 1 ? 'chip on' : 'chip'}">프리미엄</a>
-            <a th:href="@{/planner/WeddingCategory(t=2, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
-               th:class="${t == 2 ? 'chip on' : 'chip'}">호텔</a>
-            <a th:href="@{/planner/WeddingCategory(t=3, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
-               th:class="${t == 3 ? 'chip on' : 'chip'}">채플</a>
-            <a th:href="@{/planner/WeddingCategory(t=4, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
-               th:class="${t == 4 ? 'chip on' : 'chip'}">가든</a>
-            <a th:href="@{/planner/WeddingCategory(q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
-               th:class="${t == null ? 'chip ghost on' : 'chip ghost'}">전체</a>
-          </div>
-        </div>
+				<!-- 필터 -->
+				<form class="filters" method="get"
+					th:action="@{/planner/WeddingCategory}">
+					<input type="hidden" name="sort" th:value="${sort}">
+					<div class="field-group fg-mood">
+						<label class="label">무드(패키지 유형)</label>
+						<div class="chip-row">
+							<a
+								th:href="@{/planner/WeddingCategory(t=0, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
+								th:class="${t == 0 ? 'chip on' : 'chip'}">가성비</a> <a
+								th:href="@{/planner/WeddingCategory(t=1, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
+								th:class="${t == 1 ? 'chip on' : 'chip'}">프리미엄</a> <a
+								th:href="@{/planner/WeddingCategory(t=2, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
+								th:class="${t == 2 ? 'chip on' : 'chip'}">호텔</a> <a
+								th:href="@{/planner/WeddingCategory(t=3, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
+								th:class="${t == 3 ? 'chip on' : 'chip'}">채플</a> <a
+								th:href="@{/planner/WeddingCategory(t=4, q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
+								th:class="${t == 4 ? 'chip on' : 'chip'}">가든</a> <a
+								th:href="@{/planner/WeddingCategory(q=${q}, city=${city}, min=${min}, max=${max}, sort=${sort})}"
+								th:class="${t == null ? 'chip ghost on' : 'chip ghost'}">전체</a>
+						</div>
+					</div>
 
-        <div class="field-group">
-          <label class="label">키워드</label>
-          <input class="input" type="search" name="q" th:value="${q}" placeholder="상품명 검색(홀/스튜디오/드레스/메이크업)">
-        </div>
+					<!-- 키워드 -->
+					<div class="field-group fg-keyword">
+						<label class="label">키워드</label> <input class="input"
+							type="search" name="q" th:value="${q}"
+							placeholder="상품명 검색(홀/스튜디오/드레스/메이크업)">
+					</div>
 
-        <div class="field-group">
-          <label class="label">예산(만원)</label>
-          <div class="budget">
-            <input type="number" class="input" name="min" th:value="${min}" placeholder="최소" min="0" step="50">
-            <span class="dash">~</span>
-            <input type="number" class="input" name="max" th:value="${max}" placeholder="최대" min="0" step="50">
-          </div>
-        </div>
+					<!-- 예산 -->
+					<div class="field-group fg-budget">
+						<label class="label">예산(만원)</label>
+						<div class="budget">
+							<input type="number" class="input" name="min" th:value="${min}"
+								placeholder="최소" min="0" step="10000"> <span
+								class="dash">~</span> <input type="number" class="input"
+								name="max" th:value="${max}" placeholder="최대" min="0"
+								step="10000">
+						</div>
+					</div>
 
-        <div class="field-group">
-          <label class="label">지역</label>
-          <input class="input" name="city" th:value="${city}" placeholder="예: 서울, 경기, 부산">
-        </div>
+					<!-- 지역 -->
+					<div class="field-group fg-city">
+						<label class="label">지역</label> <input class="input" name="city"
+							th:value="${city}" placeholder="예: 서울, 경기, 부산">
+					</div>
 
-        <div class="field-actions">
-          <a class="btn ghost" th:href="@{/planner/WeddingCategory}">초기화</a>
-          <button type="submit" class="btn brand">적용</button>
-        </div>
-      </form>
+					<!-- 버튼 -->
+					<div class="field-actions fg-actions">
+						<a class="btn ghost" th:href="@{/planner/WeddingCategory}">초기화</a>
+						<button type="submit" class="btn brand">적용</button>
+					</div>
+				</form>
 
-      <!-- 결과 요약 -->
-      <section class="result-meta">
-        <span class="count"><strong th:text="${packageCount}">0</strong>개 결과</span>
-        <div class="sort">
-          <label for="sortSel">정렬</label>
-          <select id="sortSel" class="select small"
-                  onchange="location.href=this.options[this.selectedIndex].dataset.href">
-            <option th:data-href="@{/planner/WeddingCategory(t=${t}, q=${q}, city=${city}, min=${min}, max=${max}, sort='pop')}"
-                    th:selected="${sort == null or sort == 'pop'}">인기순</option>
-            <option th:data-href="@{/planner/WeddingCategory(t=${t}, q=${q}, city=${city}, min=${min}, max=${max}, sort='priceAsc')}"
-                    th:selected="${sort == 'priceAsc'}">가격↑</option>
-            <option th:data-href="@{/planner/WeddingCategory(t=${t}, q=${q}, city=${city}, min=${min}, max=${max}, sort='priceDesc')}"
-                    th:selected="${sort == 'priceDesc'}">가격↓</option>
-          </select>
-        </div>
-      </section>
+				<!-- 결과 요약 -->
+				<section class="result-meta">
+					<span class="count"><strong th:text="${packageCount}">0</strong>개
+						결과</span>
+					<div class="sort">
+						<label for="sortSel">정렬</label> <select id="sortSel"
+							class="select small"
+							onchange="location.href=this.options[this.selectedIndex].dataset.href">
+							<option
+								th:data-href="@{/planner/WeddingCategory(t=${t}, q=${q}, city=${city}, min=${min}, max=${max}, sort='pop')}"
+								th:selected="${sort == null or sort == 'pop'}">인기순</option>
+							<option
+								th:data-href="@{/planner/WeddingCategory(t=${t}, q=${q}, city=${city}, min=${min}, max=${max}, sort='priceAsc')}"
+								th:selected="${sort == 'priceAsc'}">가격↑</option>
+							<option
+								th:data-href="@{/planner/WeddingCategory(t=${t}, q=${q}, city=${city}, min=${min}, max=${max}, sort='priceDesc')}"
+								th:selected="${sort == 'priceDesc'}">가격↓</option>
+						</select>
+					</div>
+				</section>
 
-      <!-- 카드 그리드 -->
-      <section class="grid">
-        <article class="card" th:each="pkg : ${packages}">
-          <div class="thumb">
-            <img th:if="${pkg.hallImg != null and !#strings.isEmpty(pkg.hallImg)}"
-                 th:src="@{${pkg.hallImg}}"
-                 alt="패키지 대표 이미지"
-                 style="width:100%;height:100%;object-fit:cover;display:block;">
-            <div class="noimg" th:if="${pkg.hallImg == null or #strings.isEmpty(pkg.hallImg)}">
-              <i class="bx bx-image-alt"></i> 이미지가 없음
-            </div>
-            <div class="badge" th:if="${pkg.discount > 0}" th:text="${pkg.discount} + '%'">10%</div>
-          </div>
+				<!-- 카드 그리드 -->
+				<section class="grid">
+					<article class="card" th:each="pkg : ${packages}">
+						<div class="thumb">
+							<img
+								th:if="${pkg.hallImg != null and !#strings.isEmpty(pkg.hallImg)}"
+								th:src="@{${pkg.hallImg}}" alt="패키지 대표 이미지"
+								style="width: 100%; height: 100%; object-fit: cover; display: block;">
+							<div class="noimg"
+								th:if="${pkg.hallImg == null or #strings.isEmpty(pkg.hallImg)}">
+								<i class="bx bx-image-alt"></i> 이미지가 없음
+							</div>
+							<div class="badge" th:if="${pkg.discount > 0}"
+								th:text="${pkg.discount} + '%'">10%</div>
+						</div>
 
-          <div class="body">
-            <h3 class="name">
-              <span th:text="${pkg.packageNo}">1</span>번 패키지
-              <small class="type"
-                     th:text="${pkg.type == 0 ? '가성비' : (pkg.type == 1 ? '프리미엄' : (pkg.type == 2 ? '호텔' : (pkg.type == 3 ? '채플' : '가든')))}">가성비</small>
-            </h3>
-            <p class="desc"
-               th:text="'홀·스·드·메 고정 구성, 할인 적용 최종가 ' + ${#numbers.formatInteger(pkg.finalPrice, 3, 'COMMA')} + '원'">설명</p>
-            <div class="meta">
-              <span class="pill" th:text="${pkg.hallAddress}">서울</span>
-              <span class="pill" th:text="'최종가 ' + ${#numbers.formatInteger(pkg.finalPrice,3,'COMMA')} + '원'">1,200,000원</span>
-            </div>
-          </div>
+						<div class="body">
+							<h3 class="name">
+								<span th:text="${pkg.packageNo}">1</span>번 패키지 <small
+									class="type"
+									th:text="${pkg.type == 0 ? '가성비' : (pkg.type == 1 ? '프리미엄' : (pkg.type == 2 ? '호텔' : (pkg.type == 3 ? '채플' : '가든')))}">가성비</small>
+							</h3>
+							<p class="desc"
+								th:text="'홀·스·드·메 고정 구성, 할인 적용 최종가 ' + ${#numbers.formatInteger(pkg.finalPrice, 3, 'COMMA')} + '원'">설명</p>
+							<div class="meta">
+								<span class="pill" th:text="${pkg.hallAddress}">서울</span> <span
+									class="pill"
+									th:text="'최종가 ' + ${#numbers.formatInteger(pkg.finalPrice,3,'COMMA')} + '원'">1,200,000원</span>
+							</div>
+						</div>
 
-          <!-- 상세(토글) -->
-          <div class="details">
-            <div class="row">
-              <span class="k">웨딩홀</span>
-              <span class="v">
-                <b th:text="${pkg.hallName}">홀명</b>
-                <em th:text="${#numbers.formatInteger(pkg.hallCost,3,'COMMA')} + '원'">0원</em>
-              </span>
-            </div>
-            <div class="row">
-              <span class="k">스튜디오</span>
-              <span class="v">
-                <b th:text="${pkg.studioName}">스튜디오명</b>
-                <em th:text="${#numbers.formatInteger(pkg.studioCost,3,'COMMA')} + '원'">0원</em>
-              </span>
-            </div>
-            <div class="row">
-              <span class="k">드레스</span>
-              <span class="v">
-                <b th:text="${pkg.dressName}">드레스명</b>
-                <em th:text="${#numbers.formatInteger(pkg.dressCost,3,'COMMA')} + '원'">0원</em>
-              </span>
-            </div>
-            <div class="row">
-              <span class="k">메이크업</span>
-              <span class="v">
-                <b th:text="${pkg.makeupName}">메이크업명</b>
-                <em th:text="${#numbers.formatInteger(pkg.makeupCost,3,'COMMA')} + '원'">0원</em>
-              </span>
-            </div>
-            <div class="sum">
-              <span>총액</span>
-              <b th:text="${#numbers.formatInteger(pkg.totalPrice,3,'COMMA')} + '원'">0원</b>
-              <span class="arrow"><i class="bx bx-chevrons-right"></i></span>
-              <span class="final">최종가</span>
-              <b class="final-price" th:text="${#numbers.formatInteger(pkg.finalPrice,3,'COMMA')} + '원'">0원</b>
-            </div>
-          </div>
+						<!-- 상세(토글) -->
+						<div class="details">
+							<div class="row">
+								<span class="k">웨딩홀</span> <span class="v"> <b
+									th:text="${pkg.hallName}">홀명</b> <em
+									th:text="${#numbers.formatInteger(pkg.hallCost,3,'COMMA')} + '원'">0원</em>
+								</span>
+							</div>
+							<div class="row">
+								<span class="k">스튜디오</span> <span class="v"> <b
+									th:text="${pkg.studioName}">스튜디오명</b> <em
+									th:text="${#numbers.formatInteger(pkg.studioCost,3,'COMMA')} + '원'">0원</em>
+								</span>
+							</div>
+							<div class="row">
+								<span class="k">드레스</span> <span class="v"> <b
+									th:text="${pkg.dressName}">드레스명</b> <em
+									th:text="${#numbers.formatInteger(pkg.dressCost,3,'COMMA')} + '원'">0원</em>
+								</span>
+							</div>
+							<div class="row">
+								<span class="k">메이크업</span> <span class="v"> <b
+									th:text="${pkg.makeupName}">메이크업명</b> <em
+									th:text="${#numbers.formatInteger(pkg.makeupCost,3,'COMMA')} + '원'">0원</em>
+								</span>
+							</div>
+							<div class="sum">
+								<span>총액</span> <b
+									th:text="${#numbers.formatInteger(pkg.totalPrice,3,'COMMA')} + '원'">0원</b>
+								<span class="arrow"><i class="bx bx-chevrons-right"></i></span>
+								<span class="final">최종가</span> <b class="final-price"
+									th:text="${#numbers.formatInteger(pkg.finalPrice,3,'COMMA')} + '원'">0원</b>
+							</div>
+						</div>
 
-          <!-- 액션 -->
-          <div class="actions">
-            <a class="btn brand" th:href="@{/planner/package/select(packageNo=${pkg.packageNo})}">이 패키지 선택</a>
-            <a class="btn ghost" href="javascript:void(0)">자세히</a>
-          </div>
-        </article>
+						<!-- 액션 -->
+						<div class="actions">
+							<a class="btn brand"
+								th:href="@{/planner/package/select(packageNo=${pkg.packageNo})}">이
+								패키지 선택</a>
+							<!-- <a class="btn ghost" href="javascript:void(0)">자세히</a> -->
+						</div>
+					</article>
 
-        <div class="empty" th:if="${#lists.isEmpty(packages)}">
-          <i class="bx bx-info-circle"></i> 조건에 맞는 패키지가 없습니다.
-        </div>
-      </section>
+					<div class="empty" th:if="${#lists.isEmpty(packages)}">
+						<i class="bx bx-info-circle"></i> 조건에 맞는 패키지가 없습니다.
+					</div>
+				</section>
+			</main>
+		</div>
+	</section>
 
-      <!-- 페이지네이션 자리 -->
-      <nav class="pager" aria-label="페이지 이동">
-        <button class="btn ghost" disabled>«</button>
-        <button class="btn brand">1</button>
-        <button class="btn">2</button>
-        <button class="btn">3</button>
-        <button class="btn ghost">»</button>
-      </nav>
-    </main>
-  </div>
-</section>
-
-<script>
+	<script>
 (function(){
   const root = document.getElementById('wppkg');
   if(!root) return;

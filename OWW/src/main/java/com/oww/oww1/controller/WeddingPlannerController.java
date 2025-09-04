@@ -66,10 +66,26 @@ public class WeddingPlannerController {
     /* -------------------------- 단순 뷰 매핑 -------------------------- */
 
     @GetMapping("/WeddingPlanner/WeddingPlannerInfo")
-    public String weddingPlannerInfo() { return "WeddingPlanner/WeddingPlannerInfo"; }
+    public String weddingPlannerInfo(Model model, HttpSession session) { 
+    	
+    	@SuppressWarnings("unchecked")
+        List<ProductVO> compareList = (List<ProductVO>) session.getAttribute("productCompareList");
+        int compareCnt = (compareList == null) ? 0 : compareList.size();
+    	
+    	model.addAttribute("productCompareCount", compareCnt);
+    	return "WeddingPlanner/WeddingPlannerInfo"; 
+    	}
 
     @GetMapping("/WeddingPlanner/WeddingPlannerIntro")
-    public String weddingPlannerIntro() { return "WeddingPlanner/WeddingPlannerIntro"; }
+    public String weddingPlannerIntro(Model model, HttpSession session) { 
+    	
+    	@SuppressWarnings("unchecked")
+        List<ProductVO> compareList = (List<ProductVO>) session.getAttribute("productCompareList");
+        int compareCnt = (compareList == null) ? 0 : compareList.size();
+    	
+    	model.addAttribute("productCompareCount", compareCnt);
+    	return "WeddingPlanner/WeddingPlannerIntro"; 	
+    }
 
     /* ====================== 임시 플랜 보관함 ====================== */
     @GetMapping("/planner/WeddingPlanList")
@@ -100,6 +116,26 @@ public class WeddingPlannerController {
 
         return "WeddingPlanner/WeddingPlanList";
     }
+    
+    // 임시 플랜 보관함: 삭제
+    @GetMapping("/planner/planbox/remove")
+    public String planBoxRemove(@RequestParam("idx") int idx, HttpSession session) {
+        // 1) 화면에서 쓰는 소스: session.planBoxDetails에서 동일 인덱스 제거
+        @SuppressWarnings("unchecked")
+        List<List<ProductVO>> boxDetails = (List<List<ProductVO>>) session.getAttribute("planBoxDetails");
+        if (boxDetails != null && idx >= 0 && idx < boxDetails.size()) {
+            boxDetails.remove(idx);
+            session.setAttribute("planBoxDetails", boxDetails);
+        }
+
+        // 2) (병행 유지 시) Draft 박스도 동일 인덱스 제거해서 상태 동기화
+        //    DraftPlanServiceImpl.removeFromBox(...)는 session "planBox"를 정리함
+        draft.removeFromBox(session, idx);
+
+        // 3) 보관함으로 복귀
+        return "redirect:/planner/WeddingPlanList";
+    }
+
 
     /* ====================== DIY 목록/필터 ====================== */
     @GetMapping("/planner/WeddingDIY")
@@ -305,6 +341,14 @@ public class WeddingPlannerController {
 
         return "redirect:/planner/WeddingPlanList";
     }
+    
+    @GetMapping("/planner/plan/final/remove")
+    public String removeFinalPlan(HttpSession session){
+        String userEmail = ensureUser(session);
+        planService.deleteFinalByUser(userEmail);
+        return "redirect:/planner/WeddingPlanList";
+    }
+
 
     /* ====================== 상품비교 (세션) ====================== */
     @GetMapping("/planner/compare/add")
@@ -347,6 +391,69 @@ public class WeddingPlannerController {
     public String compareGoToDIY(){
         return "redirect:/planner/WeddingDIY?cmp=true#cmp-result";
     }
+    
+    // 플랜 비교 (임시보관함 인덱스 기반)
+    @GetMapping("/planner/WeddingPlanCompare")
+    public String planBoxCompare(
+            @RequestParam(value = "idx", required = false) List<Integer> idx,
+            Model model, HttpSession session) {
+
+        // 세션 사용자 확인 (샘플 user1@example.com 세팅)
+        String userEmail = ensureUser(session);
+
+        @SuppressWarnings("unchecked")
+        List<List<ProductVO>> boxDetails =
+                (List<List<ProductVO>>) session.getAttribute("planBoxDetails");
+        if (boxDetails == null) boxDetails = new ArrayList<>();
+
+        // 선택이 없으면 기본으로 앞에서 2개(있으면) 선택
+        List<Integer> cmpIdx = new ArrayList<>();
+        if (idx != null) {
+            for (Integer i : idx) {
+                if (i != null && i >= 0 && i < boxDetails.size()) {
+                    cmpIdx.add(i);
+                }
+            }
+        }
+        if (cmpIdx.isEmpty()) {
+            for (int i = 0; i < Math.min(2, boxDetails.size()); i++) {
+                cmpIdx.add(i);
+            }
+        }
+
+        // 최대 4개 제한
+        if (cmpIdx.size() > 4) {
+            cmpIdx = cmpIdx.subList(0, 4);
+        }
+
+        // 비교 대상 플랜들과 합계 계산
+        List<List<ProductVO>> plans = new ArrayList<>();
+        List<Integer> totals = new ArrayList<>();
+        for (Integer i : cmpIdx) {
+            List<ProductVO> one = (i >= 0 && i < boxDetails.size())
+                    ? boxDetails.get(i) : new ArrayList<>();
+            plans.add(one);
+
+            int sum = 0;
+            if (one != null) {
+                for (ProductVO p : one) {
+                    if (p != null) {
+                        // ProductVO.cost 사용 (세션에서 쓰는 VO 그대로 사용)
+                        sum += p.getCost();
+                    }
+                }
+            }
+            totals.add(sum);
+        }
+
+        model.addAttribute("plans", plans);
+        model.addAttribute("cmpIdx", cmpIdx);
+        model.addAttribute("totals", totals);
+        model.addAttribute("progressPercent", 0);
+
+        return "WeddingPlanner/WeddingPlanCompare";
+    }
+
 
     /* ====================== 테마별 패키지 ====================== */
 

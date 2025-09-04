@@ -1,129 +1,195 @@
 :root {
-	--line: #e7e2dd;
-	--ink: #2b2b2b;
-	--brand: #7c3aed;
-	--card: #fff;
-	--sub: #7a7a7a;
-	--shadow: 0 10px 24px rgba(0, 0, 0, .08);
+  --line: #e7e2dd;
+  --ink: #2b2b2b;
+  --brand: #7c3aed;
+  --card: #fff;
+  --sub: #7a7a7a;
+  --bg: #faf7f4;
+  --shadow: 0 10px 24px rgba(0, 0, 0, .08);
 }
 
-#wpplancomp.page {
-	display: grid;
-	grid-template-columns: 260px minmax(0, 1fr);
-	gap: 24px;
-	padding: 16px 20px 40px;
+/* 페이지 레이아웃: 사이드바 260px + 컨텐츠 */
+#wpplancompare.page {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+  padding: 16px 20px 40px;
 }
 
-#wpplancomp .title {
-	margin: 0;
-	font-size: 28px;
-	font-weight: 800;
-	color: var(--brand);
+/* 타이틀/설명 */
+#wpplancompare .title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--brand);
 }
 
-#wpplancomp .actions {
-	margin-top: 8px;
+#wpplancompare .desc {
+  margin: 0 0 16px 0;
+  color: var(--sub);
 }
 
-#wpplancomp .btn {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 8px 12px;
-	border: 1px solid var(--line);
-	border-radius: 12px;
-	text-decoration: none;
-	background: #fff;
+/* 버튼 공통 */
+#wpplancompare .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
+  background: #fff;
+  color: var(--ink);
+  transition: transform .06s ease, box-shadow .06s ease, background .15s ease;
 }
 
-#wpplancomp .table {
-	border: 1px solid var(--line);
-	border-radius: 16px;
-	overflow: hidden;
-	background: #fff;
-	box-shadow: var(--shadow);
+#wpplancompare .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
 }
 
-#wpplancomp .header, #wpplancomp .row {
-	display: grid;
-	grid-template-columns: 180px repeat(auto-fit, minmax(220px, 1fr));
-	border-bottom: 1px solid var(--line);
+#wpplancompare .btn.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
 }
 
-#wpplancomp .header .c, #wpplancomp .row .c {
-	padding: 10px;
+#wpplancompare .btn.ghost {
+  background: #fff;
 }
 
-#wpplancomp .header .c:first-child, #wpplancomp .row .c:first-child {
-	background: #faf7f4;
-	font-weight: 800;
+/* 공백/알림 박스 */
+#wpplancompare .empty,
+#wpplancompare .note {
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  color: var(--sub);
+  background: #fff;
 }
 
-#wpplancomp .key {
-	font-weight: 800;
-	color: var(--ink);
+/* 비교 테이블 카드 */
+#wpplancompare .cmp-table {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: var(--shadow);
 }
 
-#wpplancomp .mini {
-	display: grid;
-	grid-template-columns: 70px 1fr auto;
-	gap: 8px;
-	align-items: center;
-	border: 1px solid var(--line);
-	border-radius: 12px;
-	padding: 6px;
-	margin-bottom: 8px;
+/* 헤더/행 그리드: 첫 컬럼(항목명) + 반복 컬럼(플랜들) */
+#wpplancompare .cmp-header,
+#wpplancompare .cmp-row {
+  display: grid;
+  grid-template-columns: 180px repeat(auto-fit, minmax(220px, 1fr));
+  border-bottom: 1px solid var(--line);
 }
 
-#wpplancomp .thumb {
-	width: 70px;
-	height: 56px;
-	border-radius: 8px;
-	overflow: hidden;
-	background: #f2eee9;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+#wpplancompare .cmp-header .c,
+#wpplancompare .cmp-row .c {
+  padding: 12px 14px;
 }
 
-#wpplancomp .thumb img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+/* 좌측 키 컬럼 스타일 */
+#wpplancompare .cmp-header .c:first-child,
+#wpplancompare .cmp-row .c:first-child {
+  background: var(--bg);
+  font-weight: 800;
+  color: var(--ink);
 }
 
-#wpplancomp .noimg {
-	color: var(--sub);
-	font-size: 12px;
-	display: flex;
-	align-items: center;
-	gap: 6px;
+/* 헤더 플랜 타이틀 */
+#wpplancompare .pname {
+  font-weight: 800;
+  color: var(--ink);
 }
 
-#wpplancomp .name {
-	font-weight: 800;
+/* 항목 명시 */
+#wpplancompare .key {
+  font-weight: 800;
+  color: var(--ink);
 }
 
-#wpplancomp .sub {
-	color: var(--sub);
-	font-size: 12px;
+/* 아이템 리스트 */
+#wpplancompare .items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
 }
 
-#wpplancomp .price {
-	font-weight: 800;
+/* 아이템(상품) 미니 카드 */
+#wpplancompare .mini,
+#wpplancompare .items li {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  background: #fff;
 }
 
-#wpplancomp .empty {
-	border: 1px dashed var(--line);
-	border-radius: 16px;
-	padding: 18px;
-	text-align: center;
-	color: var(--sub);
-	background: #fff;
+/* 썸네일 */
+#wpplancompare .thumb {
+  width: 70px;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f2eee9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@media ( max-width :1100px) {
-	#wpplancomp.page {
-		grid-template-columns: 1fr;
-	}
+#wpplancompare .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#wpplancompare .noimg {
+  color: var(--sub);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 상품명/보조텍스트/가격 */
+#wpplancompare .name {
+  font-weight: 800;
+}
+
+#wpplancompare .sub {
+  color: var(--sub);
+  font-size: 12px;
+}
+
+#wpplancompare .price {
+  font-weight: 800;
+}
+
+/* 합계 강조 */
+#wpplancompare .cmp-row .c strong {
+  font-size: 16px;
+  color: var(--ink);
+}
+
+/* 하단 액션 */
+#wpplancompare .actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+  #wpplancompare.page {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,308 +1,338 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">WeddingDIY</title>
-  <link rel="stylesheet" th:href="@{/css/WeddingDIY.css}" />
-  <link rel="stylesheet" th:href="@{/css/WeddingProductCompare.css}" />
+<title layout:fragment="title">WeddingDIY</title>
+<link rel="stylesheet" th:href="@{/css/WeddingDIY.css}" />
+<link rel="stylesheet" th:href="@{/css/WeddingProductCompare.css}" />
 </head>
 <body>
-<section layout:fragment="content">
-  <div class="page" id="wpdiy">
-    <!-- 좌측 사이드바(프래그먼트) -->
-    <div th:replace="~{fragments/MainSideBar :: sidebar(
+	<section layout:fragment="content">
+		<div class="page" id="wpdiy">
+			<!-- 좌측 사이드바(프래그먼트) -->
+			<div
+				th:replace="~{fragments/MainSideBar :: sidebar(
         user=${user},
         active='WeddingPlanner/WeddingDIY',
         progress=${progressPercent},
         productCompareCount=${productCompareCount}
     )}"></div>
 
-    <!-- 본문 -->
-    <main class="main">
-      <h1 class="brown-title">사용자 DIY</h1>
-      <p class="brown-desc">스튜디오 · 드레스 · 메이크업 · 웨딩홀을 한 곳에서 비교·선택하세요.</p>
+			<!-- 본문 -->
+			<main class="main">
+				<h1 class="brown-title">사용자 DIY</h1>
+				<p class="brown-desc">스튜디오 · 드레스 · 메이크업 · 웨딩홀을 한 곳에서 비교·선택하세요.</p>
 
-      <div class="folder">
+				<div class="folder">
 
-        <!-- 탭 -->
-        <div class="folder-tabs" role="tablist" aria-label="카테고리">
-          <a class="tab" th:classappend="${all} ? ' active' : ''"
-             th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort=${sort})}">
-            <i class="bx bx-grid-alt mr-6" aria-hidden="true"></i>전체보기
-          </a>
-          <a class="tab" th:classappend="${cat == 1 and !all} ? ' active' : ''"
-             th:href="@{/planner/WeddingDIY (cat=1, q=${q}, ex=${ex}, sort=${sort})}">
-            <i class="bx bx-camera mr-6" aria-hidden="true"></i>스튜디오
-          </a>
-          <a class="tab" th:classappend="${cat == 2 and !all} ? ' active' : ''"
-             th:href="@{/planner/WeddingDIY (cat=2, q=${q}, ex=${ex}, sort=${sort})}">
-            <i class="bx bx-store mr-6" aria-hidden="true"></i>드레스
-          </a>
-          <a class="tab" th:classappend="${cat == 3 and !all} ? ' active' : ''"
-             th:href="@{/planner/WeddingDIY (cat=3, q=${q}, ex=${ex}, sort=${sort})}">
-            <i class="bx bx-brush mr-6" aria-hidden="true"></i>메이크업
-          </a>
-          <a class="tab" th:classappend="${cat == 0 and !all} ? ' active' : ''"
-             th:href="@{/planner/WeddingDIY (cat=0, q=${q}, ex=${ex}, sort=${sort})}">
-            <i class="bx bx-buildings mr-6" aria-hidden="true"></i>웨딩홀
-          </a>
-        </div>
+					<!-- 탭 -->
+					<div class="folder-tabs" role="tablist" aria-label="카테고리">
+						<a class="tab" th:classappend="${all} ? ' active' : ''"
+							th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort=${sort})}">
+							<i class="bx bx-grid-alt mr-6" aria-hidden="true"></i>전체보기
+						</a> <a class="tab"
+							th:classappend="${cat == 1 and !all} ? ' active' : ''"
+							th:href="@{/planner/WeddingDIY (cat=1, q=${q}, ex=${ex}, sort=${sort})}">
+							<i class="bx bx-camera mr-6" aria-hidden="true"></i>스튜디오
+						</a> <a class="tab"
+							th:classappend="${cat == 2 and !all} ? ' active' : ''"
+							th:href="@{/planner/WeddingDIY (cat=2, q=${q}, ex=${ex}, sort=${sort})}">
+							<i class="bx bx-store mr-6" aria-hidden="true"></i>드레스
+						</a> <a class="tab"
+							th:classappend="${cat == 3 and !all} ? ' active' : ''"
+							th:href="@{/planner/WeddingDIY (cat=3, q=${q}, ex=${ex}, sort=${sort})}">
+							<i class="bx bx-brush mr-6" aria-hidden="true"></i>메이크업
+						</a> <a class="tab"
+							th:classappend="${cat == 0 and !all} ? ' active' : ''"
+							th:href="@{/planner/WeddingDIY (cat=0, q=${q}, ex=${ex}, sort=${sort})}">
+							<i class="bx bx-buildings mr-6" aria-hidden="true"></i>웨딩홀
+						</a>
+					</div>
 
-        <div class="folder-body">
-          <!-- 검색/정렬 -->
-          <section class="toolbar" role="search">
-            <form class="searchbar" method="get" th:action="@{/planner/WeddingDIY}">
-              <i class="bx bx-search search-ico" aria-hidden="true"></i>
-              <input type="hidden" name="all" th:value="${all}" th:if="${all}">
-              <input type="hidden" name="cat" th:value="${cat}" th:if="${!all}">
-              <input type="search" name="q" th:value="${q}" placeholder="검색어를 입력하세요"/>
-            </form>
+					<div class="folder-body">
+						<!-- 검색/정렬 -->
+						<section class="toolbar" role="search">
+							<form class="searchbar" method="get"
+								th:action="@{/planner/WeddingDIY}">
+								<i class="bx bx-search search-ico" aria-hidden="true"></i> <input
+									type="hidden" name="all" th:value="${all}" th:if="${all}">
+								<input type="hidden" name="cat" th:value="${cat}"
+									th:if="${!all}"> <input type="search" name="q"
+									th:value="${q}" placeholder="검색어를 입력하세요" />
+							</form>
 
-            <div class="chipbox" aria-label="빠른 필터">
-              <a class="chip" th:if="${!all}"
-                 th:classappend="${sort == 'cost_asc'} ? ' active' : ''"
-                 th:href="@{/planner/WeddingDIY (cat=${cat}, q=${q}, ex=${ex}, sort='cost_asc')}">
-                <i class="bx bx-sort-up mr-4" aria-hidden="true"></i>가격순
-              </a>
-              <a class="chip" th:if="${!all}"
-                 th:classappend="${sort == 'cost_desc'} ? ' active' : ''"
-                 th:href="@{/planner/WeddingDIY (cat=${cat}, q=${q}, ex=${ex}, sort='cost_desc')}">
-                <i class="bx bx-sort-down mr-4" aria-hidden="true"></i>가격순
-              </a>
-              <a class="chip" th:if="${all}"
-                 th:classappend="${sort == 'cost_asc'} ? ' active' : ''"
-                 th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort='cost_asc')}">
-                <i class="bx bx-sort-up mr-4" aria-hidden="true"></i>가격순
-              </a>
-              <a class="chip" th:if="${all}"
-                 th:classappend="${sort == 'cost_desc'} ? ' active' : ''"
-                 th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort='cost_desc')}">
-                <i class="bx bx-sort-down mr-4" aria-hidden="true"></i>가격순
-              </a>
-            </div>
-          </section>
+							<div class="chipbox" aria-label="빠른 필터">
+								<a class="chip" th:if="${!all}"
+									th:classappend="${sort == 'cost_asc'} ? ' active' : ''"
+									th:href="@{/planner/WeddingDIY (cat=${cat}, q=${q}, ex=${ex}, sort='cost_asc')}">
+									<i class="bx bx-sort-up mr-4" aria-hidden="true"></i>가격순
+								</a> <a class="chip" th:if="${!all}"
+									th:classappend="${sort == 'cost_desc'} ? ' active' : ''"
+									th:href="@{/planner/WeddingDIY (cat=${cat}, q=${q}, ex=${ex}, sort='cost_desc')}">
+									<i class="bx bx-sort-down mr-4" aria-hidden="true"></i>가격순
+								</a> <a class="chip" th:if="${all}"
+									th:classappend="${sort == 'cost_asc'} ? ' active' : ''"
+									th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort='cost_asc')}">
+									<i class="bx bx-sort-up mr-4" aria-hidden="true"></i>가격순
+								</a> <a class="chip" th:if="${all}"
+									th:classappend="${sort == 'cost_desc'} ? ' active' : ''"
+									th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort='cost_desc')}">
+									<i class="bx bx-sort-down mr-4" aria-hidden="true"></i>가격순
+								</a>
+							</div>
+						</section>
 
-          <!-- 고급 필터 -->
-          <section class="filter-advanced">
-            <details open>
-              <summary><i class="bx bx-slider-alt mr-6"></i>카테고리 선택</summary>
-              <div class="fa-inner">
+						<!-- 고급 필터 -->
+						<section class="filter-advanced">
+							<details open>
+								<summary>
+									<i class="bx bx-slider-alt mr-6"></i>카테고리 선택
+								</summary>
+								<div class="fa-inner">
 
-                <!-- 현재 선택 -->
-                <div class="fa-row">
-                  <div class="fa-label"><i class="bx bx-check-circle mr-6"></i>현재 선택</div>
-                  <div class="fa-fields">
-                    <span class="chip" th:if="${all}">
-                      <i class="bx bx-grid-alt mr-4"></i>전체보기
-                    </span>
-                    <span class="chip" th:if="${!all}"
-                          th:text="${cat == 0 ? '웨딩홀' : (cat==1 ? '스튜디오' : (cat==2 ? '드레스' : '메이크업'))}">스튜디오</span>
-                  </div>
-                </div>
+									<!-- 현재 선택 -->
+									<div class="fa-row">
+										<div class="fa-label">
+											<i class="bx bx-check-circle mr-6"></i>현재 선택
+										</div>
+										<div class="fa-fields">
+											<span class="chip" th:if="${all}"> <i
+												class="bx bx-grid-alt mr-4"></i>전체보기
+											</span> <span class="chip" th:if="${!all}"
+												th:text="${cat == 0 ? '웨딩홀' : (cat==1 ? '스튜디오' : (cat==2 ? '드레스' : '메이크업'))}">스튜디오</span>
+										</div>
+									</div>
 
-                <!-- 다른 카테고리 -->
-                <div class="fa-row">
-                  <div class="fa-label"><i class="bx bx-category mr-6"></i>카테고리</div>
-                  <div class="fa-fields">
-                    <a class="chip" th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort=${sort})}">
-                      <i class="bx bx-grid-alt mr-4"></i>전체보기
-                    </a>
-                    <a class="chip" th:href="@{/planner/WeddingDIY (cat=1, q=${q}, ex=${ex}, sort=${sort})}">
-                      <i class="bx bx-camera mr-4"></i>스튜디오
-                    </a>
-                    <a class="chip" th:href="@{/planner/WeddingDIY (cat=2, q=${q}, ex=${ex}, sort=${sort})}">
-                      <i class="bx bx-store mr-4"></i>드레스
-                    </a>
-                    <a class="chip" th:href="@{/planner/WeddingDIY (cat=3, q=${q}, ex=${ex}, sort=${sort})}">
-                      <i class="bx bx-brush mr-4"></i>메이크업
-                    </a>
-                    <a class="chip" th:href="@{/planner/WeddingDIY (cat=0, q=${q}, ex=${ex}, sort=${sort})}">
-                      <i class="bx bx-buildings mr-4"></i>웨딩홀
-                    </a>
-                  </div>
-                </div>
+									<!-- 다른 카테고리 -->
+									<div class="fa-row">
+										<div class="fa-label">
+											<i class="bx bx-category mr-6"></i>카테고리
+										</div>
+										<div class="fa-fields">
+											<a class="chip"
+												th:href="@{/planner/WeddingDIY (all=true, q=${q}, ex=${ex}, sort=${sort})}">
+												<i class="bx bx-grid-alt mr-4"></i>전체보기
+											</a> <a class="chip"
+												th:href="@{/planner/WeddingDIY (cat=1, q=${q}, ex=${ex}, sort=${sort})}">
+												<i class="bx bx-camera mr-4"></i>스튜디오
+											</a> <a class="chip"
+												th:href="@{/planner/WeddingDIY (cat=2, q=${q}, ex=${ex}, sort=${sort})}">
+												<i class="bx bx-store mr-4"></i>드레스
+											</a> <a class="chip"
+												th:href="@{/planner/WeddingDIY (cat=3, q=${q}, ex=${ex}, sort=${sort})}">
+												<i class="bx bx-brush mr-4"></i>메이크업
+											</a> <a class="chip"
+												th:href="@{/planner/WeddingDIY (cat=0, q=${q}, ex=${ex}, sort=${sort})}">
+												<i class="bx bx-buildings mr-4"></i>웨딩홀
+											</a>
+										</div>
+									</div>
 
-                <!-- 제외 단어 -->
-                <div class="fa-row">
-                  <div class="fa-label"><i class="bx bx-block mr-6"></i>제외할 단어</div>
-                  <div class="fa-fields">
-                    <form method="get" th:action="@{/planner/WeddingDIY}" class="fa-exclude-form">
-                      <input type="hidden" name="all" th:value="${all}">
-                      <input type="hidden" name="cat" th:value="${cat}">
-                      <input type="hidden" name="q" th:value="${q}">
-                      <input type="hidden" name="sort" th:value="${sort}">
-                      <input type="text" name="ex" class="input fa-exclude" th:value="${ex}" placeholder="예: 야외, 스냅 불가, 주차 협소">
-                      <button class="btn-s" type="submit"><i class="bx bx-check mr-4"></i>적용</button>
-                    </form>
-                  </div>
-                </div>
+									<!-- 제외 단어 -->
+									<div class="fa-row">
+										<div class="fa-label">
+											<i class="bx bx-block mr-6"></i>제외할 단어
+										</div>
+										<div class="fa-fields">
+											<form method="get" th:action="@{/planner/WeddingDIY}"
+												class="fa-exclude-form">
+												<input type="hidden" name="all" th:value="${all}"> <input
+													type="hidden" name="cat" th:value="${cat}"> <input
+													type="hidden" name="q" th:value="${q}"> <input
+													type="hidden" name="sort" th:value="${sort}"> <input
+													type="text" name="ex" class="input fa-exclude"
+													th:value="${ex}" placeholder="예: 야외, 스냅 불가, 주차 협소">
+												<button class="btn-s" type="submit">
+													<i class="bx bx-check mr-4"></i>적용
+												</button>
+											</form>
+										</div>
+									</div>
 
-              </div>
-            </details>
-          </section>
+								</div>
+							</details>
+						</section>
 
-          <!-- 결과 카드 -->
-          <section class="grid" aria-live="polite">
-            <article class="card" th:each="p : ${products}">
-              <div class="thumb">
-                <img class="thumb-img" th:src="@{${p.img}}" th:alt="${p.productName}" alt="thumbnail">
-              </div>
+						<!-- 결과 카드 -->
+						<section class="grid" aria-live="polite">
+							<article class="card" th:each="p : ${products}">
+								<div class="thumb">
+									<img class="thumb-img" th:src="@{${p.img}}"
+										th:alt="${p.productName}" alt="thumbnail">
+								</div>
 
-              <div class="content">
-                <h3 class="title" th:text="${p.productName}">로맨틱 스튜디오</h3>
-                <div class="meta-row">
-                  <span th:text="${'가격 ' + #numbers.formatInteger(p.cost, 3, 'COMMA') + '원'}">가격 1,200,000원</span><span>•</span>
-                  <span th:text="${p.address}">강남구</span>
-                </div>
-                <p class="desc" th:text="${p.description}">설명 텍스트</p>
-              </div>
+								<div class="content">
+									<h3 class="title" th:text="${p.productName}">로맨틱 스튜디오</h3>
+									<div class="meta-row">
+										<span
+											th:text="${'가격 ' + #numbers.formatInteger(p.cost, 3, 'COMMA') + '원'}">가격
+											1,200,000원</span><span>•</span> <span th:text="${p.address}">강남구</span>
+									</div>
+									<p class="desc" th:text="${p.description}">설명 텍스트</p>
+								</div>
 
-              <div class="row-actions">
-                <a class="btn-m"
-                   th:href="@{/planner/compare/add (productNo=${p.productNo})}">
-                  <i class="bx bx-git-compare mr-6"></i>비교
-                </a>
-                <a class="btn-m contained"
-                   th:href="@{/planner/plan/select (userEmail=${userEmail}, productNo=${p.productNo}, cat=${cat}, q=${q}, ex=${ex}, sort=${sort}, all=${all})}">
-                  <i class="bx bx-check-circle mr-6"></i>선택
-                </a>
-              </div>
-            </article>
+								<div class="row-actions">
+									<a class="btn-m"
+										th:href="@{/planner/compare/add (productNo=${p.productNo})}">
+										<i class="bx bx-git-compare mr-6"></i>비교
+									</a> <a class="btn-m contained"
+										th:href="@{/planner/plan/select (userEmail=${userEmail}, productNo=${p.productNo}, cat=${cat}, q=${q}, ex=${ex}, sort=${sort}, all=${all})}">
+										<i class="bx bx-check-circle mr-6"></i>선택
+									</a>
+								</div>
+							</article>
 
-            <div class="empty" th:if="${products == null or #lists.isEmpty(products)}">
-              <i class="bx bx-info-circle mr-6"></i>검색 결과가 없습니다.
-            </div>
-          </section>
-        </div>
-      </div>
+							<div class="empty"
+								th:if="${products == null or #lists.isEmpty(products)}">
+								<i class="bx bx-info-circle mr-6"></i>검색 결과가 없습니다.
+							</div>
+						</section>
+					</div>
+				</div>
 
-      <!-- 비교표: cmp=1일 때만 -->
-      <section id="cmp-result"
-               th:if="${showCompare} and ${compareList != null} and ${!#lists.isEmpty(compareList)}">
-        <h2 class="section-title"><i class="bx bx-spreadsheet mr-6"></i>상품 비교</h2>
+				<!-- 비교표: cmp=1일 때만 -->
+				<section id="cmp-result"
+					th:if="${showCompare} and ${compareList != null} and ${!#lists.isEmpty(compareList)}">
+					<h2 class="section-title">
+						<i class="bx bx-spreadsheet mr-6"></i>상품 비교
+					</h2>
 
-        <div class="cmp-table">
-          <div class="cmp-header">
-            <div class="c">항목</div>
-            <div class="c" th:each="p : ${compareList}">
-              <div class="pname" th:text="${p.productName}">상품명</div>
-              <div class="addr" th:text="${p.address}">주소</div>
-            </div>
-          </div>
+					<div class="cmp-table">
+						<div class="cmp-header">
+							<div class="c">항목</div>
+							<div class="c" th:each="p : ${compareList}">
+								<div class="pname" th:text="${p.productName}">상품명</div>
+								<div class="addr" th:text="${p.address}">주소</div>
+							</div>
+						</div>
 
-          <div class="cmp-row">
-            <div class="c key">이미지</div>
-            <div class="c" th:each="p : ${compareList}">
-              <img th:if="${p.img != null and !#strings.isEmpty(p.img)}" th:src="@{${p.img}}" alt="">
-              <div th:if="${p.img == null or #strings.isEmpty(p.img)}" class="noimg">
-                <i class="bx bx-image-alt"></i> 이미지가 없음
-              </div>
-            </div>
-          </div>
+						<div class="cmp-row">
+							<div class="c key">이미지</div>
+							<div class="c" th:each="p : ${compareList}">
+								<img th:if="${p.img != null and !#strings.isEmpty(p.img)}"
+									th:src="@{${p.img}}" alt="">
+								<div th:if="${p.img == null or #strings.isEmpty(p.img)}"
+									class="noimg">
+									<i class="bx bx-image-alt"></i> 이미지가 없음
+								</div>
+							</div>
+						</div>
 
-          <div class="cmp-row">
-            <div class="c key">가격</div>
-            <div class="c" th:each="p : ${compareList}"
-                 th:text="${#numbers.formatInteger(p.cost, 3, 'COMMA') + '원'}">0원</div>
-          </div>
+						<div class="cmp-row">
+							<div class="c key">가격</div>
+							<div class="c" th:each="p : ${compareList}"
+								th:text="${#numbers.formatInteger(p.cost, 3, 'COMMA') + '원'}">0원</div>
+						</div>
 
-          <div class="cmp-row">
-            <div class="c key">카테고리</div>
-            <div class="c" th:each="p : ${compareList}"
-                 th:text="${p.category == 0 ? '웨딩홀' : (p.category==1 ? '스튜디오' : (p.category==2 ? '드레스' : '메이크업'))}">카테고리</div>
-          </div>
+						<div class="cmp-row">
+							<div class="c key">카테고리</div>
+							<div class="c" th:each="p : ${compareList}"
+								th:text="${p.category == 0 ? '웨딩홀' : (p.category==1 ? '스튜디오' : (p.category==2 ? '드레스' : '메이크업'))}">카테고리</div>
+						</div>
 
-          <div class="cmp-row">
-            <div class="c key">설명</div>
-            <div class="c" th:each="p : ${compareList}" th:text="${p.description}">설명</div>
-          </div>
-        </div>
-      </section>
-    </main>
+						<div class="cmp-row">
+							<div class="c key">설명</div>
+							<div class="c" th:each="p : ${compareList}"
+								th:text="${p.description}">설명</div>
+						</div>
+					</div>
+				</section>
+			</main>
 
-    <!-- 선택 현황(사이드바) -->
-    <aside class="selectbar" aria-label="선택 현황 패널">
-      <div class="row row-top">
-        <div class="sb-title">
-          <i class="bx bx-list-check mr-6"></i>선택 현황
-          <span class="pill"
-                th:text="${selectedItems != null and !#lists.isEmpty(selectedItems) ? '선택 ' + selectedItems.size() + '건' : '선택 없음'}">
-            선택 없음
-          </span>
-        </div>
-        <div class="right-actions">
-          <a class="btn-s" th:href="@{/planner/plan/reset (userEmail=${userEmail},cat=${cat})}">
-            <i class="bx bx-reset mr-4"></i>모두 초기화
-          </a>
-        </div>
-      </div>
+			<!-- 선택 현황(사이드바) -->
+			<aside class="selectbar" aria-label="선택 현황 패널">
+				<div class="row row-top">
+					<div class="sb-title">
+						<i class="bx bx-list-check mr-6"></i>선택 현황 <span class="pill"
+							th:text="${selectedItems != null and !#lists.isEmpty(selectedItems) ? '선택 ' + selectedItems.size() + '건' : '선택 없음'}">
+							선택 없음 </span>
+					</div>
+					<div class="right-actions">
+						<a class="btn-s"
+							th:href="@{/planner/plan/reset (userEmail=${userEmail},cat=${cat})}">
+							<i class="bx bx-reset mr-4"></i>모두 초기화
+						</a>
+					</div>
+				</div>
 
-      <!-- 플랜 있을 때 -->
-      <section class="sb-block" th:if="${selectedPlan != null and selectedItems != null and !#lists.isEmpty(selectedItems)}">
-        <div class="row"><strong th:text="${selectedPlan.planNo + '번 플랜'}">1번 플랜</strong></div>
+				<!-- 플랜 있을 때 -->
+				<section class="sb-block"
+					th:if="${selectedPlan != null and selectedItems != null and !#lists.isEmpty(selectedItems)}">
+					<div class="row">
+						<strong th:text="${selectedPlan.planNo + '번 플랜'}">1번 플랜</strong>
+					</div>
 
-        <div class="mini" th:each="it : ${selectedItems}">
-          <div class="thumb-s">
-            <img class="thumb-img" th:src="@{${it.img}}" th:alt="${it.productName}" alt="thumb">
-          </div>
-          <div class="meta">
-            <div th:text="${it.productName}">로맨틱 드레스 B</div>
-            <div class="tag"
-                 th:text="${it.category == 0 ? '웨딩홀' : (it.category==1 ? '스튜디오' : (it.category==2 ? '드레스' : '메이크업'))}">
-              드레스
-            </div>
-          </div>
-          <div class="price" th:text="${#numbers.formatInteger(it.cost, 3, 'COMMA') + '원'}">800,000원</div>
+					<div class="mini" th:each="it : ${selectedItems}">
+						<div class="thumb-s">
+							<img class="thumb-img" th:src="@{${it.img}}"
+								th:alt="${it.productName}" alt="thumb">
+						</div>
+						<div class="meta">
+							<div th:text="${it.productName}">로맨틱 드레스 B</div>
+							<div class="tag"
+								th:text="${it.category == 0 ? '웨딩홀' : (it.category==1 ? '스튜디오' : (it.category==2 ? '드레스' : '메이크업'))}">
+								드레스</div>
+						</div>
+						<div class="price"
+							th:text="${#numbers.formatInteger(it.cost, 3, 'COMMA') + '원'}">800,000원</div>
 
-          <a class="remove" title="항목 삭제"
-             th:href="@{/planner/plan/item/delete (
+						<a class="remove" title="항목 삭제"
+							th:href="@{/planner/plan/item/delete (
                userEmail=${userEmail},
                planNo=${selectedPlan.planNo},
                category=${it.category},
                cat=${cat}, q=${q}, ex=${ex}, sort=${sort}
              )}">
-            <i class="bx bx-x"></i>
-          </a>
-        </div>
+							<i class="bx bx-x"></i>
+						</a>
+					</div>
 
-        <div class="row row-legend">
-          <div class="legend">
-            <i class="bx bxs-circle ok-dot"></i> 예산 이내
-            <i class="bx bxs-circle ng-dot ml-10"></i> 예산 초과
-          </div>
-          <div class="budget" th:classappend="${isBudgetOk} ? ' ok' : ' ng'"
-               th:text="${isBudgetOk ? '예산 이내' : '예산 초과'}">예산 이내</div>
-        </div>
-        <div class="row">
-          <div class="tag">합계</div>
-          <div class="price" th:text="${#numbers.formatInteger(selectedTotal, 3, 'COMMA') + '원'}">2,000,000원</div>
-        </div>
+					<div class="row row-legend">
+						<div class="legend">
+							<i class="bx bxs-circle ok-dot"></i> 예산 이내 <i
+								class="bx bxs-circle ng-dot ml-10"></i> 예산 초과
+						</div>
+						<div class="budget" th:classappend="${isBudgetOk} ? ' ok' : ' ng'"
+							th:text="${isBudgetOk ? '예산 이내' : '예산 초과'}">예산 이내</div>
+					</div>
+					<div class="row">
+						<div class="tag">합계</div>
+						<div class="price"
+							th:text="${#numbers.formatInteger(selectedTotal, 3, 'COMMA') + '원'}">2,000,000원</div>
+					</div>
 
-        <div class="row buttons" style="margin-top:8px">
-          <a class="btn" th:href="@{/planner/plan/save (userEmail=${userEmail},cat=${cat})}">
-            <i class="bx bx-save mr-6"></i>플랜 저장
-          </a>
-          <a class="btn" th:href="@{/planner/plan/add (userEmail=${userEmail},cat=${cat})}">
-            <i class="bx bx-plus-circle mr-6"></i>플랜 추가
-          </a>
-        </div>
-      </section>
+					<div class="row buttons" style="margin-top: 8px">
+						<a class="btn"
+							th:href="@{/planner/plan/save (userEmail=${userEmail},cat=${cat})}">
+							<i class="bx bx-save mr-6"></i>플랜 저장
+						</a> <!-- <a class="btn"
+							th:href="@{/planner/plan/add (userEmail=${userEmail},cat=${cat})}">
+							<i class="bx bx-plus-circle mr-6"></i>플랜 추가
+						</a> -->
+					</div>
+				</section>
 
-      <!-- 플랜 없을 때 -->
-      <section class="sb-block" th:if="${selectedItems == null or #lists.isEmpty(selectedItems)}">
-        <div class="row"><strong>플랜 없음</strong></div>
-        <div class="empty"><i class="bx bx-package mr-6"></i>선택한 상품이 없습니다.</div>
-        <div class="row">
-          <div class="tag">합계</div>
-          <div class="price">0원</div>
-        </div>
-      </section>
-    </aside>
-  </div>
+				<!-- 플랜 없을 때 -->
+				<section class="sb-block"
+					th:if="${selectedItems == null or #lists.isEmpty(selectedItems)}">
+					<div class="row">
+						<strong>플랜 없음</strong>
+					</div>
+					<div class="empty">
+						<i class="bx bx-package mr-6"></i>선택한 상품이 없습니다.
+					</div>
+					<div class="row">
+						<div class="tag">합계</div>
+						<div class="price">0원</div>
+					</div>
+				</section>
+			</aside>
+		</div>
 
-  <!-- 하단 떠있는 비교바 include -->
-  <div th:replace="~{WeddingPlanner/WeddingProductCompare :: compareBar(compareList=${compareList})}"></div>
-</section>
+		<!-- 하단 떠있는 비교바 include -->
+		<div
+			th:replace="~{WeddingPlanner/WeddingProductCompare :: compareBar(compareList=${compareList})}"></div>
+	</section>
 </body>
 </html>
