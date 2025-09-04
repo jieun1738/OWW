@@ -560,8 +560,94 @@
 	margin-bottom: 5px;
 	margin-left: 5px;
 }
+/*-----safebox-------  */
+.safe-card {
+	display: flex;	
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: left;
+	width: 80%;
+	height: auto;
+	gap:10px;
+	margin: 10px;
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 1px solid var(--line);
+	padding: 16px;
+	color: #5a3a36;
+	box-shadow: 0 4px 12px var(--brand-weak);
+	border-radius: 10px;
+	transition: transform 0.3s ease;
+}
+.safe-card .tabs button{
+	background: rgb(217, 137, 243);
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.3s ease;
+}
 
+.safe-card .tabs button:hover{
+	background: rgb(128, 128, 255);
+}
+.safe-card .wrap select {
+    /* 글씨 크기 */
+    font-size: 14px;
+    
+    /* 박스 크기 */
+    width: 100px;
+    height: 30px;
+    
+    /* 패딩으로 내부 여백 조절 */
+    padding: 5px 5px;
+    
+    /* 추가 스타일링 */
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
 
+.chart-wrap {
+    width: 100%;
+    height: 500px;   /* 원하는 높이 */
+    position: relative; /* Chart.js 권장 */
+}
+
+#savingChart {
+    width: 100%;
+    height: 100%;
+}
+
+.safe-card .progress-container {
+	position: relative;
+	background: rgb(244, 220, 252);
+	border-radius: 20px;
+	width: 90%;
+	height: 25px;
+	overflow: visible;
+	margin: 2px 0;
+	display: flex;
+	align-items: center;
+	/* 세로 중앙 정렬 */
+	padding-left: 4px;
+}
+
+.safe-card .progress-bar {
+	background: linear-gradient(90deg, rgb(64, 0, 128), rgb(186, 121, 225));
+	height: 60%;
+	border-radius: 20px;
+	transition: width 0.3s ease;
+}
+.safe-card .section {
+    display: flex;
+    align-items: center; /* 섹션 내부 요소들은 가로로 정렬 */
+    gap: 5px; /* 섹션 내부 요소들 간 간격 */
+}
+.safe-card .section h2{
+	font-size:20px;
+	font-weight: bold;
+}
 
 
 /* 반응형 */

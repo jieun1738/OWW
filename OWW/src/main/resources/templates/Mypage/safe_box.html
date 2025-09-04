@@ -1,181 +1,118 @@
-<!doctype html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+<!DOCTYPE html>
+<html lang="ko" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/base}">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title layout:fragment="title">myPage | 차곡차곡 금고</title>
-  <link rel="stylesheet" th:href="@{/css/Mypage.css}">
-<!--  <link rel="stylesheet" href="/css/safe_box.css">-->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title layout:fragment="title">myPage | 차곡차곡 금고</title>
+	<link rel="stylesheet" th:href="@{/css/Mypage.css}">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="/js/safeboxChart.js" defer></script>
+	<script th:inline="javascript" defer>
+		window.targetAmount = /*[[${targetAmount != null ? targetAmount : 0}]]*/ 0;
+		window.savedAmount = /*[[${savedAmount != null ? savedAmount  : 0}]]*/ 0;
+		window.historyList = /*[[${historyList}]]*/[];
+		
+	</script>
+	<script defer>
+		document.addEventListener("DOMContentLoaded", () => {
+					const labels = window.historyList.map(h => h.payment_date);
+					const data = window.historyList.map(h => h.amount);
+					console.log("html historyList:", window.historyList);
+					initChart(labels, data);
+				});
+	</script>
 </head>
+
 <body>
 	<section layout:fragment="content">
-			<div class="page">
+		<div class="page">
 
-				<!-- 좌측 사이드바 -->
-				<div
-					th:replace="~{fragments/MypageSideBar :: sidebar(user=${user}, active='safe_box', progress=${contract_progress}, totalBudget=${totalBudget}, sumBudget=${sumBudget})}">
-				</div>
+			<!-- 좌측 사이드바 -->
+			<div th:replace="~{fragments/MypageSideBar :: sidebar(user=${user}, active='safe_box', progress=${contract_progress}, totalBudget=${totalBudget}, sumBudget=${sumBudget})}"></div>
 
-				<div class="cards">
-					<!-- 우측 본문 -->
-					<main class="content">
-						<header class="page-header">
-							<div>
-								<h1 class="title">차곡차곡 금고</h1>
-								<p class="desc">저금 현황을 확인하세요</p>
+			<div class="cards">
+				<!-- 우측 본문 -->
+				<main class="content">
+					<header class="page-header">
+						<div>
+							<h1 class="title">차곡차곡 금고</h1>
+							<p class="desc">저금 현황을 확인하세요</p>
+						</div>
+					</header>
+
+					<!-- 카드: 목표 달성율 -->
+					<div class="safe-card">
+							<div class="section"><h2>목표 달성율</h2></div>
+							
+							<div class="progress-container">
+								<div class="progress-bar" th:style="'width:' + ${progress}+'%'"></div>
+								<span th:text="${progress} + '%'"
+									th:style="'left: calc(' + ${progress} + '% + 7px)'"></span>
 							</div>
-						</header>
+							<div class="section">
+							<span><strong>목표 금액: </strong></span><span
+								th:text="${targetAmount != null ? targetAmount : 0}">-</span> 원
+							</div>
+							<div class="section">
+								<span><strong>저금한 금액: </strong></span><span
+								th:text="${savedAmount != null ? savedAmount : 0}">-</span> 원
+							</div>
+							<div class="section">
+								<span><strong>목표까지 남은 금액: </strong></span><span
+								th:text="${targetAmount.subtract(savedAmount)}">-</span>
+							원
+							</div>
+					
+					</div>
 
-      <!-- 카드: 목표 달성율 -->
-      <div class="card">
-		<div class="card-title">목표 달성율</div>
-		<div class="total-progress">
-			<div class="progress-container">
-				<div class="progress-bar" th:style="'width:' + ${progress}+'%'"></div>
-				<span th:text="${progress} + '%'" th:style="'left: calc(' + ${progress} + '% + 7px)'"></span>
+
+					<!-- 카드: 통계 + 그래프 -->
+					<div class="safe-card">
+						<div class="tabs">
+							<button id="tab-daily" class="tab active">일별 저금율</button>
+							<button id="tab-monthly" class="tab">월별 저금율</button>
+						</div>
+						<div class="wrap">
+							<select name="month" id="month">
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="8">8</option>
+								<option value="9">9</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select><strong> 월</strong>
+						</div>
+
+						<div class="chart-wrap">
+							<canvas id="savingChart"></canvas>
+						</div>
+						<!--<div class="baseline"></div>-->
+
+
+							<div class="section"><h2>저금 성공률</h2></div>
+							<div class="progress-container">
+								<div class="progress-bar" th:style="'width:' + ${save_progress}+'%'"></div>
+								<span th:text="${save_progress} + '%'" th:style="'left: calc(' + ${save_progress} + '% + 7px)'"></span>
+							</div>
+						</div>
+					 </div>
+				</main>
 			</div>
-			<span><strong>목표 금액: </strong></span><span th:text="${targetAmount != null ? targetAmount : 0}">-</span> 원<br>
-			<span><strong>저금한 금액: </strong></span><span th:text="${savedAmount != null ? savedAmount : 0}">-</span> 원<br>
-			<span><strong>목표까지 남은 금액: </strong></span><span th:text="${targetAmount.subtract(savedAmount)}">-</span>
-			원<br>
 		</div>
-        <!--<div class="goal-info">
-          <div class="row">
-            <span class="label">목표금액:</span>
-           <span th:text="|${targetAmount}원|"> - 원</span>
+	</section>
 
-          </div>
-          <div class="row">
-            <span class="label">저축액:</span>
-            <span class="value violet"
-      th:text="|${goal != null ? #numbers.formatInteger(goal.savedAmount,3,'COMMA') : 0}원|">7,000,000원</span>
 
-          </div>
-          <div class="row">
-            <span class="label">잔여금액:</span>
-           <span th:text="|${goal != null ? #numbers.formatInteger(goal.targetAmount - goal.savedAmount,3,'COMMA') : 0}원|">
-  			3,000,000원
-			</span>
-          </div>
-        </div>
--->      </div>
+	</body>
 
-      <!-- 카드: 통계 + 그래프 -->
-      <section class="card">
-        <div class="tabs">
-          <button id="tab-daily" class="tab active">일별 저금율</button>
-          <button id="tab-monthly" class="tab">월별 저금율</button>
-        </div>
 
-        <div class="chart-block">
-          <div class="chart-caption">
-		  <select name="month" id="month">
-		    <option value="1">1</option>
-		    <option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-			<option value="7">7</option>
-			<option value="8">8</option>
-			<option value="9">9</option>
-			<option value="10">10</option>
-			<option value="11">11</option>
-		    <option value="12">12</option>
-		  </select>월
-		  </div>
-		  
-		  
-          <div class="chart-wrap">
-            <canvas id="savingChart"></canvas>
-          </div>
-          <div class="baseline"></div>
-        </div>
-
-        <div class="progress titled">
-          <div class="title">저금 성공률</div>
-          <span id="successBar" style="width: 67%">67%</span>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- 서버 값 JS 주입 -->
-<script th:inline="javascript">
-  const targetAmount = /*[[${targetAmount != null ? targetAmount : 0}]]*/ 0;
-  const savedAmount  = /*[[${savedAmount != null ? savedAmount  : 0}]]*/ 0;
-</script>
-
-  <script th:inline="javascript">
-    // -------- Chart.js (증식 방지 & 높이 고정) --------
-    let savingChart;
-
-    function renderChart(labels, data) {
-      const ctx = document.getElementById('savingChart').getContext('2d');
-      if (savingChart) savingChart.destroy();
-
-      savingChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: '저축금액',
-            data,
-            pointRadius: 3,
-            tension: 0.35
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true }
-          }
-        }
-      });
-    }
-
-    // 샘플 데이터(백엔드 연동 전)
-    const sampleDaily   = [15,12,14,18,25,22,27,26,24,28,32,31,30,29,30,33,31,35,36,34,32,33,36,35,34,37,39,38,36,37,40].map(v=>v*10000);
-    const sampleMonthly = [120,130,110,150,160,170,180,190,175,185,195,210].map(v=>v*10000);
-	
-	const labels = historyList.map(h => h.payment_date);
-	const data = historyList.map(h => h.amount);
-	
-    function toDaily() {
-      document.getElementById('tab-daily').classList.add('active');
-      document.getElementById('tab-monthly').classList.remove('active');
-      const days = new Date().getMonth() === 1 ? 28 : 31;
-      renderChart(Array.from({length: days}, (_,i)=>`${i+1}일`), sampleDaily.slice(0, days));
-      updateSuccessBar(sampleDaily.slice(0, days));
-    }
-    function toMonthly() {
-      document.getElementById('tab-monthly').classList.add('active');
-      document.getElementById('tab-daily').classList.remove('active');
-      renderChart(Array.from({length: 12}, (_,i)=>`${i+1}월`), sampleMonthly);
-      updateSuccessBar(sampleMonthly);
-    }
-
-    function updateSuccessBar(arr){
-      const unit = Math.max(1, Math.round(targetAmount / (arr.length || 1)));
-      const exceed = arr.filter(v => v >= unit).length;
-      const ratio = Math.min(100, Math.round(exceed / arr.length * 100));
-      const bar = document.getElementById('successBar');
-      bar.style.width = ratio + '%';
-      bar.textContent = ratio + '%';
-    }
-
-    document.getElementById('tab-daily').addEventListener('click', toDaily);
-    document.getElementById('tab-monthly').addEventListener('click', toMonthly);
-
-    // 초기 렌더
-    toDaily();
-  </scriptth:inline="javascript">
-</body>
 </html>
