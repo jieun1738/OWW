@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+      layout:decorate="~{layout/banking_base}">
 <head>
     <title layout:fragment="title">Own Wedding Wallet - 차곡차곡금고</title>
 
@@ -252,6 +252,12 @@
             background: #6b4c6b;
         }
 
+        /* 로딩 상태 표시 */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         /* 반응형 */
         @media (max-width: 768px) {
             .main-layout {
@@ -398,7 +404,7 @@
                         <p>
                             저축 주기: <span th:text="${goal.paymentType == 'daily' ? '매일' : '매월'}">매일</span>
                         </p>
-                        <button onclick="viewGoalDetail(/*[[${goal.goalId}]]*/ 1)">상세보기</button>
+                        <button th:onclick="|viewGoalDetail(${goal.goalId})|">상세보기</button>
                     </div>
                 </div>
             </div>
@@ -409,7 +415,16 @@
         <script src="/js/auth-buttons.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
-        <script>
+       <script th:inline="javascript">
+        // JWT는 게이트웨이에서 처리되므로 CSRF 토큰 불필요
+
+        // jQuery AJAX 기본 설정 (CSRF 없음)
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+
         // 💰 세이프박스 로직
         const slider = document.getElementById("slider");
         const currentAmount = document.getElementById("currentAmount");
@@ -421,9 +436,9 @@
         }
 
         // 초기값 설정
-        const initialSafeboxBalance = /*[[${safeboxBalance ?: 0}]]*/ 0;
-        const totalAssets = /*[[${totalAssets ?: 1200000}]]*/ 1200000;
-        
+    const initialSafeboxBalance = /*[[${safeboxBalance}]]*/ 0;
+    const totalAssets = /*[[${totalAssets}]]*/ 1200000;
+    
         slider.value = initialSafeboxBalance;
         currentAmount.textContent = formatCurrency(initialSafeboxBalance);
 
@@ -442,8 +457,9 @@
           const amount = Number(slider.value);
           
           $.ajax({
-            url: '/banking/safebox/setAmount',
+            url: '/safebox/setAmount',
             type: 'POST',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: {
               amount: amount
             },
@@ -456,8 +472,16 @@
                 alert(response.message);
               }
             },
-            error: function() {
-              alert('서버 오류가 발생했습니다.');
+            error: function(xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              if (xhr.status === 401) {
+                alert('인증이 필요합니다. 다시 로그인해주세요.');
+                window.location.href = '/login';
+              } else if (xhr.status === 403) {
+                alert('접근 권한이 없습니다.');
+              } else {
+                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+              }
             }
           });
         }
@@ -511,8 +535,9 @@
           };
 
           $.ajax({
-            url: '/banking/safebox/createGoal',
+            url: '/safebox/createGoal',
             type: 'POST',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: formData,
             success: function(response) {
               if (response.success) {
@@ -520,14 +545,22 @@
                 location.reload();
               }
             },
-            error: function() {
-              alert('서버 오류가 발생했습니다.');
+            error: function(xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              if (xhr.status === 401) {
+                alert('인증이 필요합니다. 다시 로그인해주세요.');
+                window.location.href = '/login';
+              } else if (xhr.status === 403) {
+                alert('접근 권한이 없습니다.');
+              } else {
+                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+              }
             }
           });
         });
 
         function viewGoalDetail(goalId) {
-          window.location.href = '/banking/safebox/goal/' + goalId;
+          window.location.href = '/safebox/goal/' + goalId;
         }
 
         $(document).ready(function() {
@@ -536,7 +569,7 @@
 
         function updateSafeboxInfo() {
           $.ajax({
-            url: '/banking/safebox/info',
+            url: '/safebox/info',
             type: 'GET',
             success: function(response) {
               if (response.success) {

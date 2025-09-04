@@ -44,6 +44,12 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
             String requestPath = request.getPath().toString();
             System.out.println("[JWT Filter] 요청 경로: " + requestPath);
 
+            // ⭐ 정적 리소스는 JWT 검증 건너뛰기
+            if (isStaticResource(requestPath)) {
+                System.out.println("[JWT Filter] 정적 리소스 요청 - JWT 검증 건너뛰기: " + requestPath);
+                return chain.filter(exchange);
+            }
+            
             // JWT 토큰 추출 (쿠키 우선, 헤더 대안)
             String jwtToken = extractJwtToken(request);
             
@@ -128,6 +134,33 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
         return null;
     }
 
+    
+    /**
+     * 정적 리소스 요청인지 확인
+     */
+    private boolean isStaticResource(String path) {
+        return path.startsWith("/css/") ||
+               path.startsWith("/js/") ||
+               path.startsWith("/img/") ||
+               path.startsWith("/images/") ||
+               path.startsWith("/static/") ||
+               path.startsWith("/webjars/") ||
+               path.equals("/favicon.ico") ||
+               path.endsWith(".css") ||
+               path.endsWith(".js") ||
+               path.endsWith(".png") ||
+               path.endsWith(".jpg") ||
+               path.endsWith(".jpeg") ||
+               path.endsWith(".gif") ||
+               path.endsWith(".ico") ||
+               path.endsWith(".svg") ||
+               path.endsWith(".woff") ||
+               path.endsWith(".woff2") ||
+               path.endsWith(".ttf") ||
+               path.endsWith(".eot");
+    }
+    
+    
     /**
      * 로그인 페이지로 리다이렉트
      */

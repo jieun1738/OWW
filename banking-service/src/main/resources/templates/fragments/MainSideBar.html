@@ -1,196 +1,72 @@
-<div th:fragment="sidebar(userName, userEmail, totalAssets, safeboxBalance, goalPercent, active)">
-<aside class="leftnav" aria-label="뱅킹 사이드바">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Banking 페이지 호출부와 동일하게 6개의 인자 받도록 수정 -->
+<div th:fragment="sidebar(userName, userEmail, totalAssets, safeboxBalance, goalPercent, activePage)">
+  <aside class="leftnav" aria-label="웨딩플래너 사이드바">
+    <!-- 상단 사용자 박스 -->
+    <div class="ln-header">
+      <div class="icon-box brand --xl" title="User"><i class='bx bx-user-circle'></i></div>
+      <div class="ln-user">
+        <div class="ln-hello"
+             th:text="${userName != null ? userName + ' 님' : '반가워요!'}">반가워요!</div>
+        <div class="ln-mail"
+             th:text="${userEmail != null ? userEmail : ''}"></div>
+      </div>
+    </div>
 
-<!-- 상단 사용자 박스 -->
-<div class="ln-header">
-<div class="icon-box brand --xl" title="User">
-<i class='bx bx-user-circle'></i>
+    <!-- 요약 (Banking 서비스용 KPI: 자산, 금고 등) -->
+    <div class="ln-summary">
+      <div class="ln-kpi">
+        <div class="kpi">
+          <span class="icon-box --sm brand"><i class='bx bx-wallet'></i></span>
+          <span class="t">총 자산</span>
+          <span class="v" th:text="${totalAssets != null ? #numbers.formatInteger(totalAssets, 3, 'COMMA') : 0}">0</span>
+        </div>
+        <div class="kpi">
+          <span class="icon-box --sm brand"><i class='bx bx-lock'></i></span>
+          <span class="t">금고 잔액</span>
+          <span class="v" th:text="${safeboxBalance != null ? #numbers.formatInteger(safeboxBalance, 3, 'COMMA') : 0}">0</span>
+        </div>
+        <div class="kpi">
+          <span class="icon-box --sm brand"><i class='bx bx-bullseye'></i></span>
+          <span class="t">목표 달성률</span>
+          <span class="v" th:text="${goalPercent != null ? goalPercent : 0}">0</span>%
+        </div>
+      </div>
+    </div>
+
+    <!-- 내비게이션 -->
+    <div class="ln-title" style="margin-top:10px;">뱅킹 메뉴</div>
+    <nav class="ln-list">
+      <a class="ln-item"
+         th:classappend="${#strings.containsIgnoreCase(activePage,'Main')}? ' active' : ''"
+         th:href="@{/banking/main}">
+        <i class='bx bx-home-heart'></i><span>메인</span>
+      </a>
+      <a class="ln-item"
+         th:classappend="${#strings.containsIgnoreCase(activePage,'Transfer')}? ' active' : ''"
+         th:href="@{/banking/transfer_1}">
+        <i class='bx bx-transfer'></i><span>이체</span>
+      </a>
+      <a class="ln-item"
+         th:classappend="${#strings.containsIgnoreCase(activePage,'Safebox')}? ' active' : ''"
+         th:href="@{/banking/safebox/main}">
+        <i class='bx bx-lock-alt'></i><span>차곡차곡 금고</span>
+      </a>
+      <a class="ln-item"
+         th:classappend="${#strings.containsIgnoreCase(activePage,'History')}? ' active' : ''"
+         th:href="@{/banking/history}">
+        <i class='bx bx-list-ul'></i><span>거래 내역</span>
+      </a>
+    </nav>
+
+    <!-- 도움말 -->
+    <div class="ln-help">
+      <div class="icon-box --sm"><i class='bx bx-info-circle'></i></div>
+      <div class="t">로그인 후 뱅킹 서비스를 이용하실 수 있습니다.</div>
+    </div>
+  </aside>
 </div>
-<div class="ln-user">
-<div class="ln-hello" th:text="${userName != null ? userName + '님의 지갑' : '반가워요!'}">
-반가워요!
-</div>
-<div class="ln-mail" th:text="${userEmail != null ? userEmail : ''}">
-user@example.com
-</div>
-</div>
-</div>
-
-<!-- 프로필/잔액 요약 - KPI 카드 스타일로 변경 -->
-<div class="ln-summary">
-<div class="ln-kpi">
-
-<!-- 계좌 정보 KPI -->
-<div class="kpi" th:if="${globalHasAccount}">
-<div class="icon-box --sm">
-<i class='bx bx-wallet'></i>
-</div>
-<div class="v" th:text="'₩' + ${#numbers.formatInteger(globalAccountBalance, 3, 'COMMA')}">₩0</div>
-<div class="t">계좌 잔액</div>
-</div>
-
-<div class="kpi no-account" th:unless="${globalHasAccount}">
-<div class="icon-box --sm warning">
-<i class='bx bx-wallet'></i>
-</div>
-<div class="v no-data">계좌 없음</div>
-<div class="t">계좌를 생성해주세요</div>
-</div>
-
-<!-- 차곡차곡금고 정보 KPI -->
-<div class="kpi" th:if="${globalHasSafebox}">
-<div class="icon-box --sm">
-<i class='bx bx-lock'></i>
-</div>
-<div class="v" th:text="'₩' + ${#numbers.formatInteger(globalSafeboxBalance, 3, 'COMMA')}">₩0</div>
-<div class="t">차곡차곡금고</div>
-</div>
-
-<div class="kpi no-safebox" th:unless="${globalHasSafebox}">
-<div class="icon-box --sm warning">
-<i class='bx bx-lock'></i>
-</div>
-<div class="v no-data">차곡차곡금고 없음</div>
-<div class="t">차곡차곡금고를 생성해주세요</div>
-</div>
-
-<!-- 목표 대비 KPI - 둘 다 있을 때만 표시 -->
-<div class="kpi" th:if="${globalHasAccount and globalHasSafebox}">
-<div class="icon-box --sm">
-<i class='bx bx-target-lock'></i>
-</div>
-<div class="v" th:text="${goalPercent != null ? goalPercent + '%' : '0%'}">0%</div>
-<div class="t">목표 대비</div>
-</div>
-
-<div class="kpi no-goal" th:unless="${globalHasAccount and globalHasSafebox}">
-<div class="icon-box --sm warning">
-<i class='bx bx-target-lock'></i>
-</div>
-<div class="v no-data">계산 불가</div>
-<div class="t">계좌와 차곡차곡금고 필요</div>
-</div>
-
-</div>
-</div>
-
-<!-- 내비게이션 -->
-<div class="ln-title">메뉴</div>
-<nav class="ln-list">
-<a class="ln-item" th:classappend="${#strings.containsIgnoreCase(active,'Main')? ' active' : ''}" th:href="@{/banking/main}">
-<i class='bx bx-home'></i><span>메인</span>
-</a>
-
-<!-- 계좌 생성 - 계좌가 없을 때만 표시 -->
-<a class="ln-item" th:if="${!globalHasAccount}" th:classappend="${#strings.containsIgnoreCase(active,'CreateAccount')? ' active' : ''}" th:href="@{/banking/createAccount}">
-<i class='bx bx-plus-circle'></i><span>계좌 생성</span>
-</a>
-
-<!-- 계좌 관리 - 계좌가 있을 때만 표시 -->
-<a class="ln-item" th:if="${globalHasAccount}" th:classappend="${#strings.containsIgnoreCase(active,'Account')? ' active' : ''}" th:href="@{/banking/account}">
-<i class='bx bx-credit-card'></i><span>계좌 관리</span>
-</a>
-
-<!-- 차곡차곡금고 -->
-<a class="ln-item" th:classappend="${#strings.containsIgnoreCase(active,'Safebox')? ' active' : ''}" th:href="@{/banking/safebox}">
-<i class='bx bx-lock'></i><span>차곡차곡금고</span>
-<span th:unless="${globalHasSafebox}" class="menu-badge">생성</span>
-</a>
-
-<!-- 이체 - 계좌가 있을 때만 활성화 -->
-<a class="ln-item" th:if="${globalHasAccount}" th:classappend="${#strings.containsIgnoreCase(active,'Transfer')? ' active' : ''}" th:href="@{/banking/transfer}">
-<i class='bx bx-transfer'></i><span>이체</span>
-</a>
-
-<div class="ln-item disabled" th:unless="${globalHasAccount}">
-<i class='bx bx-transfer'></i><span>이체</span>
-<small class="disabled-text">(계좌 생성 후 이용가능)</small>
-</div>
-
-<!-- 거래내역 - 계좌가 있을 때만 활성화 -->
-<a class="ln-item" th:if="${globalHasAccount}" th:classappend="${#strings.containsIgnoreCase(active,'History')? ' active' : ''}" th:href="@{/banking/history}">
-<i class='bx bx-history'></i><span>거래내역</span>
-</a>
-
-<div class="ln-item disabled" th:unless="${globalHasAccount}">
-<i class='bx bx-history'></i><span>거래내역</span>
-<small class="disabled-text">(계좌 생성 후 이용가능)</small>
-</div>
-
-</nav>
-
-<!-- 도움말 -->
-<div class="ln-help">
-<div class="icon-box --sm"><i class='bx bx-info-circle'></i></div>
-<div class="t" th:if="${!globalHasAccount and !globalHasSafebox}">
-계좌와 차곡차곡금고를 생성하여 뱅킹 서비스를 시작해보세요!
-</div>
-<div class="t" th:if="${globalHasAccount and !globalHasSafebox}">
-차곡차곡금고를 생성하여 안전하게 돈을 저축해보세요!
-</div>
-<div class="t" th:if="${!globalHasAccount and globalHasSafebox}">
-계좌를 생성하여 모든 뱅킹 서비스를 이용해보세요!
-</div>
-<div class="t" th:if="${globalHasAccount and globalHasSafebox}">
-모든 서비스가 준비되었습니다. 안전한 뱅킹을 즐기세요!
-</div>
-</div>
-
-</aside>
-</div>
-
-<!-- 추가 CSS 스타일 -->
-<style>
-/* 계좌/차곡차곡금고 없을 때의 스타일 */
-.kpi.no-account, .kpi.no-safebox, .kpi.no-goal {
-    opacity: 0.7;
-    border: 1px dashed #dc3545;
-}
-
-.icon-box.warning {
-    color: #dc3545;
-    background-color: #ffe6e6;
-}
-
-.v.no-data {
-    color: #6c757d;
-    font-size: 0.9em;
-    font-weight: normal;
-}
-
-/* 비활성화된 메뉴 아이템 */
-.ln-item.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-    color: #6c757d;
-}
-
-.disabled-text {
-    display: block;
-    font-size: 0.8em;
-    color: #dc3545;
-    margin-top: 2px;
-}
-
-/* 메뉴 배지 */
-.menu-badge {
-    background-color: #28a745;
-    color: white;
-    font-size: 0.7em;
-    padding: 2px 6px;
-    border-radius: 10px;
-    margin-left: auto;
-}
-
-/* KPI 상태별 애니메이션 */
-.kpi:hover {
-    transform: translateY(-2px);
-    transition: transform 0.2s ease;
-}
-
-.kpi.no-account:hover, .kpi.no-safebox:hover, .kpi.no-goal:hover {
-    transform: none;
-    border-color: #dc3545;
-}
-</style>
+</body>
+</html>

@@ -1,133 +1,191 @@
 :root {
-	--line: #e5e7eb;
-	--ink: #111827;
-	--sub: #6b7280;
+	--line: #e7e2dd;
+	--ink: #2b2b2b;
+	--sub: #7a7a7a;
 	--brand: #7c3aed;
+	--brand2: #c4b5fd;
 	--card: #fff;
-	--muted: #f9fafb;
-	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
-	--r: 16px;
+	--muted: #faf7f4;
+	--shadow: 0 10px 24px rgba(0, 0, 0, .08);
+	--radius: 16px;
 }
 
-#wpplanlist.page {
+/* ===== 레이아웃 ===== */
+#wplist.page {
 	display: grid;
-	grid-template-columns: 280px minmax(0, 1fr);
+	grid-template-columns: 260px minmax(0, 1fr);
 	gap: 24px;
-	align-items: start;
+	padding: 16px 20px 40px;
 }
 
-#wpplanlist .content {
-	padding: 8px 16px 32px;
+#wplist .content {
 	min-width: 0;
 }
 
-#wpplanlist .title {
-	margin: 0 0 6px;
+/* ===== 타이틀 ===== */
+#wplist .title {
+	margin: 0;
 	font-size: 28px;
 	font-weight: 800;
-	letter-spacing: -.3px;
+	color: var(--brand);
 }
 
-#wpplanlist .desc {
-	margin: 0 0 14px;
+#wplist .desc {
+	margin: 6px 0 12px;
 	color: var(--sub);
 }
 
-#wpplanlist .grid {
+/* ===== 카드 그리드: 카드가 화면 너비에 맞춰 '여러 칼럼'으로 배치 ===== */
+#wplist .cards {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(220px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+	/* ▶ 가로 폭 과도 문제 해결 */
 	gap: 16px;
 }
 
-#wpplanlist .card {
+/* ===== 카드 ===== */
+#wplist .card {
 	border: 1px solid var(--line);
-	border-radius: 16px;
+	border-radius: var(--radius);
 	background: var(--card);
 	box-shadow: var(--shadow);
-	overflow: hidden;
+	padding: 12px;
 	display: flex;
 	flex-direction: column;
+	gap: 12px;
 }
 
-#wpplanlist .thumb {
-	width: 100%;
-	height: 140px;
-	background: #e5e7eb;
-	background-size: cover;
-	background-position: center;
-}
-
-#wpplanlist .content {
-	padding: 14px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-#wpplanlist .meta-row {
-	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
-	color: var(--sub);
-	font-size: 13px;
-}
-
-#wpplanlist .price-row {
+#wplist .head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 8px 0;
-	border-top: 1px dashed var(--line);
-}
-
-#wpplanlist .price-row .label {
-	color: var(--sub);
-}
-
-#wpplanlist .price-row .value {
-	font-weight: 800;
-	font-size: 16px;
-}
-
-#wpplanlist .actions {
-	margin-top: auto;
-	display: flex;
 	gap: 8px;
 }
 
-#wpplanlist .btn {
-	appearance: none;
+#wplist .pill {
+	background: #f4ede6;
 	border: 1px solid var(--line);
-	background: var(--card);
-	color: var(--ink);
+	border-radius: 999px;
+	padding: 4px 8px;
+	font-weight: 800;
+	color: var(--brand);
+}
+
+/* ===== 슬롯: 가로 배치 ===== */
+#wplist .slots {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px; /* ▶ 세로 나열 → 가로 나열 */
+}
+
+#wplist .slot {
+	display: grid;
+	grid-template-columns: 70px 1fr; /* 썸네일 옆에 텍스트 */
+	align-items: center;
+	gap: 10px;
+	border: 1px solid var(--line);
 	border-radius: 12px;
-	padding: 10px 14px;
-	font-weight: 700;
-	text-decoration: none;
-	display: inline-flex;
+	padding: 8px;
+	background: #fff;
+	min-width: 200px; /* 2~3개씩 가로로 자연 배치 */
+	flex: 1 1 220px;
+}
+
+/* 썸네일 */
+#wplist .thumb {
+	width: 70px;
+	height: 56px;
+	border-radius: 10px;
+	overflow: hidden;
+	background: #f2eee9;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#wplist .thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+#wplist .noimg {
+	color: var(--sub);
+	font-size: 12px;
+	display: flex;
 	align-items: center;
 	gap: 6px;
 }
 
-#wpplanlist .empty {
-	padding: 28px;
+/* 텍스트 */
+#wplist .meta .name {
+	font-weight: 800;
+	color: var(--ink);
+}
+
+#wplist .meta .sub {
+	color: var(--sub);
+	font-size: 12px;
+}
+
+/* 하단 버튼 */
+#wplist .row-actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-top: 2px;
+}
+
+#wplist .btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	border-radius: 10px;
+	font-weight: 700;
+	text-decoration: none;
+	border: 1px solid var(--line);
+	background: #fff;
+	color: var(--ink);
+}
+
+#wplist .btn.ghost {
+	background: #fff;
+}
+
+#wplist .btn.primary {
+	background: var(--brand);
+	color: #fff;
+	border-color: transparent;
+}
+
+#wplist .btn.danger {
+	border-color: #e03131;
+	color: #e03131;
+}
+
+/* 빈 상태 */
+#wplist .empty {
 	border: 1px dashed var(--line);
-	border-radius: 12px;
+	border-radius: 16px;
+	padding: 18px;
+	text-align: center;
 	color: var(--sub);
 	background: #fff;
 }
 
-@media ( max-width : 980px) {
-	#wpplanlist .grid {
-		grid-template-columns: repeat(2, minmax(220px, 1fr));
+/* 섹션 제목 */
+#wplist .section-title {
+	margin: 18px 0 10px;
+	font-size: 18px;
+	font-weight: 800;
+}
+
+/* 반응형 */
+@media ( max-width : 1100px) {
+	#wplist.page {
+		grid-template-columns: 1fr;
 	}
 }
 
-@media ( max-width : 640px) {
-	#wpplanlist.page {
-		grid-template-columns: 1fr;
-	}
-	#wpplanlist .grid {
-		grid-template-columns: 1fr;
-	}
-}

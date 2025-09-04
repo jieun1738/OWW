@@ -155,12 +155,9 @@
 </style>
 </head>
 
-<body>
-	<main class="site-content" layout:fragment="content">
 
-
-
-		<div class="main-layout">
+<main class="site-content" layout:fragment="content">
+  <div class="main-layout">
 			<!-- 왼쪽 사이드바 -->
 			<div
 				th:replace="~{fragments/MainSideBar :: sidebar(
@@ -171,21 +168,9 @@
       ${goalPercent}, 
       'Main')}"></div>
 
-
 			<!-- 우측 메인 컨텐츠 -->
 			<div class="container">
 				<section class="service-cards">
-
-
-<!-- 					<header class="page-header">
-						<div>
-							<h1 class="title">뱅킹 서비스</h1>
-							<p class="desc">OWW 편리한 뱅킹 서비스</p>
-						</div>
-					</header> -->
-
-
-
 
 
 					<!-- 통장 카드 -->
@@ -197,16 +182,13 @@
 							<div th:if="${hasAccount}" class="account-info">
 								<h2 class="account-number" th:text="${accountNumber}">110-000000-001</h2>
 
-
 								<div class="balance-text">
-									잔액: <span class="balance-amount">₩<span
-										th:text="${#numbers.formatInteger(globalAccountBalance, 3, 'COMMA')}">0</span></span>
+									잔액: <span class="balance-amount">₩ <span
+										th:text="${#numbers.formatInteger(accountBalance, 3, 'COMMA')}">0</span>
+									</span>
 								</div>
-
-
-
-
 							</div>
+
 							<div th:unless="${hasAccount}" class="no-account">
 								<h2>계좌가 없습니다</h2>
 								<p>Own Wedding Wallet 계좌를 생성해주세요</p>
@@ -229,8 +211,9 @@
 							</h1>
 							<div th:if="${hasSafebox}" class="safebox-info">
 								<div class="balance-text">
-									잔액: <span class="balance-amount">₩<span
-										th:text="${#numbers.formatInteger(safeboxBalance, 3, 'COMMA')}">0</span></span>
+									잔액: <span class="balance-amount">₩ <span
+										th:text="${#numbers.formatInteger(safeboxBalance, 3, 'COMMA')}">0</span>
+									</span>
 								</div>
 							</div>
 							<div th:unless="${hasSafebox}" class="no-safebox">
@@ -239,17 +222,17 @@
 							</div>
 						</div>
 						<div class="service-card-right">
-						<a
-								th:href="${@environment.getProperty('app.gateway-base-url')} + '/banking/safebox/main'"
-								class="banking-btn">금고로 이동</a>
 							<a
+								th:href="${@environment.getProperty('app.gateway-base-url')} + '/banking/safebox/main'"
+								class="banking-btn">금고로 이동</a> <a
 								th:href="${@environment.getProperty('app.gateway-base-url')} + '/banking/safebox/history'"
 								class="banking-btn auth-btn" data-url="/api/check-jwt">내역조회</a>
 						</div>
 					</article>
+
 				</section>
 			</div>
 		</div>
 	</main>
-</body>
+
 </html>

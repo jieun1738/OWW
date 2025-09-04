@@ -38,8 +38,7 @@ public class SafeboxController {
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private TransferService transferService;
+
 
     @Autowired
     private AESUtil aesUtil;
@@ -59,7 +58,7 @@ public class SafeboxController {
             // 2. 쿠키에서 토큰 확인 (헤더에 없을 경우)
             if (request.getCookies() != null) {
                 for (Cookie cookie : request.getCookies()) {
-                    if ("authToken".equals(cookie.getName())) {
+                    if ("jwt-token".equals(cookie.getName())) {
                         token = cookie.getValue();
                         break;
                     }
@@ -299,4 +298,49 @@ public class SafeboxController {
             return "error";
         }
     }
+    
+    /**
+     * 세이프박스/계좌 잔액 정보 조회 (AJAX용, JWT 기반)
+     */
+    @GetMapping("/info")
+    @ResponseBody
+    public Map<String, Object> getSafeboxInfo(HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            // JWT 검증
+            BankingJwtUtil.TokenValidationResult tokenResult = extractUserFromJwt(request);
+
+            if (!tokenResult.isValid()) {
+                result.put("success", false);
+                result.put("message", "인증이 필요합니다: " + tokenResult.getMessage());
+                return result;
+            }
+
+            String userEmailHash = tokenResult.getUserEmailHash();
+
+            // 계좌 & 세이프박스 조회
+            AccountVO account = accountService.getAccountByEmailHash(userEmailHash);
+            SafeboxVO safebox = safeboxService.getSafeboxByEmailHash(userEmailHash);
+
+            BigDecimal accountBalance = account != null ? account.getBalance() : BigDecimal.ZERO;
+            BigDecimal safeboxBalance = safebox != null && safebox.getBalance() != null ? safebox.getBalance() : BigDecimal.ZERO;
+            BigDecimal totalAssets = accountBalance.add(safeboxBalance);
+
+            // 응답 데이터
+            result.put("success", true);
+            result.put("accountBalance", accountBalance);
+            result.put("safeboxBalance", safeboxBalance);
+            result.put("totalAssets", totalAssets);
+
+        } catch (Exception e) {
+            System.out.println("세이프박스 정보 조회 오류: " + e.getMessage());
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "세이프박스 정보를 불러오는 중 오류가 발생했습니다.");
+        }
+
+        return result;
+    }
+
+    
 }

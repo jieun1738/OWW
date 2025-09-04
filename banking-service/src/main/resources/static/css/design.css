@@ -49,15 +49,27 @@ div.site-content {
   100% { background-position: 0% 50%; }
 }
 
-.site-header .brand .logo {
+/* .site-header .brand .logo {
   position: absolute;
   left: 2%;
   transform: translateY(-55%);
   font-size: 28px;
   margin: 0;
-  width: 300px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
+} */
+
+.site-header .brand .logo {
+  position: absolute;
+  left: 50%;              /* 화면 가로 중앙으로 위치 */
+  top: 60%;               /* 화면 세로 중앙으로 위치 (필요 시) */
+  transform: translate(-50%, -55%); /* X축 중앙 보정, Y축은 기존처럼 -55% */
+  font-size: 28px;
+  margin: 0;
+  width: 250px;
+  height: 250px;
 }
+
 
 .site-header #header-particles {
   position: absolute;
@@ -79,6 +91,7 @@ div.site-content {
   pointer-events: none;
 }
 
+
 /* ================= Nav ================= */
 .site-nav {
   display: grid;
@@ -86,7 +99,7 @@ div.site-content {
   justify-content: space-between;      /* 좌우 정렬 */
   align-items: center;
   padding: 0 40px;
-  background-color: #F1CBE5;
+  background-color: #f472b6;
   height: 60px;
   min-height: 60px;
   box-sizing: border-box;
@@ -94,6 +107,7 @@ div.site-content {
   top: 0;
   z-index: 1000;
   overflow: visible;
+  margin-top: 0;
 }
 
 @keyframes slideDownFade {
@@ -151,8 +165,8 @@ div.site-content {
 }
 
 .site-nav__link:hover {
-  background-color: #ffe5e1;
-  color: #333;
+  /* background-color: #ffe5e1; */
+  color: #7c3aed;
 }
 
 /* 드롭다운(기존 .dropdown) */
@@ -191,7 +205,7 @@ div.site-content {
   text-align: center;
   padding: 10px 15px;
   white-space: nowrap;
-  color: #C8A2C8;
+  color: #f472b6;
   text-decoration: none;
   font-size: 15px;
   /* 라인 높이 통일(기존 값 유지) */
@@ -201,7 +215,7 @@ div.site-content {
 
 .site-nav__dropdown a:hover {
   /* background-color: #ffe5e1; */
-  color: #d94c43;
+  color: #c4b5fd;
 }
 
 /* 드롭다운 하단 영역(기존 .dropdown-footer) */
@@ -281,80 +295,14 @@ div.site-content {
 
 .site-nav .dropdown2:hover {
   background-color: #ffe5e1;
-  color: #d94c43;
+  color: #c4b5fd;
   border-radius: 0;
 }
 
+
 /* ================= content ================= */
-.hero-swiper {
-  width: 100%;
-  margin: 60px 0;
-  padding: 0;
-  max-width: none;
-}
 
-.swiper-slide.hero {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(255, 111, 97, 0.3);
-  position: relative;
-  overflow: hidden;
-}
 
-.hero-content {
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 40px;
-  border-radius: 16px;
-  text-align: center;
-  max-width: 80%;
-}
-
-.hero-content h2 {
-  font-size: 36px;
-  color: #FF6F61;
-  margin-bottom: 20px;
-}
-
-.hero-content p {
-  font-size: 18px;
-  color: #5a3a36;
-}
-
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  background-color: rgba(255, 240, 240, 0.3);
-  padding: 60px 20px;
-  border-radius: 8px;
-  max-width: 1000px;
-  margin: 0 auto 80px auto;
-}
-
-.card {
-  background-color: rgba(255, 255, 255, 0.85);
-  border: 1px solid #ffd2cc;
-  padding: 30px;
-  width: 280px;
-  text-align: center;
-  color: #5a3a36;
-  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-}
-
-.card:hover { transform: translateY(-5px); }
-
-.card h3 {
-  color: #FF6F61;
-  margin-bottom: 10px;
-}
 
 /* ================= Footer ================= */
 .site-footer {
@@ -379,7 +327,7 @@ div.site-content {
 
 .site-footer__sec, .footer-section { flex: 1 1 300px; }
 
-.site-footer__sec h4, .footer-section h4 {
+.site-footer__sec h5, .footer-section h5 {
   margin-bottom: 10px;
   font-weight: bold;
   color: #333;

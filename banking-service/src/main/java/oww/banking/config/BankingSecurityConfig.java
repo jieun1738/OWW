@@ -2,6 +2,7 @@ package oww.banking.config;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class BankingSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+        	.securityMatcher("/**") 
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -51,7 +53,19 @@ public class BankingSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/health", "/actuator/**").permitAll()
-                    .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
+                    .requestMatchers("/safebox/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/css/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/js/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/img/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/webjars/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/*.css").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/*.js").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/*.png").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/*.jpg").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/*.ico").permitAll()
                     .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
@@ -65,20 +79,21 @@ public class BankingSecurityConfig {
 
         return http.build();
     }
-
+    
+    
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ 단일 CORS 설정 (WebMvcConfigurer 불필요)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedOrigins(List.of("http://localhost:8201")); // ← * 대신 명시
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(true); // 쿠키 허용
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

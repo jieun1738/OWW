@@ -8,15 +8,14 @@
     
     <meta name="user-email-hash" th:content="${userEmailHash}">
 
+
     <!-- 필수 공통 CSS들 추가 -->
-    <link th:href="@{/css/vendor/bootstrap.min.css}" rel="stylesheet" />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link th:href="@{/css/icons.css}" rel="stylesheet">
-    <link th:href="@{/css/design.css}" rel="stylesheet" />
     <link th:href="@{/css/MainSideBar.css}" rel="stylesheet">
-    
-    <!-- 헤더/네비/푸터 디자인을 위한 필수 CSS들 추가 -->
-    <link th:href="@{/css/page.css}" rel="stylesheet" />
+
+    <!-- 새로운 헤더 디자인 CSS (마지막에 로드해서 우선순위 확보) -->
+    <link th:href="@{/css/design.css}" rel="stylesheet" />
     
     <!-- 외부 라이브러리 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />

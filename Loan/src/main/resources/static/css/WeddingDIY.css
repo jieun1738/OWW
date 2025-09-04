@@ -1,206 +1,193 @@
-/* ===========================
-   OWW · WeddingDIY 전용 스타일
-   - wpinfo 규격과 간격/패딩 통일
-   - 이 페이지에만 적용되도록 #wpdiy 스코프
-=========================== */
-:root {
-	--line: #e5e7eb;
-	--ink: #111827;
-	--sub: #6b7280;
+
+#wpdiy {
 	--brand: #7c3aed;
-	--brand-weak: #f3e8ff;
-	--card: #ffffff;
-	--muted: #f9fafb;
-	--chip: #f3f4f6;
-	--ok: #0ea5e9;
-	--ng: #ef4444;
-	--shadow: 0 10px 20px rgba(17, 24, 39, .08);
-	--r: 16px;
-	/* 공통 간격(토큰) — wpinfo와 통일 */
-	--space-2: 8px;
-	--space-3: 12px;
-	--space-4: 16px;
-	--space-5: 20px;
-	--space-6: 24px;
-	--space-8: 32px;
+	--brand-2: #c4b5fd;
+	--bg: #ffffff;
+	--text: #2b2b2b;
+	--muted: #7a7a7a;
+	--border: #e7e2dd;
+	--chip: #f4ede6;
+	--ok: #2f9e44;
+	--ng: #e03131;
+	--card-bg: #ffffff;
+	--shadow: 0 4px 18px rgba(0, 0, 0, .06);
+	--radius: 16px;
+	background: var(--bg);
 }
 
-/* ===== 레이아웃: 사이드바(좌) + 본문 + 선택패널(우) ===== */
-#wpdiy.page {
+/* 본문/우측 패널만 색상 지정 (사이드바 보호) */
+#wpdiy .main, #wpdiy .selectbar {
+	color: var(--text);
+}
+
+
+/* 유틸 */
+#wpdiy .mr-4 {
+	margin-right: 4px;
+}
+
+#wpdiy .mr-6 {
+	margin-right: 6px;
+}
+
+#wpdiy .ml-10 {
+	margin-left: 10px;
+}
+
+/* =========================
+   레이아웃
+   ========================= */
+#wpdiy {
 	display: grid;
-	grid-template-columns: 280px minmax(0, 1fr) 320px;
-	gap: var(--space-6);
-	align-items: start;
+	grid-template-columns: 260px minmax(0, 1fr) 320px;
+	grid-column-gap: 24px;
+	padding: 16px 20px 40px;
 }
 
-/* 본문 패딩/폭 — wpinfo와 동일 리듬 */
-#wpdiy .content {
-	padding: 8px 16px 32px;
+#wpdiy .main {
+	grid-column: 2/3;
 	min-width: 0;
 }
 
-/* 선택 패널 고정 */
 #wpdiy .selectbar {
+	grid-column: 3/4;
 	position: sticky;
-	top: 72px;
-	align-self: start;
-	background: var(--card);
-	border: 1px solid var(--line);
-	border-radius: var(--r);
-	padding: 18px;
-	box-shadow: var(--shadow);
+	top: 88px;
 }
 
-/* ===== 공통 타이포 ===== */
-#wpdiy .title {
-	margin: 0;
+/* 타이틀 */
+#wpdiy .brown-title {
+	margin: 4px 0 8px;
 	font-size: 28px;
 	font-weight: 800;
-	letter-spacing: -.3px;
-}
-
-#wpdiy .desc {
-	margin: .25rem 0 0;
-	color: var(--sub);
-}
-
-#wpdiy .brown-title {
-	margin: 0 0 6px;
-	font-size: 32px;
-	font-weight: 800;
-	letter-spacing: -.3px;
-	color: #5a3a36;
+	color: var(--brand);
+	letter-spacing: -.2px;
 }
 
 #wpdiy .brown-desc {
-	margin: 0 0 14px;
+	margin: 0 0 18px;
+	color: var(--muted);
 	font-size: 14px;
-	line-height: 1.6;
-	color: var(--sub);
 }
 
-/* ===== 폴더 ===== */
-#wpdiy .folder {
-	position: relative;
-	border-radius: 16px;
-	background: linear-gradient(180deg, var(--muted), transparent);
-	border: 1px solid var(--line);
-	box-shadow: var(--shadow);
-	padding: 0;
-}
-
+/* 탭 */
 #wpdiy .folder-tabs {
 	display: flex;
 	gap: 8px;
-	padding: 12px 16px;
-	border-bottom: 0;
-	background: transparent;
+	border-bottom: 1px solid var(--border);
+	margin-bottom: 10px;
 }
 
-#wpdiy .tab {
+#wpdiy .folder-tabs .tab {
+	display: inline-flex;
+	align-items: center;
 	padding: 10px 14px;
-	border-radius: 10px;
-	background: #fff;
-	border: 1px solid var(--line);
+	border-radius: 12px 12px 0 0;
+	font-weight: 600;
+	color: var(--muted);
+	border: 1px solid transparent;
 	text-decoration: none;
-	color: var(--sub);
-	font-weight: 800;
-	box-shadow: 0 4px 10px rgba(17, 24, 39, .04);
 }
 
-#wpdiy .tab:hover {
-	background: #f9fafb;
-}
-
-#wpdiy .tab.active {
+#wpdiy .folder-tabs .tab:hover {
 	color: var(--brand);
-	background: var(--brand-weak);
-	border-color: #e9d5ff;
 }
 
-#wpdiy .folder-body {
-	position: relative;
-	z-index: 1;
-	padding: 14px 16px 18px;
-	border-radius: 0 0 16px 16px;
+#wpdiy .folder-tabs .tab.active {
+	color: var(--brand);
+	border-color: var(--border);
+	border-bottom-color: transparent;
+	background: var(--card-bg);
+	box-shadow: 0 -1px 0 var(--card-bg);
 }
 
-/* ===== 도구모음 ===== */
+/* 툴바 */
 #wpdiy .toolbar {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
 	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 0 6px;
 }
 
 #wpdiy .searchbar {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 10px 12px;
-	border: 1px solid var(--line);
+	gap: 8px;
+	background: var(--card-bg);
+	border: 1px solid var(--border);
 	border-radius: 999px;
-	background: #fff;
+	padding: 6px 10px;
 	box-shadow: var(--shadow);
-	max-width: 640px;
 }
 
-#wpdiy .searchbar input {
-	flex: 1;
+#wpdiy .searchbar .search-ico {
+	opacity: .7;
+}
+
+#wpdiy .searchbar input[type="search"] {
 	border: none;
 	outline: none;
-	font-size: 15px;
-	padding: 6px 2px;
+	font-size: 14px;
+	width: 240px;
 	background: transparent;
 }
 
 #wpdiy .btn-s {
-	border: 1px solid var(--line);
-	background: #fff;
+	border: 1px solid var(--brand);
+	background: var(--brand-2);
 	padding: 6px 10px;
 	border-radius: 10px;
+	font-size: 12px;
+	font-weight: 600;
 	cursor: pointer;
+}
+
+#wpdiy .btn-s:hover {
+	filter: brightness(.98);
 }
 
 #wpdiy .chipbox {
 	display: flex;
 	gap: 8px;
 	flex-wrap: wrap;
-	margin-left: auto;
 }
 
 #wpdiy .chip {
+	display: inline-flex;
+	align-items: center;
 	padding: 6px 10px;
+	background: var(--chip);
+	border: 1px solid var(--border);
 	border-radius: 999px;
-	background: #fff;
-	border: 1px solid var(--line);
 	font-size: 12px;
-	color: var(--sub);
-	text-decoration: none;
+	font-weight: 700;
+	color: var(--muted);
+}
+
+#wpdiy .chip:hover {
+	color: var(--brand);
 }
 
 #wpdiy .chip.active {
-	background: var(--brand-weak);
 	color: var(--brand);
-	border-color: #e9d5ff;
-}
-
-/* ===== 고급 필터 ===== */
-#wpdiy .filter-advanced {
-	margin: 10px 2px 12px;
-}
-
-#wpdiy .filter-advanced details {
-	border: 1px dashed var(--line);
 	background: #fff;
-	border-radius: 12px;
-	padding: 10px 12px;
+}
+
+/* 고급 필터 */
+#wpdiy .filter-advanced details {
+	background: var(--card-bg);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 8px 12px;
+	margin: 10px 0 14px;
+	box-shadow: var(--shadow);
 }
 
 #wpdiy .filter-advanced summary {
-	cursor: pointer;
-	font-weight: 800;
-	color: var(--ink);
+	cursor: default;
+	font-weight: 700;
+	color: var(--brand);
 	list-style: none;
 }
 
@@ -208,312 +195,434 @@
 	display: none;
 }
 
-#wpdiy .filter-advanced details[open] summary {
-	margin-bottom: 10px;
+#wpdiy .filter-advanced .fa-inner {
+	padding: 6px 4px;
 }
 
-#wpdiy .fa-inner {
-	display: grid;
-	gap: 12px;
-}
-
-#wpdiy .fa-row {
-	display: grid;
-	grid-template-columns: 120px 1fr;
-	gap: 12px;
-	align-items: center;
-}
-
-#wpdiy .fa-label {
-	font-weight: 700;
-	color: var(--sub);
-}
-
-#wpdiy .fa-fields {
+#wpdiy .filter-advanced .fa-row {
 	display: flex;
-	flex-wrap: wrap;
 	gap: 10px;
 	align-items: center;
+	padding: 6px 2px;
 }
 
-#wpdiy .chk {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
+#wpdiy .filter-advanced .fa-label {
+	width: 90px;
+	color: var(--muted);
+	font-size: 13px;
 }
 
-#wpdiy .input.fa-exclude {
-	min-width: 260px;
-	max-width: 520px;
-	width: 100%;
-	border: 1px solid var(--line);
-	border-radius: 10px;
-	padding: 8px 10px;
-}
-
-/* ===== 카드 그리드 ===== */
-#wpdiy .grid {
-	display: flex;
-	flex-wrap: wrap;
-	column-gap: 16px;
-	row-gap: 20px;
-	align-content: flex-start;
-}
-
-#wpdiy .card {
-	flex: 0 0 280px;
-	max-width: 280px;
-	display: flex;
-	flex-direction: column;
-	border: 1px solid var(--line);
-	border-radius: 16px;
-	background: var(--card);
-	box-shadow: var(--shadow);
-	overflow: hidden;
-}
-
-@media ( max-width : 900px) {
-	#wpdiy .card {
-		flex-basis: 240px;
-		max-width: 240px;
-	}
-}
-
-@media ( max-width : 640px) {
-	#wpdiy .card {
-		flex-basis: 100%;
-		max-width: 100%;
-	}
-}
-
-#wpdiy .thumb {
-	position: relative;
-	width: 100%;
-	padding-top: 66%;
-	background: linear-gradient(135deg, #fee2e2, #e0e7ff);
-}
-
-#wpdiy .thumb::after {
-	content: "PHOTO";
-	position: absolute;
-	inset: auto 10px 10px auto;
-	background: #111827cc;
-	color: #fff;
-	font-size: 12px;
-	padding: 6px 8px;
-	border-radius: 999px;
-}
-
-#wpdiy .content {
-	padding: 14px;
-}
-
-#wpdiy .title {
-	font-weight: 800;
-	margin: 0 0 6px;
-	font-size: 16px;
-}
-
-#wpdiy .meta-row {
+#wpdiy .filter-advanced .fa-fields {
 	display: flex;
 	gap: 8px;
 	flex-wrap: wrap;
-	color: var(--sub);
+}
+
+#wpdiy .filter-advanced .fa-exclude {
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 6px 10px;
 	font-size: 13px;
-	margin-bottom: 10px;
+	width: 260px;
+}
+
+#wpdiy .fa-exclude-form {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+/* 카드 그리드 */
+#wpdiy .grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 34px;
+	align-items: stretch;
+}
+
+#wpdiy .card {
+	display: flex;
+	flex-direction: column;
+	background: var(--card-bg);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	overflow: hidden;
+	box-shadow: var(--shadow);
+	transition: transform .06s ease;
+}
+
+#wpdiy .card:hover {
+	transform: translateY(-2px);
+}
+
+#wpdiy .card .thumb {
+	height: 300px;
+	background: #f2eee9;
+}
+
+#wpdiy .card .thumb .thumb-img {
+	width: 100%;
+	height: 300px;
+	object-fit: cover;
+	display: block;
+}
+
+#wpdiy .card .content {
+	padding: 12px 14px 8px;
+	display: grid;
+	gap: 6px;
+}
+
+#wpdiy .card .title {
+	font-size: 16px;
+	font-weight: 800;
+	color: var(--text);
+	line-height: 1.25;
+}
+
+#wpdiy .card .meta-row {
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	font-size: 13px;
+	color: var(--muted);
+}
+
+#wpdiy .card .content .desc {
+	margin: 6px 0 0;
+	color: #6b7280;
+	font-size: 13px;
+	line-height: 1.45;
 }
 
 #wpdiy .row-actions {
 	display: flex;
 	gap: 8px;
+	padding: 10px 14px 14px;
 	margin-top: auto;
-	padding: 14px;
 }
 
 #wpdiy .btn-m {
-	flex: 1;
-	padding: 10px 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 12px;
 	border-radius: 12px;
-	border: 1px solid var(--line);
+	border: 1px solid var(--border);
 	background: #fff;
+	font-weight: 700;
+	font-size: 13px;
 	cursor: pointer;
-	font-weight: 800;
+	text-decoration: none;
+}
+
+#wpdiy .btn-m:hover {
+	filter: brightness(.98);
 }
 
 #wpdiy .btn-m.contained {
+	border-color: transparent;
 	background: var(--brand);
 	color: #fff;
-	border-color: transparent;
 }
 
+/* 빈 상태 */
 #wpdiy .empty {
-	padding: 28px;
-	border: 1px dashed var(--line);
-	border-radius: 12px;
-	color: var(--sub);
+	grid-column: 1/-1;
 	background: #fff;
+	border: 1px dashed var(--border);
+	color: var(--muted);
+	border-radius: var(--radius);
+	padding: 18px;
+	text-align: center;
 }
 
-/* ===== 선택 현황 ===== */
-#wpdiy .sb-title {
-	font-weight: 800;
-	font-size: 18px;
-	margin: 2px 0 14px;
+/* 선택 현황(오른쪽 패널) */
+#wpdiy .selectbar {
+	background: var(--card-bg);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+	padding: 14px;
+	height: fit-content;
 }
 
-#wpdiy .sb-block+.sb-block {
-	margin-top: 18px;
-	padding-top: 18px;
-	border-top: 1px dashed var(--line);
-}
-
-#wpdiy .row {
+#wpdiy .selectbar .row {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 10px;
-	padding: 8px 0;
+	padding: 6px 0;
+	gap: 8px;
 }
 
-#wpdiy .row-compact {
-	padding-top: 2px;
+#wpdiy .selectbar .row-top {
 	gap: 12px;
 }
 
-#wpdiy .row-left {
-	justify-content: flex-start;
+#wpdiy .selectbar .right-actions {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
 	gap: 8px;
 }
 
-#wpdiy .pill {
+#wpdiy .selectbar .sb-title {
+	font-weight: 800;
+	font-size: 15px;
+	color: var(--text);
+}
+
+#wpdiy .selectbar .pill {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	border-radius: 999px;
-	font-size: 13px;
+	gap: 6px;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--brand);
 	background: var(--chip);
-	color: var(--sub);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	padding: 4px 8px;
+	margin-left: 8px;
+}
+
+#wpdiy .sb-block {
+	border-top: 1px solid var(--border);
+	padding-top: 10px;
+	margin-top: 6px;
 }
 
 #wpdiy .mini {
 	display: grid;
-	grid-template-columns: 56px 1fr auto;
-	gap: 10px;
+	grid-template-columns: 60px 1fr auto;
 	align-items: center;
-	padding: 8px;
+	gap: 10px;
+	padding: 8px 6px;
+	border: 1px solid var(--border);
 	border-radius: 12px;
-	border: 1px solid var(--line);
 	background: #fff;
+	margin: 8px 0;
 	position: relative;
 }
 
 #wpdiy .thumb-s {
-	width: 56px;
-	height: 56px;
-	border-radius: 8px;
-	background: linear-gradient(135deg, #dbeafe, #f5d0fe);
+	width: 60px;
+	height: 48px;
+	border-radius: 10px;
+	background: #f2eee9;
+	background-size: cover;
+	background-position: center;
 }
 
-#wpdiy .meta {
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
+#wpdiy .thumb-s .thumb-img {
+	width: 100%;
+	height: 48px;
+	object-fit: cover;
+	display: block;
+	border-radius: 10px;
 }
 
-#wpdiy .price {
-	font-weight: 700;
+#wpdiy .mini .meta {
+	display: grid;
+	gap: 2px;
 }
 
-#wpdiy .tag {
-	font-size: 12px;
-	color: var(--sub);
+#wpdiy .mini .meta .tag {
+	font-size: 11px;
+	color: var(--muted);
 }
 
-#wpdiy .link-x {
+#wpdiy .mini .price {
+	font-weight: 800;
+	white-space: nowrap;
+	font-size: 13px;
+}
+
+#wpdiy .mini .remove {
 	position: absolute;
 	top: 6px;
 	right: 6px;
-}
-
-#wpdiy .link-x button {
-	appearance: none;
-	border: 0;
-	background: transparent;
 	font-weight: 700;
-	font-size: 18px;
+	text-decoration: none;
 	line-height: 1;
-	cursor: pointer;
 }
 
 #wpdiy .legend {
-	display: flex;
-	gap: 8px;
+	color: var(--muted);
 	font-size: 12px;
-	color: var(--sub);
-}
-
-#wpdiy .dot {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-}
-
-#wpdiy .dot.ok {
-	background: var(--ok);
-}
-
-#wpdiy .dot.ng {
-	background: var(--ng);
-}
-
-#wpdiy .budget {
-	font-weight: 700;
-}
-
-#wpdiy .budget.ok {
-	color: var(--ok);
-}
-
-#wpdiy .budget.ng {
-	color: var(--ng);
-}
-
-#wpdiy .btn {
-	appearance: none;
-	border: 1px solid var(--line);
-	background: var(--card);
-	color: var(--ink);
-	border-radius: 12px;
-	padding: 10px 14px;
-	font-weight: 700;
-	text-decoration: none;
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	gap: 6px;
 }
 
-#wpdiy .btn.primary {
+#wpdiy .ok-dot {
+	color: var(--ok);
+	font-size: 10px;
+}
+
+#wpdiy .ng-dot {
+	color: var(--ng);
+	font-size: 10px;
+}
+
+#wpdiy .budget {
+	margin-left: auto;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 800;
+	border: 1px solid var(--border);
+	background: var(--chip);
+	color: var(--muted);
+}
+
+#wpdiy .budget.ok {
+	background: #e9f7ef;
+	color: var(--ok);
+	border-color: #d0f0dc;
+}
+
+#wpdiy .budget.ng {
+	background: #fff0f0;
+	color: var(--ng);
+	border-color: #ffd8d8;
+}
+
+/* 공통 버튼(우측 하단) */
+#wpdiy .btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 14px;
+	border-radius: 12px;
 	background: var(--brand);
 	color: #fff;
-	border-color: transparent;
+	font-weight: 800;
+	border: none;
+	text-decoration: none;
+	cursor: pointer;
 }
 
-/* ===== 반응형 ===== */
-@media ( max-width : 1200px) {
-	#wpdiy.page {
-		grid-template-columns: 200px 1fr;
-	}
-	#wpdiy .selectbar {
-		order: 3;
-	}
+#wpdiy .btn:hover {
+	filter: brightness(.98);
 }
 
-@media ( max-width : 920px) {
-	#wpdiy.page {
-		grid-template-columns: 1fr;
+#wpdiy .buttons {
+	justify-content: flex-start;
+	gap: 8px;
+}
+
+/* 비교 결과 섹션 */
+#wpdiy #cmp-result {
+	margin-top: 24px;
+}
+
+#wpdiy .section-title {
+	font-size: 18px;
+	font-weight: 800;
+	margin: 6px 0 12px;
+	display: flex;
+	align-items: center;
+}
+
+#wpdiy .cmp-table {
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	overflow: hidden;
+	display: grid;
+	gap: 0;
+}
+
+#wpdiy .cmp-header {
+	display: grid;
+	grid-template-columns: 180px repeat(auto-fit, minmax(180px, 1fr));
+	background: #faf7f4;
+	border-bottom: 1px solid var(--border);
+}
+
+#wpdiy .cmp-row {
+	display: grid;
+	grid-template-columns: 180px repeat(auto-fit, minmax(180px, 1fr));
+	border-bottom: 1px solid var(--border);
+}
+
+#wpdiy .cmp-row:last-child {
+	border-bottom: none;
+}
+
+#wpdiy .cmp-header .c, #wpdiy .cmp-row .c {
+	padding: 12px 10px;
+	background: #fff;
+}
+
+#wpdiy .cmp-header .c:first-child, #wpdiy .cmp-row .c:first-child {
+	font-weight: 700;
+}
+
+#wpdiy .cmp-row .key {
+	font-weight: 700;
+	background: #fff;
+}
+
+#wpdiy .cmp-header .pname {
+	font-weight: 800;
+}
+
+#wpdiy .cmp-header .addr {
+	color: #7a7a7a;
+	font-size: 12px;
+}
+
+#wpdiy .noimg {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 140px;
+	border: 1px dashed var(--border);
+	border-radius: 12px;
+	color: #7a7a7a;
+}
+
+#wpdiy .cmp-row img {
+	width: 100%;
+	height: 140px;
+	object-fit: cover;
+	border-radius: 12px;
+	display: block;
+}
+
+/* 접근성 */
+#wpdiy [aria-live="polite"] {
+	outline: none;
+}
+
+/* 반응형 */
+@media ( max-width :1200px) {
+	#wpdiy {
+		grid-template-columns: 240px 1fr;
 	}
 	#wpdiy .selectbar {
+		grid-column: 1/-1;
 		position: static;
+		margin-top: 16px;
+	}
+}
+
+@media ( max-width :860px) {
+	#wpdiy {
+		grid-template-columns: 1fr;
+		padding: 12px;
+	}
+	#wpdiy>.leftnav {
+		display: none;
+	}
+	#wpdiy .main {
+		grid-column: 1/-1;
+	}
+	#wpdiy .selectbar {
+		grid-column: 1/-1;
+	}
+	#wpdiy .searchbar input[type="search"] {
+		width: 160px;
 	}
 }
