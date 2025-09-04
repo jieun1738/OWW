@@ -5,8 +5,6 @@ import java.util.List;
 import com.oww.oww1.VO.PlanVO;
 import com.oww.oww1.VO.ProductVO;
 
-
-
 public interface PlanService {
     List<PlanVO> listFinalPlans(String userEmail);
     List<ProductVO> listProductsOfPlan(int planNo);

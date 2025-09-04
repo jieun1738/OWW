@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.oww.oww1.mapper.PackageMapper">
 
-  <!-- 패키지 카드 조회: PackageCardVO(카멜)로 반환 -->
+  <!-- 패키지 목록 검색: package_admin_v 기반 -->
   <select id="search" parameterType="map" resultType="com.oww.oww1.VO.PackageCardVO">
     SELECT
       p.package_no        AS packageNo,
@@ -29,7 +28,7 @@
       m.product_name      AS makeupName,
       m.cost              AS makeupCost,
 
-      (h.cost + s.cost + d.cost + m.cost)                                          AS totalPrice,
+      (h.cost + s.cost + d.cost + m.cost)                                         AS totalPrice,
       ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS finalPrice
     FROM package p
       JOIN product h ON p.hall   = h.product_no
@@ -42,25 +41,25 @@
     </if>
     <if test="q != null and q != ''">
       AND (
-        LOWER(h.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%' OR
-        LOWER(s.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%' OR
-        LOWER(d.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%' OR
-        LOWER(m.product_name) LIKE '%'||LOWER(#{q,jdbcType=VARCHAR})||'%'
+        LOWER(h.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+        LOWER(s.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+        LOWER(d.product_name) LIKE '%'||LOWER(#{q})||'%' OR
+        LOWER(m.product_name) LIKE '%'||LOWER(#{q})||'%'
       )
     </if>
     <if test="region != null and region != ''">
-      AND LOWER(h.address) LIKE '%'||LOWER(#{region,jdbcType=VARCHAR})||'%'
+      AND LOWER(h.address) LIKE '%'||LOWER(#{region})||'%'
     </if>
     <if test="minPrice != null">
-      AND ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) &gt;= #{minPrice, jdbcType=NUMERIC}
+      AND ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) &gt;= #{minPrice}
     </if>
     <if test="maxPrice != null">
-      AND ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) &lt;= #{maxPrice, jdbcType=NUMERIC}
+      AND ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) &lt;= #{maxPrice}
     </if>
     <choose>
-      <when test="sort == 'priceAsc'">  ORDER BY finalPrice ASC,  p.package_no ASC </when>
+      <when test="sort == 'priceAsc'"> ORDER BY finalPrice ASC, p.package_no ASC </when>
       <when test="sort == 'priceDesc'"> ORDER BY finalPrice DESC, p.package_no ASC </when>
-      <otherwise>                       ORDER BY p.package_no ASC </otherwise>
+      <otherwise> ORDER BY p.package_no ASC </otherwise>
     </choose>
   </select>
 
@@ -88,7 +87,7 @@
       m.product_name      AS makeupName,
       m.cost              AS makeupCost,
 
-      (h.cost + s.cost + d.cost + m.cost)                                          AS totalPrice,
+      (h.cost + s.cost + d.cost + m.cost)                                         AS totalPrice,
       ROUND((h.cost + s.cost + d.cost + m.cost) * (100 - NVL(p.discount,0)) / 100) AS finalPrice
     FROM package p
       JOIN product h ON p.hall   = h.product_no

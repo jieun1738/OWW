@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oww.oww1.mapper.Plannermapper">
+
+  <!-- ========================= -->
+  <!-- Category(패키지) 화면 전용 -->
+  <!-- ========================= -->
+
+  <select id="select_package_admin_list"
+          resultType="com.oww.oww1.VO.PlannerPackageAdminVVO">
+    SELECT
+      package_no, type, NVL(discount,0) AS discount,
+      hall_no, hall_name, hall_address, hall_cost, hall_img,
+      studio_no, studio_name, studio_cost,
+      dress_no, dress_name, dress_cost,
+      makeup_no, makeup_name, makeup_cost,
+      total_price, final_price
+    FROM package_admin_v
+    ORDER BY package_no DESC
+  </select>
+
+  <select id="select_package_admin_one"
+          parameterType="int"
+          resultType="com.oww.oww1.VO.PlannerPackageAdminVVO">
+    SELECT
+      package_no, type, NVL(discount,0) AS discount,
+      hall_no, hall_name, hall_address, hall_cost, hall_img,
+      studio_no, studio_name, studio_cost,
+      dress_no, dress_name, dress_cost,
+      makeup_no, makeup_name, makeup_cost,
+      total_price, final_price
+    FROM package_admin_v
+    WHERE package_no = #{package_no}
+  </select>
+
+</mapper>
