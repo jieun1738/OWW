@@ -41,4 +41,32 @@ public class ProductVO {
 	public String getImg() {
 		return img;
 	}
+	
+	public int setProductNo() {
+		return product_no;
+	}
+
+	public String setProductName() {
+		return product_name;
+	}
+
+	public int setCategory() {
+		return category;
+	}
+
+	public int setCost() {
+		return cost;
+	}
+
+	public String setAddress() {
+		return address;
+	}
+
+	public String setDescription() {
+		return description;
+	}
+
+	public String setImg() {
+		return img;
+	}
 }
