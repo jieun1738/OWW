@@ -62,7 +62,7 @@ public class TransferController {
             // 2. 쿠키에서 토큰 확인 (헤더에 없을 경우)
             if (request.getCookies() != null) {
                 for (Cookie cookie : request.getCookies()) {
-                    if ("authToken".equals(cookie.getName())) {
+                    if ("jwt-token".equals(cookie.getName())) {
                         token = cookie.getValue();
                         break;
                     }
@@ -211,62 +211,67 @@ public class TransferController {
             return "redirect:http://localhost:8201/banking/main";
         }
     }
-
-    /** 이체 처리 (JWT 기반) */
+    
     @PostMapping("/transfer")
-    public String processTransfer(@RequestParam("toAccountNumber") String toAccountNumber,
-                                  @RequestParam("amount") String amountStr,
-                                  @RequestParam("memo") String memo,
-                                  @RequestParam("password") String password,
-                                  @RequestParam(value = "recipientName", required = false) String recipientName,
-                                  HttpServletRequest request,
-                                  RedirectAttributes redirectAttributes) {
-
+    @ResponseBody  // 추가
+    public Map<String, Object> processTransfer(
+        @RequestParam("toAccountNumber") String toAccountNumber,
+        @RequestParam("amount") String amountStr,
+        @RequestParam("memo") String memo,
+        @RequestParam("password") String password,
+        @RequestParam(value = "recipientName", required = false) String recipientName,
+        HttpServletRequest request) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
         try {
             BankingJwtUtil.TokenValidationResult tokenResult = extractUserFromJwt(request);
             
             if (!tokenResult.isValid()) {
-                redirectAttributes.addFlashAttribute("errorMessage", "인증이 필요합니다.");
-                return "redirect:http://localhost:8201/banking/transfer_2";
+                response.put("success", false);
+                response.put("message", "인증이 필요합니다.");
+                return response;
             }
-
+            
             String userEmailHash = tokenResult.getUserEmailHash();
-
             TransferVO fromAccount = transferService.getAccountInfoByEmailHash(userEmailHash);
+            
             if (fromAccount == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "계좌 정보를 찾을 수 없습니다.");
-                return "redirect:http://localhost:8201/banking/transfer_2";
+                response.put("success", false);
+                response.put("message", "계좌 정보를 찾을 수 없습니다.");
+                return response;
             }
-
+            
             BigDecimal amount = new BigDecimal(amountStr.replace(",", ""));
-            String result = transferService.processTransferByEmailHash(userEmailHash,
-                    toAccountNumber, amount, memo, password);
-
+            String result = transferService.processTransferByEmailHash(
+                userEmailHash, toAccountNumber, amount, memo, password
+            );
+            
             if (result == null || (!result.contains("오류") && !result.contains("실패") && !result.contains("부족"))) {
-                String finalRecipientName = (recipientName == null || recipientName.trim().isEmpty())
-                        ? "알 수 없음" : recipientName;
-
-                redirectAttributes.addAttribute("recipientName", finalRecipientName);
-                redirectAttributes.addAttribute("toAccountNumber", toAccountNumber);
-                redirectAttributes.addAttribute("amount", amount.intValue());
-                if (memo != null && !memo.trim().isEmpty()) {
-                    redirectAttributes.addAttribute("memo", memo);
-                }
-
-                return "redirect:http://localhost:8201/banking/transfer_3";
+                // 성공
+                response.put("success", true);
+                response.put("message", "이체가 완료되었습니다.");
+                response.put("recipientName", recipientName);
+                response.put("toAccountNumber", toAccountNumber);
+                response.put("amount", amount.intValue());
+                response.put("memo", memo);
+                return response;
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", result);
-                return "redirect:http://localhost:8201/banking/transfer_2";
+                // 실패
+                response.put("success", false);
+                response.put("message", result);
+                return response;
             }
-
+            
         } catch (Exception e) {
             System.out.println("이체 처리 오류: " + e.getMessage());
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "이체 처리 중 오류가 발생했습니다: " + e.getMessage());
-            return "redirect:http://localhost:8201/banking/transfer_2";
+            response.put("success", false);
+            response.put("message", "이체 처리 중 오류가 발생했습니다: " + e.getMessage());
+            return response;
         }
     }
-
+    
     /** 이체 3단계 - 완료 페이지 (JWT 기반) */
     @GetMapping("/transfer_3")
     public String transferStep3(@RequestParam(required = false) String recipientName,
@@ -367,6 +372,18 @@ public class TransferController {
             model.addAttribute("errorMessage", "거래내역 조회 중 오류가 발생했습니다.");
             return "redirect:http://localhost:8201/banking/main";
         }
+    }
+    
+    @GetMapping("/transfer-test")
+    @ResponseBody
+    public String transferTest() {
+        return "Transfer controller works!";
+    }
+
+    @PostMapping("/transfer-test")
+    @ResponseBody
+    public String transferTestPost() {
+        return "Transfer POST works!";
     }
 
     /** AJAX 거래내역 조회 (JWT 기반) */

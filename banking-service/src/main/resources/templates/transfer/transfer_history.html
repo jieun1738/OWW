@@ -1,20 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/banking_base}">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>세이프박스 내역 조회</title>
-<link rel="stylesheet" href="/css/design.css" />
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<style>
-body {
-	background: linear-gradient(135deg, #f8d7da 0%, #e1bee7 50%, #c8a2c8 100%);
-	min-height: 100vh;
-	font-family: Arial, sans-serif;
-	color: #6b4c6b;
-	margin: 0;
-	padding: 0;
-}
+<title layout:fragment="title">거래내역 조회 | Own Wedding Wallet</title>
+
+<!-- tsParticles 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.0.6/tsparticles.bundle.min.js"></script>
+
+<!-- 페이지 전용 CSS -->
+<style layout:fragment="page-styles">
 .transfer-out, .safe-withdraw { color: #dc3545 !important; font-weight: 600; }
 .transfer-in, .safe-deposit { color: #0d6efd !important; font-weight: 600; }
 .amount-red { font-size: 20px; font-weight: 700; color: #dc3545 !important; }
@@ -22,10 +17,6 @@ body {
 
 .container { max-width: 1200px; margin: 50px auto; padding: 20px; }
 .main-panel { background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 32px 40px; box-shadow: 0 8px 25px rgba(200, 162, 200, 0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-.account-info { background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 1px solid rgba(200, 162, 200, 0.2); box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2); }
-.account-number { font-size: 22px; font-weight: 600; color: #8b5a8c; margin-bottom: 8px; }
-.balance { font-size: 28px; font-weight: 700; color: #6b4c6b; }
-
 .search-section { background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px solid rgba(200, 162, 200, 0.2); box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2); }
 .search-row { display: flex; align-items: center; margin-bottom: 15px; gap: 15px; flex-wrap: wrap; }
 .search-label { min-width: 100px; font-weight: 600; color: #8b5a8c; font-size: 14px; }
@@ -75,25 +66,23 @@ body {
 #pagination button { margin: 0 2px; }
 </style>
 </head>
-<body class="site-layout">
-<th:block th:replace="~{fragments/header :: siteHeader(active='banking')}"></th:block>
-	<th:block th:replace="~{fragments/nav :: siteNav(active='banking')}"></th:block>
 
-	 
-
+<main class="site-content" layout:fragment="content">
 	<div class="container">
 		<div class="main-panel">
+			<!-- 계좌 정보 -->
 			<div class="account-info">
 				<div class="account-number"
-                     th:text="${account != null and account.accountNumber != null ? account.accountNumber : '계좌 없음'}">
-                    1001-2025-000021
-                </div>
-                <div class="balance"
-                     th:text="${account != null and account.balance != null ? '₩' + #numbers.formatInteger(account.balance, 3, 'COMMA') : '₩0'}">
-                    ₩65,680,000
-                </div>
+					 th:text="${account != null and account.accountNumber != null ? account.accountNumber : '계좌 없음'}">
+					1001-2025-000021
+				</div>
+				
+				<div class="balance"
+					 th:text="${account != null and account.balance != null ? '₩' + #numbers.formatInteger(account.balance, 3, 'COMMA') : '₩0'}">
+					₩65,680,000
+				</div>
 			</div>
-
+			
 			<div class="search-section">
 				<div class="search-row">
 					<span class="search-label">조회기간</span>
@@ -136,8 +125,9 @@ body {
 				<button class="search-btn" id="nextPage" onclick="changePage(currentPage+1)">다음</button>
 			</div>
 		</div>
+		</div>
 	</div>
-
+	
 	<!-- 모달 -->
 	<div id="detailModal" class="modal">
 		<div class="modal-content">
@@ -158,8 +148,6 @@ body {
 			</div>
 		</div>
 	</div>
-
-<th:block th:replace="~{fragments/footer :: siteFooter}"></th:block>
 
 <script th:inline="javascript">
     const serverHistoryData = /*[[${historyJson}]]*/ '[]'; 
@@ -235,7 +223,6 @@ function loadTransferHistory() {
 	noDataDiv.style.display='none';
 
 	setTimeout(()=>{
-		// 🔥 여기 핵심 수정
 		originalHistoryData = parsedHistoryData || [];
 		currentHistoryData = [...originalHistoryData];
 		currentPage = 1;
@@ -294,5 +281,6 @@ function changePage(page){ currentPage=page; updateHistoryTable(currentHistoryDa
 window.onload = loadTransferHistory;
 </script>
 
-</body>
+</main>
+
 </html>

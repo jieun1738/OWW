@@ -415,17 +415,37 @@
         <script src="/js/auth-buttons.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         
-       <script th:inline="javascript">
+<script th:inline="javascript">
         // JWT는 게이트웨이에서 처리되므로 CSRF 토큰 불필요
 
-        // jQuery AJAX 기본 설정 (CSRF 없음)
+        // 쿠키 값을 가져오는 헬퍼 함수
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // jQuery AJAX 기본 설정 - 모든 요청에 JWT 토큰 자동 추가
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
+            },
+            beforeSend: function(xhr, settings) {
+                // 쿠키에서 jwt-token 가져오기
+                const jwtToken = getCookie('jwt-token');
+                if (jwtToken) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + jwtToken);
+                }
+                
+                // POST 요청에 Content-Type 설정
+                if (settings.type === 'POST' && !settings.contentType) {
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                }
             }
         });
 
-        // 💰 세이프박스 로직
+        // 세이프박스 로직
         const slider = document.getElementById("slider");
         const currentAmount = document.getElementById("currentAmount");
         const savedDisplay = document.getElementById("savedAmount");
@@ -436,9 +456,9 @@
         }
 
         // 초기값 설정
-    const initialSafeboxBalance = /*[[${safeboxBalance}]]*/ 0;
-    const totalAssets = /*[[${totalAssets}]]*/ 1200000;
-    
+        const initialSafeboxBalance = /*[[${safeboxBalance}]]*/ 0;
+        const totalAssets = /*[[${totalAssets}]]*/ 1200000;
+        
         slider.value = initialSafeboxBalance;
         currentAmount.textContent = formatCurrency(initialSafeboxBalance);
 
@@ -456,10 +476,21 @@
         function submitAmount() {
           const amount = Number(slider.value);
           
+          // 토큰 확인
+          const jwtToken = getCookie('jwt-token');
+          if (!jwtToken) {
+              alert('인증이 필요합니다. 다시 로그인해주세요.');
+              window.location.href = '/login';
+              return;
+          }
+          
           $.ajax({
-            url: '/safebox/setAmount',
+            url: '/banking/safebox/setAmount',
             type: 'POST',
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            headers: {
+                'Authorization': 'Bearer ' + jwtToken,
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
             data: {
               amount: amount
             },
@@ -475,7 +506,9 @@
             error: function(xhr, status, error) {
               console.error('AJAX Error:', xhr.responseText);
               if (xhr.status === 401) {
-                alert('인증이 필요합니다. 다시 로그인해주세요.');
+                alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+                // JWT 토큰 삭제
+                document.cookie = "jwt-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 window.location.href = '/login';
               } else if (xhr.status === 403) {
                 alert('접근 권한이 없습니다.');
@@ -486,7 +519,7 @@
           });
         }
 
-        // 🎯 정기저금통 로직
+        // 정기저금통 로직
         const goalInput = document.getElementById("goalAmount");
         const startDate = document.getElementById("startDate");
         const endDate = document.getElementById("endDate");
@@ -527,6 +560,14 @@
         document.getElementById("autoSaveForm").addEventListener("submit", function (e) {
           e.preventDefault();
           
+          // 토큰 확인
+          const jwtToken = getCookie('jwt-token');
+          if (!jwtToken) {
+              alert('인증이 필요합니다. 다시 로그인해주세요.');
+              window.location.href = '/login';
+              return;
+          }
+          
           const formData = {
             goalAmount: goalInput.value,
             startDate: startDate.value,
@@ -535,20 +576,27 @@
           };
 
           $.ajax({
-            url: '/safebox/createGoal',
+            url: '/banking/safebox/createGoal',
             type: 'POST',
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            headers: {
+                'Authorization': 'Bearer ' + jwtToken,
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
             data: formData,
             success: function(response) {
               if (response.success) {
                 alert(response.message);
                 location.reload();
+              } else {
+                alert(response.message);
               }
             },
             error: function(xhr, status, error) {
               console.error('AJAX Error:', xhr.responseText);
               if (xhr.status === 401) {
-                alert('인증이 필요합니다. 다시 로그인해주세요.');
+                alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+                // JWT 토큰 삭제
+                document.cookie = "jwt-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 window.location.href = '/login';
               } else if (xhr.status === 403) {
                 alert('접근 권한이 없습니다.');
@@ -560,7 +608,7 @@
         });
 
         function viewGoalDetail(goalId) {
-          window.location.href = '/safebox/goal/' + goalId;
+          window.location.href = '/banking/safebox/goal/' + goalId;
         }
 
         $(document).ready(function() {
@@ -568,9 +616,12 @@
         });
 
         function updateSafeboxInfo() {
+          const jwtToken = getCookie('jwt-token');
+          
           $.ajax({
-            url: '/safebox/info',
+            url: '/banking/safebox/info',
             type: 'GET',
+            headers: jwtToken ? { 'Authorization': 'Bearer ' + jwtToken } : {},
             success: function(response) {
               if (response.success) {
                 balanceDisplay.textContent = formatCurrency(response.accountBalance);
@@ -578,12 +629,16 @@
                 slider.max = response.totalAssets;
               }
             },
-            error: function() {
+            error: function(xhr) {
               console.log('정보 업데이트 중 오류가 발생했습니다.');
+              if (xhr.status === 401) {
+                // 조용히 처리 (페이지 로드 시 발생할 수 있음)
+                console.log('인증이 필요합니다.');
+              }
             }
           });
         }
-        </script>
+</script>
     </div>
 </body>
 </html>

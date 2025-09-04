@@ -53,7 +53,11 @@ public class BankingSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/health", "/actuator/**").permitAll()
-                    .requestMatchers("/safebox/**").permitAll()
+                    .requestMatchers("/safebox/**").authenticated() 
+                    .requestMatchers("/transfer/**").authenticated()     
+                    .requestMatchers("/transfer").authenticated()       
+                    .requestMatchers("/check-account").authenticated()   
+                    .requestMatchers("/history/**").authenticated()  
                     .requestMatchers(HttpMethod.GET, "/css/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/js/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/img/**").permitAll()
