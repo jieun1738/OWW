@@ -1,4 +1,4 @@
-package com.wedding.oww.vo;
+package com.oww.oww1.VO;
 
 import lombok.*;
 

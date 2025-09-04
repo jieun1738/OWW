@@ -35,7 +35,7 @@ public class PlanServiceImpl implements PlanService {
     public int finalizeDIY(PlanVO vo) {
         // Mapper의 실제 시그니처(다중 파라미터)에 맞춰 호출합니다.
         return planMapper.insertPlanDIY(
-                vo.getUser_email(),
+                vo.getUserEmail(),
                 vo.getHall(),
                 vo.getStudio(),
                 vo.getDress(),

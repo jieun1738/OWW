@@ -83,7 +83,7 @@ public class WeddingPlannerController {
         List<PlanVO> finalPlans = planService.listFinalPlans(userEmail);
         Map<Integer, List<ProductVO>> finalPlanProducts = new HashMap<>();
         for (PlanVO p : finalPlans){
-            finalPlanProducts.put(p.getPlan_no(), planService.listProductsOfPlan(p.getPlan_no()));
+            finalPlanProducts.put(p.getPlanNo(), planService.listProductsOfPlan(p.getPlanNo()));
         }
 
         @SuppressWarnings("unchecked")
@@ -166,7 +166,7 @@ public class WeddingPlannerController {
         ensureUser(session);
         ProductVO p = productService.getOne(productNo);
         if (p != null) {
-            draft.select(userEmail, p.getProduct_no(), p.getCategory());
+            draft.select(userEmail, p.getProductNo(), p.getCategory());
             cat = p.getCategory();
         }
         return redirectDIY(cat, q, ex, sort, all);
@@ -201,7 +201,7 @@ public class WeddingPlannerController {
         return redirectDIY(cat, q, ex, sort, all);
     }
 
-    // DIY의 "플랜 저장" → 보관함 스냅샷 → Confirm 미리보기 1회
+    /** DIY의 "플랜 저장" → 보관함 스냅샷 → Confirm 미리보기 1회 */
     @GetMapping("/planner/plan/save")
     public String planSave(
         @RequestParam("userEmail") String userEmail,
@@ -287,16 +287,16 @@ public class WeddingPlannerController {
             for (ProductVO p : items){
                 if (p == null) continue;
                 int cat = p.getCategory();
-                if (cat == 0) hall   = p.getProduct_no();
-                if (cat == 1) studio = p.getProduct_no();
-                if (cat == 2) dress  = p.getProduct_no();
-                if (cat == 3) makeup = p.getProduct_no();
+                if (cat == 0) hall   = p.getProductNo();
+                if (cat == 1) studio = p.getProductNo();
+                if (cat == 2) dress  = p.getProductNo();
+                if (cat == 3) makeup = p.getProductNo();
             }
         }
 
         PlanVO vo = new PlanVO();
-        vo.setUser_email(userEmail);
-        vo.setPackage_no(9999); // DIY 확정
+        vo.setUserEmail(userEmail);
+        vo.setPackageNo(9999); // DIY 확정
         vo.setHall(hall);
         vo.setStudio(studio);
         vo.setDress(dress);
@@ -316,7 +316,7 @@ public class WeddingPlannerController {
         if (list == null) list = new ArrayList<>();
         boolean exists = false;
         for (ProductVO pv : list){
-            if (pv != null && pv.getProduct_no() == productNo){ exists = true; break; }
+            if (pv != null && pv.getProductNo() == productNo){ exists = true; break; }
         }
         if (!exists && list.size() < 4){
             ProductVO p = productService.getOne(productNo);
@@ -332,7 +332,7 @@ public class WeddingPlannerController {
         @SuppressWarnings("unchecked")
         List<ProductVO> list = (List<ProductVO>) session.getAttribute("productCompareList");
         if (list == null) list = new ArrayList<>();
-        list.removeIf(p -> p != null && p.getProduct_no() == productNo);
+        list.removeIf(p -> p != null && p.getProductNo() == productNo);
         session.setAttribute("productCompareList", list);
         return backTo(req, "/planner/WeddingDIY");
     }

@@ -19,14 +19,15 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 /**
- * - DB 접근은 ProductService/PlanMapper
+ * - DB 접근은 ProductService/PlanMapper 를 통해서만 수행
  * - 선택 상태만 메모리(Map)와 세션으로 관리
+ * - 비검사 캐스팅/불필요 애노테이션 사용 없음
  */
 @Service
 @RequiredArgsConstructor
 public class DraftPlanServiceImpl implements DraftPlanService {
 
-    private final ProductService productService; // DB에서 상품 1건/목록을 읽어옴
+    private final ProductService productService; // DB에서 상품 1건/목록을 읽어오는 기존 서비스
     private final PlanMapper planMapper;         // 최종 확정 시 DB INSERT
 
     /** 유저별 임시 상태(메모리) */
@@ -91,7 +92,7 @@ public class DraftPlanServiceImpl implements DraftPlanService {
     public PlanVO getOrCreate(String userEmail) {
         DraftState st = stateOf(userEmail);
         PlanVO vo = new PlanVO();
-        vo.setPlan_no(st.currentPlanNo); // 화면에 번호만 쓰므로 이것만 채워도 충분
+        vo.setPlanNo(st.currentPlanNo); // 화면에 번호만 쓰므로 이것만 채워도 충분
         return vo;
     }
 

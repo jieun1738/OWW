@@ -2,28 +2,32 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.oww.oww1.mapper.ProductMapper">
 
-  <!-- 카멜 VO(ProductVO)로 단순 매핑하기 위해 SELECT에 카멜 별칭 사용 -->
-  <!-- findAll -->
-  <select id="findAll" resultType="com.oww.oww1.VO.ProductVO">
-    SELECT
-      product_no      AS productNo,
-      product_name    AS productName,
-      category        AS category,
-      cost            AS cost,
-      address         AS address,
-      description     AS description,
-      img             AS img
+  <!-- 컬럼 ↔ VO -->
+<resultMap id="ProductMap" type="com.oww.oww1.VO.ProductVO">
+  <id     column="product_no"   property="product_no"/>
+  <result column="product_name" property="product_name"/>
+  <result column="category"     property="category"/>
+  <result column="cost"         property="cost"/>
+  <result column="address"      property="address"/>
+  <result column="description"  property="description"/>
+  <result column="img"          property="img"/>
+</resultMap>
+
+  <!-- 전체보기: q(검색), exPattern(제외어 정규식), sort -->
+  <select id="findAll" resultMap="ProductMap">
+    SELECT product_no, product_name, category, cost, address, description, img
     FROM product
     WHERE
+      /* q가 없으면 항상 통과 */
       (#{q,jdbcType=VARCHAR} IS NULL OR
         ( LOWER(product_name) LIKE '%' || LOWER(#{q}) || '%'
           OR LOWER(address)   LIKE '%' || LOWER(#{q}) || '%'
           OR LOWER(description) LIKE '%' || LOWER(#{q}) || '%'
         )
       )
+      /* exPattern이 없으면 통과, 있으면 세 필드 모두에 대해 미포함 */
       AND (#{exPattern,jdbcType=VARCHAR} IS NULL OR
         ( NOT REGEXP_LIKE(LOWER(product_name), #{exPattern})
           AND NOT REGEXP_LIKE(LOWER(address),   #{exPattern})
@@ -31,21 +35,15 @@
         )
       )
     ORDER BY
+      /* 정/역 구분을 CASE로 안전하게 처리 */
       CASE WHEN #{sort,jdbcType=VARCHAR} = 'cost_asc'  THEN cost END ASC,
       CASE WHEN #{sort,jdbcType=VARCHAR} = 'cost_desc' THEN cost END DESC,
       product_no ASC
   </select>
 
   <!-- 카테고리별 -->
-  <select id="findByCategory" resultType="com.oww.oww1.VO.ProductVO">
-    SELECT
-      product_no      AS productNo,
-      product_name    AS productName,
-      category        AS category,
-      cost            AS cost,
-      address         AS address,
-      description     AS description,
-      img             AS img
+  <select id="findByCategory" resultMap="ProductMap">
+    SELECT product_no, product_name, category, cost, address, description, img
     FROM product
     WHERE
       category = #{cat}
@@ -68,15 +66,8 @@
   </select>
 
   <!-- 단건 -->
-  <select id="findByNo" resultType="com.oww.oww1.VO.ProductVO">
-    SELECT
-      product_no      AS productNo,
-      product_name    AS productName,
-      category        AS category,
-      cost            AS cost,
-      address         AS address,
-      description     AS description,
-      img             AS img
+  <select id="findByNo" resultMap="ProductMap">
+    SELECT product_no, product_name, category, cost, address, description, img
     FROM product
     WHERE product_no = #{productNo}
   </select>
