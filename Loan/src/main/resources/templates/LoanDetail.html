@@ -57,18 +57,36 @@
 		</div>
 	</section>
 <script th:inline="javascript">
-document.getElementById('loanForm').addEventListener('submit', function(event) {
-    const loanamountInput = document.getElementById('loanamount');
-    const loanamount = loanamountInput.value.trim();
-    const loanLimit = /*[[${loandetails.LoanLimit}]]*/ 0;
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('loanForm');
+    form.addEventListener('submit', function(event) {
+        const loanamountInput = document.getElementById('loanamount');
+        const loanamount = loanamountInput.value.trim();
+        const loanLimit = /*[[${loandetails.LoanLimit}]]*/ 0;
 
-    if (loanamount === '') { alert('대출금을 입력하세요.'); event.preventDefault(); return; }
-    if (!/^\d+(\.\d+)?$/.test(loanamount)) { alert('숫자만 입력 가능합니다.'); event.preventDefault(); return; }
-    const amountNum = Number(loanamount);
-    if (amountNum <= 0) { alert('대출금은 0보다 커야 합니다.'); event.preventDefault(); return; }
-    if (amountNum > loanLimit) { alert('대출금은 대출 한도 ' + loanLimit + '원을 초과할 수 없습니다.'); event.preventDefault(); return; }
+        if (loanamount === '') {
+            alert('대출금을 입력하세요.');
+            event.preventDefault();
+            return;
+        }
+        if (!/^\d+$/.test(loanamount)) {
+            alert('숫자만 입력 가능합니다.');
+            event.preventDefault();
+            return; 
+        }
+        const amountNum = Number(loanamount);
+        if (amountNum <= 0) {
+            alert('대출금은 0보다 커야 합니다.');
+            event.preventDefault();
+            return;
+        }
+        if (amountNum > loanLimit) {
+            alert('대출금은 대출 한도 ' + loanLimit + '원을 초과할 수 없습니다.');
+            event.preventDefault();
+            return;
+        }
+    });
 });
 </script>
-
 </body>
 </html>
