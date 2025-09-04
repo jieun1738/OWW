@@ -42,6 +42,8 @@ public class JwtController {
 	    List<LoanProductVO> details = loanservice.getAllLoanProducts();
 	    model.addAttribute("details", details);
 		
+	    
+	    
 		//토큰 받기
         String token = null;
 
@@ -81,3 +83,5 @@ public class JwtController {
 		return "LoanMain";
     }
 }
+
+

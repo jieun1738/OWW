@@ -56,8 +56,9 @@
 	gap: 10px;
 	grid-template-columns: 150px 1fr 100px;  /* 3열 */
 	grid-template-rows: auto auto auto;   /* 3행 */
+	background:var(--card);
 	border: 1px solid var(--line);	
-    border-radius:16px; background:var(--card);
+    border-radius:16px; 	
     box-shadow:var(--shadow); padding:16px;
 	padding: 16px;
 	
@@ -107,7 +108,7 @@ grid-row: 1; grid-column: 2;
   cursor: pointer;          
   font-size: 12px;           
 }
-
+/*-----------상품비교-----------*/
 .selectProduct {
 	display: flex;
 	flex-direction: column;
@@ -149,6 +150,15 @@ grid-row: 1; grid-column: 2;
 		padding: 16px;
 		gap: 10px;
 }
+
+.comparison-card img {
+	width: 80%;
+	height: auto;
+	display: block;
+	/* 이미지를 블록 요소로 변경 */
+	margin: 0 auto;
+	/* 위아래 마진은 0, 좌우 마진은 자동으로 설정하여 가운데 정렬 */
+}
 .comparison-card h2{
 	 color: #FF6F61;
 	  margin: 0;
@@ -174,6 +184,7 @@ grid-row: 1; grid-column: 2;
 	margin: 0;
 	text-align: left;
   }
+  /*------상세보기-----------*/
 .card-detail {
 	display: flex;
 	flex-direction: column;
@@ -211,12 +222,207 @@ grid-row: 1; grid-column: 2;
 .card-detail h1 {
 	text-align: center;
 }
-/* 반응형 */
-@media (max-width: 1080px){
-  #wpintro .grid{ grid-template-columns: repeat(2, minmax(200px,1fr)); }
+
+.card-detail img {
+	width: 80%;
+	/* 원하는 너비 */
+	height: auto;
+	/* 높이는 너비에 맞춰 자동 조절 */
+	display: block;
+	/* 이미지를 블록 요소로 변경 */
+	margin: 0 auto;
+	/* 위아래 마진은 0, 좌우 마진은 자동으로 설정하여 가운데 정렬 */
 }
-@media (max-width: 640px){
-  #wpintro.page{ grid-template-columns: 1fr; }
-  #wpintro .grid{ grid-template-columns: 1fr; }
-  #wpintro .page-header{ flex-direction:column; align-items:flex-start; }
+.card-complete {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+	width: 80%;
+	height: 300px;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	padding: 16px;
+	gap: 90px;
+}
+
+.card-complete h1{
+	margin-top: 70px;
+}
+.card-complete .btn-wrap{ 
+	display: flex;  
+	gap: 10px;
+	flex-direction: row; /* 가로 배치 */
+	justify-content: center; /* 가로 방향 가운데 정렬 */
+	align-items: center; /* 세로 방향 가운데 정렬 */
+}
+/*-----------계산기----------*/
+.calculator-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 80%;
+	margin-top: 10px;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	padding: 16px;
+	gap: 10px;
+}
+
+.calculator-card table {
+	table-layout: auto;
+  	width: 100%;
+	margin-top:50px;
+  	border-collapse: collapse;
+  }
+  
+.calculator-card .wrap{
+    	display: inline-block;	
+		/*white-space: nowrap; */
+    } 
+
+
+.calculator-card .item {
+  	border: 1px solid #ddd;
+  	padding: 10px;
+  	text-align: center;
+  }
+.calculator-card td {
+    	border: 1px solid #ddd;
+    	padding: 10px;
+    }
+
+.calculator-card th {
+  	background-color:  #F1CBE5;
+  	font-weight: bold;
+  }
+
+.calculator-card .input {
+  	padding: 5px;
+  	text-align: left;
+  }
+.calculator-card h4 {
+	background: #e9d5ff;
+	border: 1px solid var(--line);	
+	border-radius:16px; 	
+	box-shadow:var(--shadow); padding:16px;
+	padding: 16px;
+}
+.calculator-card .btn-cell{
+	text-align: right;
+}
+
+/*----------상환 페이지----------*/
+
+.ln-title {
+	font-weight: 800;
+	margin: 12px 6px 8px;
+}
+
+.repayment-card {
+	display: flex;
+	flex-direction: column;
+	/*align-items: center;*/
+	position: relative;
+	width: 80%;
+	margin-right: 5px;
+	margin-top: 10px;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--card);
+	box-shadow: var(--shadow);
+	padding: 16px;
+	padding: 16px;
+	gap: 10px;
+}
+.progress {
+	margin-top: 10px;
+}
+.repayment-card progress{
+	width: 100%;
+	height: 20px;
+}
+
+
+.repayment-card h2 {
+	color: #FF6F61;
+	margin: 0;
+	text-align: left;
+}
+
+.repayment-card h4 {
+	margin: 0;
+	text-align: left;
+}
+.repayment-container{
+	display: grid;
+	grid-template-columns: 200px 1fr;  /* 2열 */
+	grid-template-rows: auto;/* 2행 */
+	margin-top: 20px;
+	gap: 10px;
+}
+.repayment-card img {
+	grid-row: 1 ; 
+	grid-column: 1; 
+	width: 200px; /* 원하는 너비 */ 
+	height: auto; /* 높이는 너비에 맞춰 자동 조절 */ 
+	text-align: left;
+	justify-self: start;
+}
+
+
+.repayment-card .detail {
+	grid-row: 1; 
+	grid-column: 2; 
+	align-self: center;
+	text-align: left;
+}
+
+.repayment-card .wrap {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	background: #e9d5ff;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	box-shadow: var(--shadow);
+	padding: 16px;
+	padding: 16px;
+}
+
+.repayment-card .btn-wrap {
+	display: flex;
+	gap: 10px;
+	position: absolute;
+	/* 이 줄을 추가 */
+	bottom: 16px;
+	/* 카드의 아래쪽으로부터 16px 위로 */
+	right: 16px;
+	/* 카드의 오른쪽으로부터 16px 왼쪽으로 */
+}
+
+/* 반응형 */
+@media (max-width: 1080px) {
+	#wpintro .grid {
+		grid-template-columns: repeat(2, minmax(200px, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	#wpintro.page {
+		grid-template-columns: 1fr;
+	}
+
+	#wpintro .grid {
+		grid-template-columns: 1fr;
+	}
+
+	#wpintro .page-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 }
