@@ -60,7 +60,7 @@
 	margin: 4px 0 8px;
 	font-size: 28px;
 	font-weight: 800;
-	color: var(--brand);
+	color: #5a3a36;
 	letter-spacing: -.2px;
 }
 
@@ -68,6 +68,7 @@
 	margin: 0 0 18px;
 	color: var(--muted);
 	font-size: 14px;
+	color: #5a3a36;
 }
 
 /* 탭 */

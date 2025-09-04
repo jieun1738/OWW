@@ -1,138 +1,182 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/base}">
 <head>
-  <title layout:fragment="title">임시 플랜 보관함</title>
-  <link rel="stylesheet" th:href="@{/css/WeddingPlanList.css}"/>
+<title layout:fragment="title">임시 플랜 보관함</title>
+<link rel="stylesheet" th:href="@{/css/WeddingPlanList.css}" />
 </head>
 <body>
-<section layout:fragment="content">
-  <div class="page" id="wplist">
-    <!-- 사이드바 -->
-    <div th:replace="~{fragments/MainSideBar :: sidebar(
+	<section layout:fragment="content">
+		<div class="page" id="wplist">
+			<!-- 사이드바 -->
+			<div
+				th:replace="~{fragments/MainSideBar :: sidebar(
         user=${user},
         active='WeddingPlanner/WeddingPlanList',
         progress=${progressPercent}
     )}"></div>
 
-    <!-- 메인 -->
-    <main class="content"
-          th:with="
+			<!-- 메인 -->
+			<main class="content"
+				th:with="
             safeBox = ${(boxDetails == null) ? #lists.list() : boxDetails},
             safeFinal = ${(finalPlans == null) ? #lists.list() : finalPlans},
             fpMap = ${(finalPlanProducts == null) ? {} : finalPlanProducts},
             disabledCompare = ${(hasConfirmed == null) ? false : hasConfirmed}
           ">
 
-      <h1 class="title">임시 플랜 보관함</h1>
-      <p class="desc">DIY에서 저장한 임시 플랜들이 모입니다. 최종결정은 이 페이지에서 진행합니다.</p>
+				<h1 class="title">임시 플랜 보관함</h1>
+				<p class="desc">DIY에서 저장한 임시 플랜들이 모입니다. 최종결정은 이 페이지에서 진행합니다.</p>
 
-      <!-- ============ 임시 보관함 ============ -->
-      <section class="section">
-        <h2 class="section-title"><i class="bx bx-archive"></i> 임시 플랜 보관함</h2>
+				<!-- ============ 임시 보관함 ============ -->
+				<section class="section">
+					<h2 class="section-title">
+						<i class="bx bx-archive"></i> 임시 플랜 보관함
+					</h2>
 
-        <!-- 카드 그리드 -->
-        <div class="cards" th:if="${!#lists.isEmpty(safeBox)}">
-          <!-- safeBox: List<List<ProductVO>> -->
-          <article class="card" th:each="lst, st : ${safeBox}">
-            <!-- 슬롯(가로 배치) -->
-            <div class="slots">
-              <div class="slot" th:each="p : ${lst}">
-                <div class="thumb">
-                  <img th:if="${p != null and p.img != null and !#strings.isEmpty(p.img)}"
-                       th:src="@{${p.img}}" alt="">
-                  <div class="noimg" th:if="${p == null or p.img == null or #strings.isEmpty(p.img)}">
-                    <i class="bx bx-image-alt"></i> 이미지 없음
-                  </div>
-                </div>
-                <div class="meta">
-                  <div class="name" th:text="${p != null ? p.productName : '미지정'}">상품명</div>
-                  <div class="sub"
-                       th:text="${p != null ? (p.category==0?'웨딩홀':(p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))) : '-'}">
-                    카테고리
-                  </div>
-                </div>
-              </div>
-            </div>
+					<!-- 카드 그리드 -->
+					<div class="cards" th:if="${!#lists.isEmpty(safeBox)}">
+						<!-- safeBox: List<List<ProductVO>> -->
+						<article class="card" th:each="lst, st : ${safeBox}">
+							<!-- 슬롯(가로 배치) -->
+							<div class="slots">
+								<div class="slot" th:each="p : ${lst}">
+									<div class="thumb">
+										<img
+											th:if="${p != null and p.img != null and !#strings.isEmpty(p.img)}"
+											th:src="@{${p.img}}" alt="">
+										<div class="noimg"
+											th:if="${p == null or p.img == null or #strings.isEmpty(p.img)}">
+											<i class="bx bx-image-alt"></i> 이미지 없음
+										</div>
+									</div>
+									<div class="meta">
+										<div class="name"
+											th:text="${p != null ? p.productName : '미지정'}">상품명</div>
+										<div class="sub"
+											th:text="${p != null ? (p.category==0?'웨딩홀':(p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))) : '-'}">
+											카테고리</div>
+									</div>
+								</div>
+							</div>
 
-            <!-- 카드 하단 버튼 -->
-            <div class="row-actions">
-              <a class="btn ghost"
-                 th:href="@{/planner/WeddingConfirm(idx=${st.index})}">
-                <i class="bx bx-show"></i> 미리보기
-              </a>
+							<!-- 카드 하단 버튼 -->
+							<div class="row-actions">
+								<a class="btn ghost"
+									th:href="@{/planner/WeddingConfirm(idx=${st.index})}"> <i
+									class="bx bx-show"></i> 미리보기
+								</a> <a class="btn danger"
+									th:href="@{/planner/planbox/remove(idx=${st.index})}"
+									onclick="return confirm('이 임시 플랜을 삭제하시겠습니까?');"> <i
+									class="bx bx-trash"></i> 삭제
+								</a> <a class="btn primary"
+									th:href="@{/planner/planbox/finalize(idx=${st.index})}"
+									onclick="return confirm('최종확정하시겠습니까? 확정 후에는 비교 기능이 비활성화됩니다.');">
+									<i class="bx bx-check-circle"></i> 최종 결정
+								</a>
+							</div>
+						</article>
+					</div>
 
-              <a class="btn danger"
-                 th:href="@{/planner/planbox/remove(idx=${st.index})}"
-                 onclick="return confirm('이 임시 플랜을 삭제하시겠습니까?');">
-                <i class="bx bx-trash"></i> 삭제
-              </a>
+					<div class="empty" th:if="${#lists.isEmpty(safeBox)}">
+						<i class="bx bx-info-circle"></i> 임시 보관된 플랜이 없습니다.
+					</div>
+				</section>
 
-              <a class="btn primary"
-                 th:href="@{/planner/planbox/finalize(idx=${st.index})}"
-                 onclick="return confirm('최종확정하시겠습니까? 확정 후에는 비교 기능이 비활성화됩니다.');">
-                <i class="bx bx-check-circle"></i> 최종 결정
-              </a>
-            </div>
-          </article>
-        </div>
+				<!-- ============ 플랜 비교 ============ -->
+				<section class="section">
+					<h2 class="section-title">
+						<i class="bx bx-git-compare"></i> 플랜 비교
+					</h2>
 
-        <div class="empty" th:if="${#lists.isEmpty(safeBox)}">
-          <i class="bx bx-info-circle"></i> 임시 보관된 플랜이 없습니다.
-        </div>
-      </section>
+					<!-- 최종확정이 있으면 안내만 -->
+					<div th:if="${disabledCompare}" class="note">이미 최종 결정된 플랜이 있어
+						비교 기능이 비활성화되었습니다.</div>
 
-      <!-- ============ 플랜 비교 ============ -->
-      <section class="section">
-        <h2 class="section-title"><i class="bx bx-git-compare"></i> 플랜 비교</h2>
-        <div th:if="${disabledCompare}" class="note">
-          이미 최종 결정된 플랜이 있어 비교 기능이 비활성화되었습니다.
-        </div>
-        <div th:if="${!disabledCompare}" class="note">
-          (선택한 임시 플랜들을 비교하는 UI를 여기에 붙이면 됩니다)
-        </div>
-      </section>
+					<!-- 최종확정이 없으면 비교 선택 폼 노출 -->
+					<div th:if="${!disabledCompare}">
+						<form th:action="@{/planner/WeddingPlanCompare}" method="get"
+							class="cmp-form">
+							<div class="cmp-picklist" th:if="${!#lists.isEmpty(safeBox)}">
+								<label class="cmp-pick" th:each="lst, st : ${safeBox}">
+									<input type="checkbox" name="idx" th:value="${st.index}" /> 
+										<span>[[${st.index + 1}]]번 임시 플랜</span>
+								</label>
+							</div>
+							<div class="note">최대 4개까지 선택 가능합니다.</div>
+							<button type="submit" class="btn primary">
+								<i class="bx bx-git-compare"></i> 비교하기
+							</button>
+						</form>
 
-      <!-- ============ 최종 결정된 플랜 ============ -->
-      <section class="section">
-        <h2 class="section-title"><i class="bx bx-badge-check"></i> 최종 결정된 플랜</h2>
+						<div class="empty" th:if="${#lists.isEmpty(safeBox)}">
+							<i class="bx bx-info-circle"></i> 비교할 임시 플랜이 없습니다.
+						</div>
+					</div>
+				</section>
 
-        <div class="cards" th:if="${!#lists.isEmpty(safeFinal)}">
-          <article class="card" th:each="fp : ${safeFinal}">
-            <div class="head">
-              <div class="pill" th:text="${fp.packageNo == 9999 ? 'DIY' : ('패키지 #' + fp.packageNo)}">DIY</div>
-              <div class="pid" th:text="${'플랜번호 ' + fp.planNo}">플랜번호</div>
-            </div>
 
-            <div class="slots">
-              <div class="slot" th:each="p : ${fpMap[fp.planNo]}">
-                <div class="thumb">
-                  <img th:if="${p != null and p.img != null and !#strings.isEmpty(p.img)}"
-                       th:src="@{${p.img}}" alt="">
-                  <div class="noimg" th:if="${p == null or p.img == null or #strings.isEmpty(p.img)}">
-                    <i class="bx bx-image-alt"></i> 이미지 없음
-                  </div>
-                </div>
-                <div class="meta">
-                  <div class="name" th:text="${p != null ? p.productName : '미지정'}">상품명</div>
-                  <div class="sub"
-                       th:text="${p != null ? (p.category==0?'웨딩홀':(p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))) : '-'}">
-                    카테고리
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
+				<!-- ============ 최종 결정된 플랜 ============ -->
+				<section class="section">
+					<h2 class="section-title">
+						<i class="bx bx-badge-check"></i> 최종 결정된 플랜
+					</h2>
 
-        <div class="empty" th:if="${#lists.isEmpty(safeFinal)}">
-          <i class="bx bx-info-circle"></i> 최종 결정된 플랜이 없습니다.
-        </div>
-      </section>
+					<div class="cards" th:if="${!#lists.isEmpty(safeFinal)}">
+						<article class="card" th:each="fp : ${safeFinal}">
+							<div class="head">
+								<div class="pill"
+									th:text="${fp.packageNo == 9999 ? 'DIY' : ('패키지 #' + fp.packageNo)}">DIY</div>
+								<div class="pid" th:text="${'플랜번호 ' + fp.planNo}">플랜번호</div>
+							</div>
 
-    </main>
-  </div>
-</section>
+							<div class="slots">
+								<div class="slot" th:each="p : ${fpMap[fp.planNo]}">
+									<div class="thumb">
+										<img
+											th:if="${p != null and p.img != null and !#strings.isEmpty(p.img)}"
+											th:src="@{${p.img}}" alt="">
+										<div class="noimg"
+											th:if="${p == null or p.img == null or #strings.isEmpty(p.img)}">
+											<i class="bx bx-image-alt"></i> 이미지 없음
+										</div>
+									</div>
+									<div class="meta">
+										<div class="name"
+											th:text="${p != null ? p.productName : '미지정'}">상품명</div>
+										<div class="sub"
+											th:text="${p != null ? (p.category==0?'웨딩홀':(p.category==1?'스튜디오':(p.category==2?'드레스':'메이크업'))) : '-'}">
+											카테고리</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- ★ 카드 하단 액션 영역 -->
+							<div class="row-actions">
+								<a class="btn danger" th:href="@{/planner/plan/final/remove}"
+									onclick="return confirm('최종 결정된 플랜을 삭제하시겠습니까?');"> <i
+									class="bx bx-trash"></i> 삭제하기
+								</a>
+								<!-- planNo로 지우려면:
+        <a class="btn danger"
+           th:href="@{/planner/plan/final/removeByNo(planNo=${fp.planNo})}"
+           onclick="return confirm('최종 결정된 플랜을 삭제하시겠습니까?');">
+          <i class="bx bx-trash"></i> 삭제하기
+        </a>
+        -->
+							</div>
+						</article>
+					</div>
+
+					<div class="empty" th:if="${#lists.isEmpty(safeFinal)}">
+						<i class="bx bx-info-circle"></i> 최종 결정된 플랜이 없습니다.
+					</div>
+				</section>
+
+
+			</main>
+		</div>
+	</section>
 </body>
 </html>

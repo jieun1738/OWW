@@ -33,7 +33,10 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public int finalizeDIY(PlanVO vo) {
-        // Mapper의 실제 시그니처(다중 파라미터)에 맞춰 호출합니다.
+        // 사용자당 1건만 유지: plan_progress -> plan 순서로 선삭제 후 삽입
+        planMapper.deleteProgressByUser(vo.getUserEmail());
+        planMapper.deleteFinalByUser(vo.getUserEmail());
+
         return planMapper.insertPlanDIY(
                 vo.getUserEmail(),
                 vo.getHall(),
@@ -61,6 +64,8 @@ public class PlanServiceImpl implements PlanService {
         if ("PKG".equals(type)) {
             int packageNo = parseInt(item.get("packageNo"));
             if (packageNo > 0) {
+                planMapper.deleteProgressByUser(userEmail);
+                planMapper.deleteFinalByUser(userEmail);
                 planMapper.insertPlanFromPackage(userEmail, packageNo);
             }
         } else {
@@ -68,18 +73,37 @@ public class PlanServiceImpl implements PlanService {
             int studio = parseInt(item.get("studio"));
             int dress  = parseInt(item.get("dress"));
             int makeup = parseInt(item.get("makeup"));
+
+            planMapper.deleteProgressByUser(userEmail);
+            planMapper.deleteFinalByUser(userEmail);
             planMapper.insertPlanDIY(userEmail, hall, studio, dress, makeup);
         }
 
-        // 커밋한 항목 제거
+        // 커밋한 항목 제거 (세션 동기화)
         List<Map<String, Object>> newBox = new ArrayList<>();
         for (Object o : src) {
             if (o instanceof Map<?, ?>) {
                 newBox.add(toStringKeyMap((Map<?, ?>) o));
             }
         }
-        newBox.remove(index);
+        if (index >= 0 && index < newBox.size()) {
+            newBox.remove(index);
+        }
         session.setAttribute("planBox", newBox);
+    }
+
+    @Override
+    public void deleteFinalByUser(String userEmail) {
+        //  FK 순서 준수
+        planMapper.deleteProgressByUser(userEmail);
+        planMapper.deleteFinalByUser(userEmail);
+    }
+
+    @Override
+    public void deleteFinalByPlanNo(int planNo) {
+        //  FK 순서 준수
+        planMapper.deleteProgressByPlanNo(planNo);
+        planMapper.deleteFinalByPlanNo(planNo);
     }
 
     // ===== 내부 유틸 =====
@@ -93,7 +117,10 @@ public class PlanServiceImpl implements PlanService {
 
     private int parseInt(Object o) {
         if (o == null) return 0;
-        try { return Integer.parseInt(String.valueOf(o)); }
-        catch (Exception e) { return 0; }
+        try {
+            return Integer.parseInt(String.valueOf(o));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

@@ -82,10 +82,112 @@
 	background: linear-gradient(180deg, #fff, var(--muted));
 	box-shadow: var(--shadow);
 	padding: 12px 14px;
-	display: grid;
-	grid-template-columns: repeat(4, minmax(160px, 1fr)) auto;
-	gap: 12px;
-	align-items: end;
+	display: grid !important;
+	grid-template-columns: repeat(12, 1fr) !important;
+	gap: 12px 16px !important;
+	align-items: end !important;
+}
+
+/* 1행: 무드(1~6), 키워드(7~12) */
+#wppkg .filters>.field-group:nth-of-type(1) {
+	grid-column: 1/span 6;
+} /* 무드 */
+#wppkg .filters>.field-group:nth-of-type(2) {
+	grid-column: 7/span 6;
+} /* 키워드 */
+
+/* 2행: 예산(1~6), 지역(7~12) */
+#wppkg .filters>.field-group:nth-of-type(3) {
+	grid-column: 1/span 6;
+} /* 예산 */
+#wppkg .filters>.field-group:nth-of-type(4) {
+	grid-column: 7/span 6;
+} /* 지역 */
+
+/* 3행: 버튼(가운데) */
+#wppkg .filters>.field-actions {
+	grid-column: 1/-1 !important;
+	display: flex !important;
+	justify-content: center !important;
+	gap: 12px !important;
+}
+
+#wppkg .filters .budget, #wppkg .filters .budget *[class*="wrap"],
+	#wppkg .filters .budget *[class*="box"] {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+}
+
+#wppkg .filters .budget {
+	display: grid !important;
+	grid-template-columns: 1fr auto 1fr !important; /* 좌우 인풋 + 가운데 ~ */
+	/* align-items: center !important; */
+	gap: 8px !important;
+	width: 80% !important;
+}
+
+#wppkg .filters .budget .dash {
+	display: inline-block !important;
+	padding: 0 6px !important;
+	line-height: 1 !important;
+	color: #8a7c72 !important;
+	font-weight: 700 !important;
+}
+
+#wppkg .filters .budget .input {
+	width: 80% !important;
+	min-width: 50px !important;
+	height: 28px !important;
+	padding: 8px 10px !important;
+	border-radius: 10px !important;
+}
+
+#wppkg .filters .label {
+	font-weight: 600;
+	font-size: 14px;
+}
+
+#wppkg .filters .chip {
+	padding: 6px 10px;
+	min-height: 32px;
+	font-size: 13px;
+}
+
+#wppkg .filters .input, #wppkg .filters .select {
+	min-height: 28px;
+}
+
+/* 반응형(태블릿 유지, 모바일 스택) */
+@media ( max-width : 1024px) {
+	#wppkg .filters>.field-group:nth-of-type(1) {
+		grid-column: 1/-1;
+	}
+	#wppkg .filters>.field-group:nth-of-type(2) {
+		grid-column: 1/-1;
+	}
+	#wppkg .filters>.field-group:nth-of-type(3) {
+		grid-column: 1/span 6;
+	}
+	#wppkg .filters>.field-group:nth-of-type(4) {
+		grid-column: 7/span 6;
+	}
+	#wppkg .filters>.field-actions {
+		grid-column: 1/-1;
+	}
+}
+
+@media ( max-width : 640px) {
+	#wppkg .filters>.field-group, #wppkg .filters>.field-actions {
+		grid-column: 1/-1 !important;
+	}
+	#wppkg .filters .budget {
+		grid-template-columns: 1fr;
+	}
+	#wppkg .filters .budget .dash {
+		display: none;
+	}
 }
 
 #wppkg .field-group {
