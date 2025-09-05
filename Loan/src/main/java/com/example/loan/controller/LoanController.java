@@ -238,10 +238,20 @@ public class LoanController {
     
 
     @GetMapping("/loanmain")
-    public String LoanMain(Model model) throws StreamReadException, DatabindException, IOException {
-        ArrayList<LoanProductVO> details = loanservice.getloanmain();
+    public String LoanMain(Model model, HttpServletRequest request) throws StreamReadException, DatabindException, IOException {
+    	// JWT 토큰 검증 추가
+      try{  
+    	  System.out.println("loan 컨트롤러 접근");
+    	String userEmail = extractUserEmail(request);
+    	
+    	ArrayList<LoanProductVO> details = loanservice.getloanmain();
         model.addAttribute("details", details);
+        model.addAttribute("user_email", userEmail); // 토큰의 user_email 전달
         return "LoanMain";
+    } catch (IllegalArgumentException e) {
+        // JWT 토큰이 없거나 유효하지 않은 경우
+        return "redirect:/login"; // 로그인 페이지로 리다이렉트
+    }
     }
 
     @GetMapping("/loandetail")

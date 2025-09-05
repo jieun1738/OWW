@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title layout:fragment="title">대출상품 상세 | OWW</title>
-  <link rel="stylesheet" th:href="@{/css/Loanmain.css}">
+  <link rel="stylesheet" th:href="@{/loan/css/Loanmain.css}">
 </head>
 <body>
 	<section layout:fragment="content">
@@ -25,6 +25,7 @@
 					
 		<div class="card-detail">
     	<h1 class="title" th:text="|💰${loandetails.loanName}💰|">상품명</h1>
+		<img th:src="@{|/loan/img/loan/${loandetails.loanName}.png|}" alt="대출상품 이미지"/>
     
     <p><strong>상세 설명:</strong><br> <span th:text="${loandetails.LoanExplanation}"> 설명</span></p>
     <p><strong>대출 한도:</strong><br><span th:text="${loandetails.LoanLimit}">-</span> 원</p>
@@ -40,7 +41,7 @@
 </div>
 <div class="card-detail">
 	
-<form th:action="@{/insertloan}" id="loanForm" class="loan-form">
+<form th:action="@{/loan/insertloan}" id="loanForm" class="loan-form">
     <div class="input-row">
 	<label for="loanamount">대출금 입력:</label>
     <input type="text" name="loanamount" id="loanamount" class="input-field" placeholder="숫자만 입력">
@@ -57,36 +58,18 @@
 		</div>
 	</section>
 <script th:inline="javascript">
-document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById('loanForm');
-    form.addEventListener('submit', function(event) {
-        const loanamountInput = document.getElementById('loanamount');
-        const loanamount = loanamountInput.value.trim();
-        const loanLimit = /*[[${loandetails.LoanLimit}]]*/ 0;
+document.getElementById('loanForm').addEventListener('submit', function(event) {
+    const loanamountInput = document.getElementById('loanamount');
+    const loanamount = loanamountInput.value.trim();
+    const loanLimit = /*[[${loandetails.LoanLimit}]]*/ 0;
 
-        if (loanamount === '') {
-            alert('대출금을 입력하세요.');
-            event.preventDefault();
-            return;
-        }
-        if (!/^\d+$/.test(loanamount)) {
-            alert('숫자만 입력 가능합니다.');
-            event.preventDefault();
-            return; 
-        }
-        const amountNum = Number(loanamount);
-        if (amountNum <= 0) {
-            alert('대출금은 0보다 커야 합니다.');
-            event.preventDefault();
-            return;
-        }
-        if (amountNum > loanLimit) {
-            alert('대출금은 대출 한도 ' + loanLimit + '원을 초과할 수 없습니다.');
-            event.preventDefault();
-            return;
-        }
-    });
+    if (loanamount === '') { alert('대출금을 입력하세요.'); event.preventDefault(); return; }
+    if (!/^\d+(\.\d+)?$/.test(loanamount)) { alert('숫자만 입력 가능합니다.'); event.preventDefault(); return; }
+    const amountNum = Number(loanamount);
+    if (amountNum <= 0) { alert('대출금은 0보다 커야 합니다.'); event.preventDefault(); return; }
+    if (amountNum > loanLimit) { alert('대출금은 대출 한도 ' + loanLimit + '원을 초과할 수 없습니다.'); event.preventDefault(); return; }
 });
 </script>
+
 </body>
 </html>

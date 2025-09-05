@@ -1,37 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
 <meta charset="UTF-8">
-<title>생활비 계산기</title>
-<link rel="stylesheet" href="/css/costcalculator.css">
-<link rel="stylesheet" href="/css/design.css">
+<title layout:fragment="title">생활비 계산기 | OWW</title>
+<link rel="stylesheet" href="/loan/css/Loanmain.css">
 </head>
 <body>
-
+	<section layout:fragment="content">
+			<div class="page">
+				<!-- ✅ 사이드바: 기존 프래그먼트 그대로 사용 (중복 선언 금지) -->
+				<div th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}">
+				</div>
+				<div class="cards">
+					<!-- Main Content -->
+					<main class="content">
+						<header class="page-header">
+							         <div>
+							           <h1 class="title">생활비 계산기</h1>
+							           <p class="desc">OWW 대출 월납입금을 확인하고 월소득을 입력하여 생활비를 설정해보세요</p>
+							         </div>
+							       </header>
+						<div class="calculator-card">
 <form action="/costcalculateresult">
-    <div class="calculator-card">
-        <h1>생활비 계산기</h1>
-        <p>
-            월 소득 : <input type="text" name="earnings">
-        </p>
-        <p>
-            월 납입금: 
-            <input type="text" name="monthlyinstallment" id="monthlyinstallment" th:value="${monthlyinstallment}" readonly>
-            <input type="checkbox" id="editInstallment"> 수정
-        </p>
-        <p>
-            생활비: <input type="text" name="cost">
-        </p>
-        <button type="submit">계산</button>
-    </div>
-</form>
+  
+	<table>
+		<thead>
+			<tr>
+				<th>항목</th>
+				<th>예산 금액 (원)</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td class="item">월 소득</td>
+			<td class="input"><input type="text" name="earnings"> 원</tdclass="item">
+		</tr>
+		<tr>
+			<td class="item">월 납입금</td>
+			<td class="input">
+				<div class="wrap">
+					<input type="text" name="monthlyinstallment" id="monthlyinstallment" th:value="${monthlyinstallment}" readonly> 원 <input type="checkbox" id="editInstallment"> 수정
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="item">생활비</td>
+			<td class="input"><input type="text" name="cost"> 원</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="btn-cell"><button type="submit" class="btn">여유자금 계산</button></td>
+		</tr>
+		</tbody>
+	</table>
+	
+	</form>
 
-<h4 class="result">여유 자금: <span th:text="${restcost != null} ? ${restcost} : ' '"> </span></h4>
+<h4 class="result">여유 자금: <span th:text="${restcost != null} ? ${restcost} : ' '"> - </span>원</h4>
 
 <form action="/safebox" style="text-align: center;">
-    <button type="submit">저금하러 가기</button>
+    <button type="submit" class="btn">저금하러 가기</button>
 </form>
-
+</div>
+</main>
+</div>
+</div>
+</section>
 <script>
     const checkbox = document.getElementById('editInstallment');
     const input = document.getElementById('monthlyinstallment');

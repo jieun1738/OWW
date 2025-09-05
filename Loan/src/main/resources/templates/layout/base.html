@@ -11,7 +11,7 @@
 <!-- Boxicons CDN -->
 <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 <!-- NEW: 공통 아이콘 유틸 -->
-<link rel="icon" type="image/png" th:href="@{/img/favicon-32x32.png}" sizes="32x32">
+<link rel="icon" type="image/png" th:href="@{/loan/img/favicon-32x32.png}" sizes="32x32">
 
 <link th:href="@{/loan/css/design.css}" rel="stylesheet" />
 <link th:href="@{/loan/css/WeddingDIY.css}" rel="stylesheet" />
@@ -41,8 +41,8 @@
 <body class="site-layout">
 	<!-- 헤더/네비는 항상 레이아웃에서만 부착 -->
 	<header
-		th:replace="~{fragments/header :: siteHeader(active=${active})}"></header>
-	<nav th:replace="~{fragments/nav :: siteNav(active=${active})}"></nav>
+		th:replace="~{/fragments/header :: siteHeader(active=${active})}"></header>
+	<nav th:replace="~{/fragments/nav :: siteNav(active=${active})}"></nav>
 
 	<main class="site-content" layout:fragment="content">
 		<!-- 각 페이지의 본문이 여기로 들어옵니다 -->
