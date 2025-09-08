@@ -9,7 +9,7 @@
     INSERT INTO UserLoan 
         (UserEmail, LoanName, LoanAmount, LoanCurrentAmount,paidmonthlyamount ,LoanPeriod,LoanCurrentPeriod,LoanRepaymentType,CurrentMonth,InterestRate,Approval)
     VALUES 
-        (#{UserEmail}, #{LoanName}, #{LoanAmount},0,0,#{LoanPeriod},1,#{LoanRepaymentType},1,#{InterestRate},0)
+        (#{UserEmail}, #{LoanName}, #{LoanAmount},0,0,#{LoanPeriod},1,#{LoanRepaymentType},1,#{InterestRate},1)
 </insert>
 
 <select id="getUserLoan" resultType="com.example.loan.vo.UserLoanVO">

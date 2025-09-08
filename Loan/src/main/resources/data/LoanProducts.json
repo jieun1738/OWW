@@ -24,14 +24,6 @@
     "interestRate": 2.5
   },
   {
-    "loanName": "생활안정 마이크로 대출",
-    "loanExplanation": "단기 생활자금이 필요한 고객을 위한 소액 대출 상품으로, 간단한 절차로 신청 가능합니다.",
-    "loanLimit": 20000000,
-    "loanPeriod": 12,
-    "loanRepaymentType": 0,
-    "interestRate": 2.3
-  },
-  {
     "loanName": "주택 보조 일반 대출",
     "loanExplanation": "주택 마련이나 이사 비용 등에 활용 가능한 범용 대출 상품으로, 장기 상환이 가능합니다.",
     "loanLimit": 100000000,

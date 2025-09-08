@@ -13,7 +13,7 @@
 		<div class="page">
 			<!-- ✅ 사이드바: 기존 프래그먼트 그대로 사용 (중복 선언 금지) -->
 			<div
-				th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='LoanMain', progress=${progressPercent})}">
+				th:replace="~{fragments/MainSideBar :: sidebar(user=${user}, active='Repayment', progress=${progressPercent})}">
 			</div>
 			<div class="cards">
 				<!-- Main Content -->
@@ -53,7 +53,7 @@
 							</div>
 							</div>
 							</div>
-							
+							<div th:if="${infoMessage == null}">
 							<div class="repayment-card">
 								<div class="ln-title"><i class='bx bx-target-lock'></i> 대출 상환율</div>
 							<progress id="progress" th:value="${userloan.LoanCurrentAmount}" min="0"
@@ -74,7 +74,7 @@
 							</form>
 							</div>
 							</div>
-					
+					</div>
 				
 					</main>
 					</div>

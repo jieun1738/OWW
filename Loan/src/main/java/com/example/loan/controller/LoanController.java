@@ -135,16 +135,24 @@ public class LoanController {
 	@GetMapping("/repayment")
 	public String repayment(RedirectAttributes redirectAttributes ,Model model,HttpServletRequest request){//여기에 토큰에서 이메일 정보 넣어야함
 		/* String useremail = request.getHeader("X-useremail"); */
-		String useremail = "testmail@gmail.com";
-		int approve = loanservice.getloanapprove(useremail);
-		long monthlyinstallments = loanservice.sumMonthlyInstallment(useremail);
-		if(approve == 0) {
-			model.addAttribute("infoMessage", "상환할 대출이 없습니다.");
-			return "Repayment";
-		}
+		String useremail = "testmail3@gmail.com";
+//		int approve = loanservice.getloanapprove(useremail);
+//		
+//		if(approve == 0) {
+//			model.addAttribute("infoMessage", "상환할 대출이 없습니다.");
+//			return "Repayment";
+//		}
 		
 		
 		UserLoanVO userloan = loanservice.getuserloan(useremail);
+		 if(userloan == null){
+		        model.addAttribute("infoMessage", "사용자 대출 정보를 찾을 수 없습니다.");
+		        return "Repayment";
+		    }
+		
+		long monthlyinstallments = loanservice.sumMonthlyInstallment(useremail);
+		
+		System.out.println(userloan);
 		model.addAttribute("userloan",userloan);
 		model.addAttribute("monthlyinstallment",monthlyinstallments);
 		return "Repayment";
@@ -156,7 +164,7 @@ public class LoanController {
 	{
 		
 		/* String useremail = request.getHeader("X-useremail"); */
-		String useremail = "testmail@gmail.com";
+		String useremail = "testmail3@gmail.com";
 			//여기에 계좌 잔액 가져와서 뺀 금액 다시 돌려보내야 함
 		int paidamounts = Integer.parseInt(paidamount);
 		
@@ -173,7 +181,7 @@ public class LoanController {
 	public String costcalculate(Model model,HttpServletRequest request) {
 		
 		/* String useremail = request.getHeader("X-useremail"); */
-		String useremail = "testmail@gmail.com";
+		String useremail = "testmail3@gmail.com";
 		
 		long monthlyinstallment = loanservice.sumMonthlyInstallment(useremail);
 		

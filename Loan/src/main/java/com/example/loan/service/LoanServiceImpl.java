@@ -143,10 +143,10 @@ public class LoanServiceImpl implements LoanService {
 		// TODO Auto-generated method stub
 	int exist = userLoanMapper.getloanexist(useremail);
 	int approve =0;
-	if (exist == 1) {
-		approve = userLoanMapper.getloanapprove(useremail);
-	}else {
+	if (exist == 0) {
 		return approve;
+	}else {
+		approve = 1;
 	}
 		
 		return approve;
