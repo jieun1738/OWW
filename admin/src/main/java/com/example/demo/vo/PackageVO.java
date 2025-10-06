@@ -1,16 +1,14 @@
 package com.example.demo.vo;
+import lombok.Data;
+
+@Data
 
 public class PackageVO {
-    private Long id;
-    private String name;
-    private Long hallId;
-    private Long studioId;
-    private Long dressId;
-    private Long makeupId;
-	public Object getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-    // getter/setter
+    private Long packageNo;
+    private Integer type;
+    private Integer hall;
+    private Integer studio;
+    private Integer dress;
+    private Integer makeup;
+    private Integer discount;
 }
